@@ -37,7 +37,7 @@ for(const L of lessons){
   L.pdfPage=Number(L.page);
   L.bookPage=Number(L.page)-8;
   L.textbookEdition='2014-11';
-  L.textbookSystem='HSK Standard Course 4B · original six-level HSK / HSK 2.0 syllabus';
+  L.textbookSystem='HSK Standard Course 4B · 《HSK标准教程4（下）》教材口径';
   const pos=POS[String(L.id)];
   if(!pos||pos.length!==L.vocab.length)throw new Error(`HSK4 final: POS count mismatch lesson ${L.id}`);
   L.vocab.forEach((w,i)=>{
@@ -86,7 +86,7 @@ window.HSK4_LOWER_CONTENT_FINAL={
   version:'2026-08-14.5',
   textbook:'HSK Standard Course 4B / 《HSK标准教程4（下）》',
   publication:'2014-11',
-  syllabusContext:'original six-level HSK / HSK 2.0 textbook system',
+  syllabusContext:'《HSK标准教程4（下）》教材口径',
   lessons:10,
   vocab:lessons.reduce((n,L)=>n+L.vocab.length,0),
   vocabWithPos:lessons.reduce((n,L)=>n+L.vocab.filter(w=>w.pos).length,0),
