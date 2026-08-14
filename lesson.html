@@ -12,13 +12,14 @@
 <footer class="footer"><b>汉语教学课件 · HSK 2</b> · 然老师课堂</footer><div class="toast"></div><script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script><script src="assets/style-packed.js"></script><script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pinyin-pro@3.28.2/dist/index.js"></script><script src="data/data-1.js"></script><script src="data/data-2.js"></script><script src="data/data-3.js"></script><script src="data/data-4.js"></script><script src="data/data-load.js"></script><script src="assets/app-packed.js"></script><script src="assets/lesson-packed.js"></script><script>
 (function(){
   const allowed=new Set(['vocab','text','grammar','hanzi','practice']);
+  const lessonId=Math.min(15,Math.max(1,parseInt(new URLSearchParams(location.search).get('id')||'1')));
   function currentSec(){const q=new URLSearchParams(location.search).get('sec');return allowed.has(q)?q:'vocab'}
-  function setDirectSection(sec,replace=true){if(!allowed.has(sec))sec='vocab';activateSection(sec);const u=new URL(location.href);u.searchParams.set('id',id);u.searchParams.set('sec',sec);if(replace)history.replaceState(null,'',u.pathname+u.search);syncLessonLinks(sec)}
+  function setDirectSection(sec,replace=true){if(!allowed.has(sec))sec='vocab';activateSection(sec);const u=new URL(location.href);u.searchParams.set('id',lessonId);u.searchParams.set('sec',sec);if(replace)history.replaceState(null,'',u.pathname+u.search);syncLessonLinks(sec)}
   function syncLessonLinks(sec){
     $$('#lessonMenu a').forEach((a,i)=>a.href=`lesson.html?id=${i+1}&sec=${sec}`);
-    const prev=$('#lessonSwitch a:first-child');const next=$('#lessonSwitch a:last-child');
-    if(prev&&id>1)prev.href=`lesson.html?id=${id-1}&sec=${sec}`;
-    if(next&&id<15)next.href=`lesson.html?id=${id+1}&sec=${sec}`;
+    const links=$$('#lessonSwitch a');
+    if(lessonId>1&&links[0])links[0].href=`lesson.html?id=${lessonId-1}&sec=${sec}`;
+    if(lessonId<15&&links.length)links[links.length-1].href=`lesson.html?id=${lessonId+1}&sec=${sec}`;
   }
   $$('.section-tab').forEach(b=>b.onclick=()=>setDirectSection(b.dataset.sec,false));
   setDirectSection(currentSec(),true);
