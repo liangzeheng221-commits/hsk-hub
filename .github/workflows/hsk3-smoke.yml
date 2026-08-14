@@ -1,0 +1,40 @@
+name: HSK3 Smoke Test
+
+on:
+  push:
+    branches: [gh-pages]
+    paths:
+      - 'hsk3/**'
+      - 'assets/hsk2-parity.js'
+      - 'assets/lesson-menu-parity.js'
+      - 'assets/hanzi-curriculum.js'
+      - 'qa/hsk3-smoke.mjs'
+      - '.github/workflows/hsk3-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install DOM test dependency
+        run: npm install --no-save --package-lock=false jsdom@26.1.0
+      - name: Syntax checks
+        run: |
+          node --check hsk3/runtime-loader.js
+          node --check hsk3/app-core.js
+          node --check hsk3/app-practice.js
+          node --check hsk3/corrections.js
+          node --check hsk3/textbook-baseline.js
+          node --check assets/hsk2-parity.js
+          node --check assets/lesson-menu-parity.js
+          node --check assets/hanzi-curriculum.js
+      - name: Decode data and render all HSK3 lessons
+        run: node qa/hsk3-smoke.mjs
