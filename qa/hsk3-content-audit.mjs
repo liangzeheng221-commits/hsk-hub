@@ -34,7 +34,7 @@ assert.equal(Ls.reduce((n,L)=>n+L.vocab.filter(w=>w.aboveLevel).length,0),13,'te
 assert.equal(Ls.reduce((n,L)=>n+L.vocab.filter(w=>w.properName).length,0),12,'proper-name items must be 12');
 
 const get=(id,zh)=>Ls[id-1].vocab.find(w=>w.zh===zh);
-assert.deepEqual(Ls[1].vocab.slice(11,14).map(w=>w.zh),['楼','把','拿'],'L2 把 must be restored in textbook order');
+assert.equal(Ls[1].vocab.slice(11,14).map(w=>w.zh).join('|'),'楼|把|拿','L2 把 must be restored in textbook order');
 assert.equal(get(2,'把').py,'bǎ');assert.equal(get(2,'把').pos,'lượng từ');
 assert.equal(get(3,'只').py,'zhǐ');
 assert.equal(get(5,'张').vn,'họ Trương');assert.equal(get(5,'张').properName,true);
