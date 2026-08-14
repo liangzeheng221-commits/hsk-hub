@@ -31,6 +31,7 @@ jobs:
           node --check hsk4/data.js
           for f in hsk4/data/*.js; do node --check "$f"; done
           node --check hsk4/runtime.js
+          node --check hsk4/content-audit.js
           node --check hsk4/modules.js
           node --check hsk4/practice.js
           node --check qa/hsk4-lower-smoke.mjs
@@ -77,6 +78,15 @@ jobs:
               tail -30 "/tmp/chrome-$i.err" || true
               exit 1
             fi
+            if [ "$i" = "19" ]; then
+              grep -q '运动员发球时' "$FILE"
+              grep -q '记错了一个电话号码数字' "$FILE"
+            fi
+            if [ "$i" = "20" ]; then
+              grep -q '不是少数民族' "$FILE"
+              grep -q '广西冬天也比较暖和' "$FILE"
+              grep -q '咸辣、香辣、酸辣' "$FILE"
+            fi
             echo "LIVE LESSON $i PASS"
           done
-          echo 'HSK4 LOWER LIVE BROWSER TEST PASS: public home + lessons 11–20'
+          echo 'HSK4 LOWER LIVE BROWSER TEST PASS: public home + lessons 11–20 + audited factual regressions'
