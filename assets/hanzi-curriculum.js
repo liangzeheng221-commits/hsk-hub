@@ -47,5 +47,5 @@
     let box=document.getElementById('textbookHanziFocus');if(!box){box=document.createElement('div');box.id='textbookHanziFocus';box.className='textbook-hanzi-focus';map.before(box)}
     box.innerHTML=`<div class="textbook-hanzi-head"><b>教材汉字重点 · Trọng điểm chữ Hán trong giáo trình</b><span>Bài ${lessonId}</span></div><div class="textbook-hanzi-body"><div><span class="curriculum-label">重点 · Trọng tâm</span><strong>${esc(data.focus)}</strong></div>${data.items?`<div><span class="curriculum-label">汉字 · Chữ</span><strong class="curriculum-chars">${esc(data.items)}</strong></div>`:''}${data.words?`<div><span class="curriculum-label">旧字新词 · Từ mới từ chữ đã học</span><strong>${esc(data.words)}</strong></div>`:''}</div>`;
   }
-  window.addEventListener('DOMContentLoaded',render);
+  if(document.readyState==='loading')window.addEventListener('DOMContentLoaded',render,{once:true});else render();
 })();

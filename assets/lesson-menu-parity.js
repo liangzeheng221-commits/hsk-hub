@@ -24,5 +24,6 @@
     menu.onclick=e=>e.stopPropagation();document.addEventListener('click',close);document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
     render();
   }
-  window.addEventListener('DOMContentLoaded',()=>setTimeout(setup,0));
+  const start=()=>setTimeout(setup,0);
+  if(document.readyState==='loading')window.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
