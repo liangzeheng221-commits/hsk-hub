@@ -1,0 +1,24 @@
+:root{--h3-orange:#e77a22;--h3-deep:#a94b10;--h3-soft:#fff4ea;--h3-line:#f0c4a2}
+body.hsk3{background:#fbfcfa}
+.hsk3 .level-badge{background:rgba(238,125,45,.20);border-color:rgba(255,225,204,.38);color:#fff7ef}
+.hsk3 .home-hero,.hsk3 .lesson-hero{background:linear-gradient(135deg,#9f4715 0%,#d7681c 55%,#ed8a36 100%)}
+.hsk3 .lesson-hero{position:relative;overflow:hidden}
+.hsk3 .lesson-hero:after{content:'三';position:absolute;right:7%;top:-34px;font-family:'Noto Serif SC',serif;font-size:205px;color:rgba(255,255,255,.055);font-weight:700;pointer-events:none}
+.hsk3 .lesson-card{border-top:3px solid var(--h3-orange)}
+.hsk3 .lesson-num,.hsk3 .section-head h2,.hsk3 .word-main,.hsk3 .grammar-card h3{color:#9b4b17}
+.hsk3 .lesson-card:hover{border-color:#e79c64;box-shadow:0 16px 36px rgba(118,65,25,.13)}
+.hsk3 .lesson-open-row a:hover,.hsk3 .scene-tab.active,.hsk3 .quiz-tab.active{border-color:var(--h3-orange);background:var(--h3-soft);color:#8e4516}
+.hsk3 .lesson-open-all{background:#b45216!important;border-color:#b45216!important}
+.hsk3 .module-step-center b,.hsk3 .complete-card h3{color:#9b4b17}
+.hsk3 .vocab-zh,.hsk3 .word-main,.hsk3 .hanzi-info h3{color:#a14c16}
+.hsk3 .vocab-py,.hsk3 .word-py,.hsk3 .line-py,.hsk3 .grammar-vn-title{color:#c76a25}
+.hsk3 .vocab-back,.hsk3 .word-detail{background:linear-gradient(145deg,#fffaf6,#fff3e8)}
+.hsk3 .hanzi-char-btn{color:#9d4b17}
+.hsk3 .hanzi-char-btn.active,.hsk3 .hanzi-char-btn:hover{border-color:#e4a06c;background:#fff4ea}
+.hsk3 .practice-level-btn.advanced.active{background:linear-gradient(135deg,#fff3e8,#ffe1c9);border-color:#e39a60;color:#8c4213}
+.hsk3 .advanced-card{border-left:3px solid #e17e37}
+.hsk3 .advanced-badge,.hsk3 .advanced-count{color:#9b4b17}
+.hsk3 .difficulty-chip{background:#fff1e5;border:1px solid #edbd95;color:#a2521b}
+.hsk3 .accent-chip{display:inline-flex;align-items:center;padding:5px 10px;border-radius:999px;border:1px solid var(--h3-line);background:var(--h3-soft);color:#9b4b17;font-size:11px;font-weight:800}
+.hsk3 .source-note{margin-top:13px;padding:11px 13px;border:1px solid #efd5c2;background:#fffaf6;border-radius:11px;color:#745c4e;font-size:11px;line-height:1.6}
+.hsk3 .culture-ribbon{display:inline-flex;align-items:center;gap:5px;margin-left:7px;padding:3px 7px;border-radius:999px;background:#fff1e5;border:1px solid #edc39f;color:#a55822;font-size:9px;font-weight:800}
