@@ -9,7 +9,7 @@ for(let i=11;i<=20;i++)vm.runInContext(read(`hsk4/data/${i}.js`),dataCtx,{filena
 const data=dataCtx.window.HSK4_LOWER_LESSONS;
 assert.equal(data.length,10);
 assert.equal(data.reduce((n,L)=>n+L.vocab.length,0),311,'audited HSK4 Lower vocab total');
-assert.deepEqual(data.map(x=>x.id),[11,12,13,14,15,16,17,18,19,20]);
+assert.equal(JSON.stringify(Array.from(data,x=>x.id)),JSON.stringify([11,12,13,14,15,16,17,18,19,20]));
 for(const L of data){
   assert(L.title&&L.vn_title,`Bài ${L.id}: title`);
   assert.equal(new Set(L.vocab.map(v=>v.zh)).size,L.vocab.length,`Bài ${L.id}: duplicate vocab`);
@@ -35,7 +35,7 @@ const expectedGrammar={
 18:['是否','受不了','接着','除此以外','把……叫作……'],
 19:['疑问代词活用表示任指','上','出来','总的来说','在于'],
 20:['动词+着+动词+着','一……就……','究竟','起来','动词+起']};
-for(const L of data){assert.equal(L.title,expectedTitles[L.id]);assert.deepEqual(L.grammar.map(g=>g.title),expectedGrammar[L.id])}
+for(const L of data){assert.equal(L.title,expectedTitles[L.id]);assert.equal(JSON.stringify(Array.from(L.grammar,g=>g.title)),JSON.stringify(expectedGrammar[L.id]))}
 console.log('TEXTBOOK BASELINE PASS: lesson titles and all 50 language-point headings match audited source');
 assert(read('index.html').includes('hsk4/index.html'),'root portal must link HSK4 Lower');
 
