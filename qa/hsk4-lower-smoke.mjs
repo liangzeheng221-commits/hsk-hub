@@ -6,6 +6,7 @@ import {JSDOM,VirtualConsole} from 'jsdom';
 const read=p=>fs.readFileSync(p,'utf8');
 const dataCtx={window:{}};vm.createContext(dataCtx);vm.runInContext(read('hsk4/data.js'),dataCtx,{filename:'hsk4/data.js'});
 for(let i=11;i<=20;i++)vm.runInContext(read(`hsk4/data/${i}.js`),dataCtx,{filename:`hsk4/data/${i}.js`});
+vm.runInContext(read('hsk4/content-audit.js'),dataCtx,{filename:'hsk4/content-audit.js'});
 const data=dataCtx.window.HSK4_LOWER_LESSONS;
 assert.equal(data.length,10);
 assert.equal(data.reduce((n,L)=>n+L.vocab.length,0),311,'audited HSK4 Lower vocab total');
@@ -18,6 +19,7 @@ for(const L of data){
   assert.equal(L.grammar.length,5,`Bài ${L.id}: grammar`);
   assert.equal(L.scenes.length,5,`Bài ${L.id}: texts`);
   assert(L.compare?.title&&L.expansion?.char&&L.culture?.title,`Bài ${L.id}: feature panels`);
+  L.vocab.filter(v=>Array.from(v.zh).length===1).forEach(v=>assert(v.py,`Bài ${L.id}: isolated character ${v.zh} must have audited pinyin`));
 }
 console.log(`DATA PASS: 10 lessons, ${data.reduce((n,L)=>n+L.vocab.length,0)} vocab entries, 50 grammar points, 50 text units`);
 
@@ -35,9 +37,27 @@ const expectedGrammar={
 18:['是否','受不了','接着','除此以外','把……叫作……'],
 19:['疑问代词活用表示任指','上','出来','总的来说','在于'],
 20:['动词+着+动词+着','一……就……','究竟','起来','动词+起']};
-for(const L of data){assert.equal(L.title,expectedTitles[L.id]);assert.equal(JSON.stringify(Array.from(L.grammar,g=>g.title)),JSON.stringify(expectedGrammar[L.id]))}
-console.log('TEXTBOOK BASELINE PASS: lesson titles and all 50 language-point headings match audited source');
+const expectedCulture={
+11:'中国古典文学名著——《西游记》',12:'孔子“因材施教”',13:'中国的筷子文化',14:'“天人合一”——中国人的“人与自然观”',15:'孟母三迁的故事',
+16:'只要功夫深，铁杵磨成针',17:'中国国宝大熊猫',18:'微博与微信',19:'舌尖上的中国——饺子',20:'中国的少数民族'};
+for(const L of data){
+  assert.equal(L.title,expectedTitles[L.id]);
+  assert.equal(JSON.stringify(Array.from(L.grammar,g=>g.title)),JSON.stringify(expectedGrammar[L.id]));
+  assert.equal(L.culture.title,expectedCulture[L.id],`Bài ${L.id}: culture title`);
+}
+assert.match(data.find(L=>L.id===11).grammar.find(g=>g.title==='连').vn_title,/Giới từ/);
+assert.match(data.find(L=>L.id===11).vocab.find(v=>v.zh==='之').vn,/trợ từ/);
+assert.match(data.find(L=>L.id===14).grammar.find(g=>g.title==='够').vn_title,/phó từ/);
+assert.equal(data.find(L=>L.id===16).vocab.find(v=>v.zh==='传真').vn,'gửi fax; gửi bằng fax');
+assert.equal(data.find(L=>L.id===16).vocab.find(v=>v.zh==='推').vn,'hoãn; dời lại');
+assert.equal(data.find(L=>L.id===17).vocab.find(v=>v.zh==='干').py,'gàn');
+assert(!data.find(L=>L.id===18).vocab.find(v=>v.zh==='火').vn.includes('lửa'));
+assert(!data.find(L=>L.id===20).vocab.find(v=>v.zh==='怪').vn.includes('lạ'));
+assert.match(data.find(L=>L.id===20).scenes[4].points,/咸辣、香辣、酸辣/);
+console.log('TEXTBOOK CONTENT AUDIT PASS: titles, language points, culture, target senses, polyphonic pinyin and corrected text focus');
 assert(read('index.html').includes('hsk4/index.html'),'root portal must link HSK4 Lower');
+assert(read('hsk4/index.html').includes('content-audit.js'),'HSK4 home must load content audit');
+assert(read('hsk4/lesson.html').includes('content-audit.js'),'HSK4 lesson must load content audit');
 
 function makeDom(file,url){
  const errors=[];const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e));
@@ -47,7 +67,15 @@ function makeDom(file,url){
  w.pinyinPro={pinyin:t=>Array.from(String(t))};
  return {dom,w,ctx:dom.getInternalVMContext(),errors};
 }
-function load(env){vm.runInContext(read('hsk4/data.js'),env.ctx,{filename:'hsk4/data.js'});for(let i=11;i<=20;i++)vm.runInContext(read(`hsk4/data/${i}.js`),env.ctx,{filename:`hsk4/data/${i}.js`});vm.runInContext(read('hsk4/runtime.js'),env.ctx,{filename:'hsk4/runtime.js'});vm.runInContext(read('hsk4/modules.js'),env.ctx,{filename:'hsk4/modules.js'});vm.runInContext(read('hsk4/practice.js'),env.ctx,{filename:'hsk4/practice.js'});vm.runInContext('boot()',env.ctx)}
+function load(env){
+ vm.runInContext(read('hsk4/data.js'),env.ctx,{filename:'hsk4/data.js'});
+ for(let i=11;i<=20;i++)vm.runInContext(read(`hsk4/data/${i}.js`),env.ctx,{filename:`hsk4/data/${i}.js`});
+ vm.runInContext(read('hsk4/runtime.js'),env.ctx,{filename:'hsk4/runtime.js'});
+ vm.runInContext(read('hsk4/content-audit.js'),env.ctx,{filename:'hsk4/content-audit.js'});
+ vm.runInContext(read('hsk4/modules.js'),env.ctx,{filename:'hsk4/modules.js'});
+ vm.runInContext(read('hsk4/practice.js'),env.ctx,{filename:'hsk4/practice.js'});
+ vm.runInContext('boot()',env.ctx);
+}
 
 {
  const env=makeDom('hsk4/index.html','https://example.test/hsk4/index.html');load(env);
@@ -56,7 +84,8 @@ function load(env){vm.runInContext(read('hsk4/data.js'),env.ctx,{filename:'hsk4/
  assert.equal(d.querySelectorAll('#lessonGrid .lesson-card').length,10);
  assert.equal(d.querySelectorAll('#lessonGrid a[href*="lesson.html?id="]').length,70);
  assert(/^\d+$/.test(d.querySelector('#wordStat').textContent.trim()));
- env.dom.window.close();console.log('HOME PASS: 10 lesson cards + 5 direct module links per lesson');
+ assert(env.w.HSK4_LOWER_CONTENT_AUDIT?.corrected===true,'home: audit marker');
+ env.dom.window.close();console.log('HOME PASS: 10 lesson cards + audited correction layer');
 }
 for(let id=11;id<=20;id++){
  const env=makeDom('hsk4/lesson.html',`https://example.test/hsk4/lesson.html?id=${id}&sec=vocab`);load(env);
@@ -69,7 +98,7 @@ for(let id=11;id<=20;id++){
  assert.equal(d.querySelectorAll('#grammarList .grammar-card').length,5,`lesson ${id}: grammar`);
  assert(d.querySelector('#comparePanel').textContent.includes('比一比'),`lesson ${id}: compare`);
  assert(d.querySelector('#expansionPanel').textContent.includes('同字词'),`lesson ${id}: expansion`);
- assert(d.querySelector('#culturePanel').textContent.includes('文化'),`lesson ${id}: culture`);
+ assert(d.querySelector('#culturePanel').textContent.includes(expectedCulture[id]),`lesson ${id}: exact culture title`);
  assert(d.querySelectorAll('#hanziWordMap .hanzi-char-btn').length>0,`lesson ${id}: hanzi`);
  assert(d.querySelectorAll('#q-mc .qcard').length===8,`lesson ${id}: vocab quiz`);
  assert(d.querySelectorAll('#q-grammar .qcard').length===5,`lesson ${id}: grammar quiz`);
@@ -80,4 +109,4 @@ for(let id=11;id<=20;id++){
  env.dom.window.close();
  console.log(`LESSON ${id} PASS`);
 }
-console.log('HSK4 LOWER SMOKE TEST PASS');
+console.log('HSK4 LOWER AUDITED SMOKE TEST PASS');
