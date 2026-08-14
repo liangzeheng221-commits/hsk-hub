@@ -46,8 +46,15 @@ assert.equal(get(17,'口').pos,'danh từ');
 assert.equal(get(18,'只').py,'zhī');assert.equal(get(18,'地').py,'de');
 assert.equal(get(19,'张').pos,'lượng từ');
 assert.equal(get(20,'分').vn,'phân biệt');assert.equal(get(20,'成绩').vn,'thành tích, kết quả (học tập, công tác)');
+
 assert.equal(Ls[1].grammar[1].structure,'V1 + 了……就 + V2……','L2 consecutive-action structure');
+assert(Ls[7].grammar[1].structure.includes('就 + 同一疑问代词'),'L8 interrogative-pronoun use 1 must use 就 between matching interrogatives');
+assert(Ls[7].grammar[1].desc.includes('同一')||Ls[7].grammar[1].desc.includes('giống nhau'),'L8 interrogative-pronoun use 1 explanation must preserve same-referent rule');
 assert(Ls[9].grammar[1].structure.includes('相邻数词'),'L10 approximate-number rule must use adjacent numerals');
+assert(Ls[14].grammar[1].structure.startsWith('什么'),'L15 interrogative-pronoun use 2 must center on 什么');
+assert(Ls[14].grammar[1].desc.includes('khách sáo'),'L15 interrogative-pronoun use 2 must preserve polite/indefinite function');
+assert(Ls[16].grammar[1].desc.includes('không có ngoại lệ'),'L17 interrogative-pronoun use 3 must express universal/no-exception scope');
+
 assert.equal(Ls[4].culture.page,61);assert.equal(Ls[9].culture.page,105);assert.equal(Ls[14].culture.page,150);assert.equal(Ls[19].culture.page,193);
 for(const id of [1,2,3,4,6,7,8,9,11,12,13,14,16,17,18,19])assert.equal(Ls[id-1].culture,null,`L${id} should not have a culture box`);
 
