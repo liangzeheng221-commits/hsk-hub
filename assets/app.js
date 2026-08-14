@@ -1,4 +1,3 @@
-
 const STORAGE_KEY='hsk2_ranteacher_progress_v1';
 const MASTER_KEY='hsk2_ranteacher_mastered_v1';
 const SESSION_KEY='hsk2_ranteacher_unlocked';
@@ -16,3 +15,16 @@ function initGate(){const o=$('#pwOverlay');if(!o)return;if(sessionStorage.getIt
 function speak(text){if(!('speechSynthesis' in window)){toast('Trình duyệt này chưa hỗ trợ phát âm.');return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='zh-CN';u.rate=.82;const voices=speechSynthesis.getVoices();u.voice=voices.find(v=>/zh|Chinese|Mandarin/i.test(v.lang+' '+v.name))||null;speechSynthesis.speak(u)}
 function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+
+(function(){
+  if(!document.getElementById('practice'))return;
+  const load=(src)=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=()=>reject(new Error('Không tải được '+src));document.head.appendChild(s)});
+  const start=()=>{
+    if(typeof renderPractice!=='function'){setTimeout(start,40);return}
+    load('assets/practice-explain.js?v=11')
+      .then(()=>load('assets/practice-advanced.js?v=11'))
+      .then(()=>{setupPracticeLevels();renderPractice()})
+      .catch(e=>console.error('Practice enhancement failed',e));
+  };
+  start();
+})();
