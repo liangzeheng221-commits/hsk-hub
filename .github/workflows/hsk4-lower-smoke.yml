@@ -33,6 +33,7 @@ jobs:
           node --check hsk4/runtime.js
           node --check hsk4/content-audit.js
           node --check hsk4/modules.js
+          node --check hsk4/hanzi-parity.js
           node --check hsk4/practice.js
           node --check qa/hsk4-lower-smoke.mjs
       - name: Render and validate HSK4 Lower
@@ -69,10 +70,11 @@ jobs:
             compare=$( (grep -o '比一比' "$FILE" || true) | wc -l | tr -d ' ')
             culture=$( (grep -o '文化' "$FILE" || true) | wc -l | tr -d ' ')
             hanzi=$( (grep -o 'hanzi-char-btn' "$FILE" || true) | wc -l | tr -d ' ')
+            stroke_ui=$( (grep -o '逐笔写法 · Từng bước viết' "$FILE" || true) | wc -l | tr -d ' ')
             basic=$( (grep -o 'id="q-mc"' "$FILE" || true) | wc -l | tr -d ' ')
             advanced=$( (grep -o 'advanced-card' "$FILE" || true) | wc -l | tr -d ' ')
-            echo "LIVE LESSON $i: runtime=$runtime title=$title vocab=$vocab texts=$texts grammar=$grammar compare=$compare culture=$culture hanzi=$hanzi basic=$basic advanced=$advanced"
-            if [ "$runtime" -lt 1 ] || [ "$title" -lt 1 ] || [ "$vocab" -lt 1 ] || [ "$texts" -lt 5 ] || [ "$grammar" -lt 5 ] || [ "$compare" -lt 1 ] || [ "$culture" -lt 1 ] || [ "$hanzi" -lt 1 ] || [ "$basic" -lt 1 ] || [ "$advanced" -lt 1 ]; then
+            echo "LIVE LESSON $i: runtime=$runtime title=$title vocab=$vocab texts=$texts grammar=$grammar compare=$compare culture=$culture hanzi=$hanzi stroke_ui=$stroke_ui basic=$basic advanced=$advanced"
+            if [ "$runtime" -lt 1 ] || [ "$title" -lt 1 ] || [ "$vocab" -lt 1 ] || [ "$texts" -lt 5 ] || [ "$grammar" -lt 5 ] || [ "$compare" -lt 1 ] || [ "$culture" -lt 1 ] || [ "$hanzi" -lt 1 ] || [ "$stroke_ui" -lt 1 ] || [ "$basic" -lt 1 ] || [ "$advanced" -lt 1 ]; then
               echo "LIVE LESSON $i FAILURE"
               grep -o 'data-hsk4-runtime="[^"]*"' "$FILE" | head || true
               tail -30 "/tmp/chrome-$i.err" || true
@@ -80,6 +82,21 @@ jobs:
             fi
             echo "LIVE LESSON $i PASS"
           done
+          HANZI_OK=0
+          for attempt in 1 2 3 4; do
+            HANZI_FILE="/tmp/hsk4-hanzi-11-$attempt.html"
+            "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=12000 --dump-dom "$BASE/lesson.html?id=11&sec=hanzi&liveqa=$GITHUB_SHA-hanzi-$attempt" > "$HANZI_FILE" 2>"/tmp/chrome-hanzi.err" || true
+            steps=$( (grep -o 'class="stroke-step"' "$HANZI_FILE" || true) | wc -l | tr -d ' ')
+            if [ "$steps" -ge 1 ] && grep -q '第 1 笔' "$HANZI_FILE"; then HANZI_OK=1; break; fi
+            echo "HSK4 stroke data not ready yet (attempt $attempt, steps=$steps)"
+            sleep 8
+          done
+          test "$HANZI_OK" = "1"
+          grep -q '演示笔顺 · Xem bút thuận' "$HANZI_FILE"
+          grep -q '练习书写 · Luyện viết' "$HANZI_FILE"
+          grep -q '重置 · Đặt lại' "$HANZI_FILE"
+          grep -Eq '[0-9]+ 画 · [0-9]+ nét' "$HANZI_FILE"
+          echo 'LIVE HSK4 HANZI PARITY PASS: writer + cumulative stroke cards + bilingual controls'
           # The lesson page renders only the active text scene into the DOM. Verify factual
           # regressions against the actual public data assets rather than incorrectly grepping
           # hidden/non-rendered scenes from dump-dom.
@@ -92,4 +109,4 @@ jobs:
           grep -q '广西冬天也比较暖和' /tmp/live-20.js
           grep -q '咸辣、香辣、酸辣' /tmp/live-audit.js
           echo 'LIVE FACTUAL ASSET REGRESSION PASS'
-          echo 'HSK4 LOWER LIVE BROWSER TEST PASS: public home + lessons 11–20 + audited factual regressions'
+          echo 'HSK4 LOWER LIVE BROWSER TEST PASS: public home + lessons 11–20 + Hanzi parity + audited factual regressions'
