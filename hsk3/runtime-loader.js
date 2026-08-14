@@ -1,7 +1,7 @@
 /* Robust HSK3 runtime bootstrap. */
 (()=>{
   'use strict';
-  const BUILD='20260814-1655';
+  const BUILD='20260814-2105-content-audit';
   const isLesson=()=>!!document.getElementById('lessonTitle');
   const qs=s=>document.querySelector(s);
   const domReady=()=>document.readyState==='loading'?new Promise(r=>document.addEventListener('DOMContentLoaded',r,{once:true})):Promise.resolve();
@@ -35,7 +35,7 @@
 
   async function ensurePako(){
     if(window.pako?.ungzip)return;
-    const urls=['https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js','https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js','https://unpkg.com/pako@2.1.0/dist/pako.min.js'];
+    const urls=['https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js','https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js','https://unpkg.com/pako@2.1.0/pako.min.js'];
     for(const u of urls){try{await loadScript(u,true);if(window.pako?.ungzip)return}catch(e){console.warn('[HSK3] pako fallback failed',u,e)}}
     throw new Error('trình duyệt không hỗ trợ gzip và không tải được pako');
   }
@@ -86,7 +86,8 @@
     if(cards.length!==20)throw new Error('trang chủ chỉ dựng được '+cards.length+'/20 thẻ bài học');
     const links=[...document.querySelectorAll('#lessonGrid a[href*="lesson.html?id="]')];
     if(links.length<120)throw new Error('thiếu liên kết vào các phần bài học');
-    const word=qs('#wordStat');if(!word||!/^\d+$/.test(word.textContent.trim()))throw new Error('không tính được tổng số từ');
+    const word=qs('#wordStat');if(!word||!/^\d+$/.test(word.textContent.trim()))throw new Error('không tính được总词数');
+    if(!qs('#hsk3SystemNote'))throw new Error('教材口径说明未渲染');
   }
 
   function verifyLesson(){
@@ -95,6 +96,10 @@
     if(!qs('#vocabGrid')?.children.length)throw new Error('từ vựng chưa render');
     if(!qs('#grammarList')?.children.length)throw new Error('ngữ pháp chưa render');
     if(!qs('#basicPractice')?.children.length)throw new Error('luyện tập chưa render');
+    if(!qs('#auditVocabSummary'))throw new Error('教材词表摘要未渲染');
+    if(!qs('#auditTextbookSource'))throw new Error('教材课文定位未渲染');
+    if(!qs('#auditGrammarNote'))throw new Error('教材语法说明未渲染');
+    if(!qs('#auditPracticeNote'))throw new Error('练习口径说明未渲染');
   }
 
   async function boot(){
@@ -104,9 +109,12 @@
       await domReady();
       await loadScript('corrections.js');
       await loadScript('textbook-baseline.js');
+      await loadScript('textbook-audit.js');
+      if(!window.__HSK3_CONTENT_AUDITED)throw new Error('textbook audit chưa khởi tạo');
       await loadScript('app-core.js');
       if(isLesson())await loadScript('../assets/hsk2-parity.js');
       await loadScript('app-practice.js');
+      await loadScript('textbook-audit-ui.js');
       if(typeof initGate!=='function')throw new Error('app-core chưa khởi tạo');
       initGate();
       if(isLesson()){
@@ -119,7 +127,8 @@
         renderHome();verifyHome();
       }
       const words=window.HSK3_LESSONS.reduce((n,L)=>n+L.vocab.length,0);
-      window.__HSK3_DIAGNOSTICS={ok:true,build:BUILD,lessons:window.HSK3_LESSONS.length,words,page:isLesson()?'lesson':'home'};
+      const coreWords=window.HSK3_LESSONS.reduce((n,L)=>n+L.vocab.filter(v=>!v.properName&&!v.aboveLevel).length,0);
+      window.__HSK3_DIAGNOSTICS={ok:true,build:BUILD,lessons:window.HSK3_LESSONS.length,words,coreWords,page:isLesson()?'lesson':'home',contentAudited:true};
       document.documentElement.dataset.hsk3Runtime='ok';window.__HSK3_RUNTIME_OK=true;
       console.info('[HSK3 bootstrap] OK',window.__HSK3_DIAGNOSTICS);
     }catch(err){showFatal(err)}
