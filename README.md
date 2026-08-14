@@ -1,2 +1,1 @@
-# hsk-hub
-HSK Hub website
+# HSK Course Hub
