@@ -1,0 +1,1 @@
+(function(){const x=Uint8Array.from(atob(window.__HSK2_V7),c=>c.charCodeAt(0));window.HSK2_LESSONS=JSON.parse(pako.ungzip(x,{to:'string'}));delete window.__HSK2_V7;})();
