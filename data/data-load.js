@@ -1,1 +1,1 @@
-(function(){var b=Uint8Array.from(atob(window.__HSK2_DATA_B64),c=>c.charCodeAt(0));(0,eval)(pako.ungzip(b,{to:'string'}));delete window.__HSK2_DATA_B64;})();
+(function(){var b=Uint8Array.from(atob(window.__HSK2_DATA_B64),c=>c.charCodeAt(0));var s=pako.ungzip(b,{to:'string'}).replace(/^const\s+HSK2_LESSONS\s*=/,'window.HSK2_LESSONS=');(0,eval)(s);delete window.__HSK2_DATA_B64;})();
