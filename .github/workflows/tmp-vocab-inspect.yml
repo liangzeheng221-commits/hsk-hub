@@ -1,31 +1,154 @@
-name: Temporary vocabulary inspection
+name: Final HSK1 HSK2 textbook corrections
 on:
   push:
     branches: [gh-pages]
     paths:
       - '.github/workflows/tmp-vocab-inspect.yml'
 permissions:
-  contents: read
+  contents: write
 jobs:
-  inspect:
+  patch:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      - name: Print HSK1 and HSK2 vocab metadata
+          ref: gh-pages
+      - name: Apply source-verified corrections
         run: |
-          node - <<'NODE'
-          const fs=require('fs'),vm=require('vm'),zlib=require('zlib');
-          const ctx1={window:{},console};ctx1.window.window=ctx1.window;
-          for(let i=1;i<=5;i++)vm.runInNewContext(fs.readFileSync(`hsk1/data-${i}.js`,'utf8'),ctx1);
-          vm.runInNewContext(fs.readFileSync('hsk1/corrections.js','utf8'),ctx1);
-          vm.runInNewContext(fs.readFileSync('hsk1/content-audit.js','utf8'),ctx1);
-          console.log('HSK1_VOCAB='+JSON.stringify(ctx1.window.HSK1_LESSONS.map(L=>({id:L.id,words:L.vocab.map(v=>({zh:v.zh,py:v.py,vn:v.vn,pos:v.pos,kind:v.kind}))}))));
-          const ctx2={window:{},console};ctx2.window.window=ctx2.window;
-          for(let i=1;i<=8;i++)vm.runInNewContext(fs.readFileSync(`data/v7-${i}.js`,'utf8'),ctx2);
-          ctx2.window.HSK2_LESSONS=JSON.parse(zlib.gunzipSync(Buffer.from(ctx2.window.__HSK2_V7,'base64')).toString('utf8'));
-          vm.runInNewContext(fs.readFileSync('assets/hsk2-content-audit.js','utf8'),ctx2);
-          console.log('HSK2_VOCAB='+JSON.stringify(ctx2.window.HSK2_LESSONS.map(L=>({id:L.id,words:L.vocab.map(v=>({zh:v.zh,py:v.py,vn:v.vn,pos:v.pos,kind:v.kind}))}))));
-          NODE
+          python - <<'PY'
+          from pathlib import Path
+
+          # HSK1: proper nouns, exact POS cleanup, separate proper-name UI.
+          p=Path('hsk1/content-audit.js'); s=p.read_text(encoding='utf-8')
+          s=s.replace("const PROPER={10:['王方','谢朋'],13:['大卫'],14:['张']};", "const PROPER={3:['李月','中国','美国'],10:['王方','谢朋'],13:['大卫'],14:['张']};")
+          anchor="const PROPER={3:['李月','中国','美国'],10:['王方','谢朋'],13:['大卫'],14:['张']};\n"
+          insert="""
+  const ensureVocab=(id,item)=>{const L=get(id);if(L&&!L.vocab.some(v=>v.zh===item.zh))L.vocab.push(item)};
+  ensureVocab(3,{zh:'李月',py:'Lǐ Yuè',vn:'Lý Nguyệt (tên người)'});
+  ensureVocab(3,{zh:'中国',py:'Zhōngguó',vn:'Trung Quốc'});
+  ensureVocab(3,{zh:'美国',py:'Měiguó',vn:'Mỹ, Hoa Kỳ'});
+"""
+          if 'ensureVocab(3' not in s: s=s.replace(anchor,anchor+insert)
+          s=s.replace("'代词':new Set(['你','您','你们','我','我们','他','她','谁','什么','哪','哪儿','几','多少','怎么','怎么样','这','那','这些']),", "'代词':new Set(['你','您','你们','我','我们','他','她','谁','什么','哪','哪儿','那儿','这儿','几','多少','怎么','怎么样','这','那','这些']),")
+          s=s.replace("'量词':new Set(['个','本','口','岁','块']),", "'量词':new Set(['个','本','口','岁','块','些']),\n    '数量词':new Set(['一点儿']),")
+          s=s.replace("'方位词':new Set(['上','下','里','前面','后面','前','后']),", "'方位词':new Set(['上','下','里','前面','后面','下面','前','后']),")
+          s=s.replace("'副词':new Set(['不','没','很','太','也','都','再','一起','少','多']),", "'副词':new Set(['不','没','很','太','也','都','再','一起','多']),")
+          s=s.replace("'介词':new Set(['在','给']),", "'介词':new Set(['给']),")
+          s=s.replace("'形容词':new Set(['好','大','小','高兴','冷','热','漂亮','好吃']),", "'形容词':new Set(['好','大','小','高兴','冷','热','漂亮','好吃','少']),")
+          s=s.replace("'动词':new Set(['爱','吃','喝','打电话'", "'动词':new Set(['是','在','吃饭','爱','吃','喝','打电话'")
+          s=s.replace("'代词':'代词 · Đại từ','数词':'数词 · Số từ','量词':'量词 · Lượng từ','方位词'", "'代词':'代词 · Đại từ','数词':'数词 · Số từ','量词':'量词 · Lượng từ','数量词':'数量词 · Cụm số lượng','方位词'")
+          old="""  function badgeHTML(v){return `<span class=\"audit-badge ${v.kind}\">${typeof esc==='function'?esc(v.kind_label):v.kind_label}</span><span class=\"audit-pos\">${typeof esc==='function'?esc(v.pos):v.pos}</span>`}
+  function decorateCards(){
+    document.querySelectorAll('.vocab-card[data-zh]').forEach(card=>{
+      const v=(typeof L!=='undefined'&&L?.vocab||[]).find(x=>x.zh===card.dataset.zh);if(!v)return;
+      card.classList.toggle('audit-extra',v.kind!=='core');
+      card.querySelectorAll('.vocab-face').forEach(face=>{if(face.querySelector('.audit-meta'))return;const box=document.createElement('div');box.className='audit-meta';box.innerHTML=badgeHTML(v);face.appendChild(box)});
+    });
+  }
+
+  if(typeof renderVocab==='function'){
+    const base=renderVocab;
+    renderVocab=function(){base();decorateCards();const q=document.getElementById('vSearch');if(q&&!q.dataset.auditBound){q.dataset.auditBound='1';q.addEventListener('input',()=>setTimeout(decorateCards,0))}};
+  }
+"""
+          new="""  function badgeHTML(v){return `<span class=\"audit-badge ${v.kind}\">${typeof esc==='function'?esc(v.kind_label):v.kind_label}</span><span class=\"audit-pos\">${typeof esc==='function'?esc(v.pos):v.pos}</span>`}
+  function renderProperPanel(){
+    if(typeof L==='undefined'||!L)return;document.getElementById('hsk1ProperPanel')?.remove();
+    const term=String(document.getElementById('vSearch')?.value||'').trim().toLowerCase();
+    const proper=(L.vocab||[]).filter(v=>v.kind==='proper').filter(v=>!term||[v.zh,v.py,v.vn].some(x=>String(x||'').toLowerCase().includes(term)));
+    if(!proper.length)return;const panel=document.createElement('section');panel.id='hsk1ProperPanel';panel.className='proper-name-panel';
+    panel.innerHTML=`<div class=\"proper-name-head\"><b>专有名词 · Danh từ riêng</b><span>${proper.length}</span></div><div class=\"proper-name-list\">${proper.map(v=>`<button type=\"button\" data-zh=\"${esc(v.zh)}\"><b>${esc(v.zh)}</b><span>${esc(v.py)}</span><small>${esc(v.vn)}</small></button>`).join('')}</div>`;
+    document.getElementById('vocabGrid')?.after(panel);panel.querySelectorAll('button').forEach(b=>b.onclick=()=>{const v=L.vocab.find(x=>x.zh===b.dataset.zh);if(v)showWordDetail(v)});
+  }
+  function decorateCards(){
+    document.querySelectorAll('.vocab-card[data-zh]').forEach(card=>{
+      const v=(typeof L!=='undefined'&&L?.vocab||[]).find(x=>x.zh===card.dataset.zh);if(!v)return;
+      card.style.display=v.kind==='proper'?'none':'';card.classList.toggle('audit-extra',v.kind==='supplement');
+      card.querySelectorAll('.vocab-face').forEach(face=>{if(face.querySelector('.audit-meta'))return;const box=document.createElement('div');box.className='audit-meta';box.innerHTML=badgeHTML(v);face.appendChild(box)});
+    });
+  }
+
+  if(typeof renderVocab==='function'){
+    const base=renderVocab;
+    renderVocab=function(){base();decorateCards();renderProperPanel();const q=document.getElementById('vSearch');if(q&&!q.dataset.auditBound){q.dataset.auditBound='1';q.addEventListener('input',()=>setTimeout(()=>{decorateCards();renderProperPanel()},0))}};
+  }
+"""
+          if old not in s: raise SystemExit('HSK1 UI block not found')
+          s=s.replace(old,new)
+          marker="if(typeof allVocab==='function')allVocab=function(){return HSK1_LESSONS.flatMap(x=>(x.vocab||[]).filter(v=>v.kind==='core'))};"
+          if "speakAllVocab=function(){speak((L.vocab" not in s:
+              s=s.replace(marker,marker+"\n  if(typeof speakAllVocab==='function')speakAllVocab=function(){speak((L.vocab||[]).filter(v=>v.kind!=='proper').map(v=>v.zh).join('，'))};")
+          p.write_text(s,encoding='utf-8')
+
+          # HSK2: exact radical correction, clean proper POS, separate proper-name UI.
+          p=Path('assets/hsk2-content-audit.js'); s=p.read_text(encoding='utf-8')
+          s=s.replace("11:{radicals:'户、冫'}", "11:{radicals:'户、氵'}")
+          s=s.replace("v.pos=v.kind==='proper'?`专名 · Tên riêng${v.base_pos?' · '+v.base_pos:''}`:v.kind==='supplement'?", "v.pos=v.kind==='proper'?'专名 · Tên riêng':v.kind==='supplement'?")
+          marker="const esc2=s=>typeof esc==='function'?esc(s):String(s??'');"
+          ui="""
+  function renderProperPanel(){
+    if(typeof L==='undefined'||!L)return;document.getElementById('hsk2ProperPanel')?.remove();
+    const term=String(document.getElementById('vSearch')?.value||'').trim().toLowerCase();
+    const proper=(L.vocab||[]).filter(v=>v.kind==='proper').filter(v=>!term||[v.zh,v.py,v.vn].some(x=>String(x||'').toLowerCase().includes(term)));
+    if(!proper.length)return;const panel=document.createElement('section');panel.id='hsk2ProperPanel';panel.className='proper-name-panel';
+    panel.innerHTML=`<div class=\"proper-name-head\"><b>专有名词 · Danh từ riêng</b><span>${proper.length}</span></div><div class=\"proper-name-list\">${proper.map(v=>{const i=L.vocab.indexOf(v);return `<button type=\"button\" data-i=\"${i}\"><b>${esc2(v.zh)}</b><span>${esc2(v.py)}</span><small>${esc2(v.vn)}</small></button>`}).join('')}</div>`;
+    document.getElementById('vocabGrid')?.after(panel);panel.querySelectorAll('button').forEach(b=>b.onclick=()=>showWord(+b.dataset.i));
+  }
+  function decorateVocabCards(){document.querySelectorAll('#vocabGrid .vcard').forEach(card=>{const zh=card.querySelector('.vzh')?.textContent.trim(),v=(L.vocab||[]).find(x=>x.zh===zh);if(v)card.style.display=v.kind==='proper'?'none':''})}
+  if(typeof renderVocab==='function'){const base=renderVocab;renderVocab=function(...args){const r=base(...args);decorateVocabCards();renderProperPanel();return r}}
+  if(typeof renderVocabQuick==='function'){const base=renderVocabQuick;renderVocabQuick=function(){const r=base();document.querySelectorAll('.vocab-pill[data-i]').forEach(b=>{const v=L.vocab[+b.dataset.i];if(v?.kind==='proper')b.style.display='none'});return r}}
+  if(typeof speakAllVocab==='function')speakAllVocab=function(){if(!('speechSynthesis' in window)){toast('Trình duyệt này chưa hỗ trợ phát âm.');return}speakSequence((L.vocab||[]).filter(v=>v.kind!=='proper').map(v=>v.zh),.75)};
+"""
+          if 'function renderProperPanel()' not in s: s=s.replace(marker,marker+ui)
+          p.write_text(s,encoding='utf-8')
+
+          # Source-verified HSK1 radical for Lesson 8.
+          p=Path('assets/hanzi-curriculum.js'); s=p.read_text(encoding='utf-8')
+          s=s.replace("8:{chars:'少、个',structure:'汉字结构（3）：上下结构与上中下结构',radicals:'夂、口'}", "8:{chars:'少、个',structure:'汉字结构（3）：上下结构与上中下结构',radicals:'钅、口'}")
+          p.write_text(s,encoding='utf-8')
+
+          # Shared styling for separated proper nouns.
+          p=Path('assets/hsk12-audit.css'); s=p.read_text(encoding='utf-8')
+          extra="""
+.proper-name-panel{margin:16px 0;padding:14px;border:1px solid #d7e2ee;border-radius:14px;background:#f8fbff}.proper-name-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;color:#365b7e;font-size:12px}.proper-name-head span{display:inline-flex;min-width:24px;height:24px;align-items:center;justify-content:center;border-radius:999px;background:#e9f1fa;font-weight:800}.proper-name-list{display:flex;gap:8px;flex-wrap:wrap}.proper-name-list button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;border:1px solid #cdddec;background:#fff;border-radius:11px;padding:8px 10px;cursor:pointer;color:inherit}.proper-name-list button b{font-family:'Noto Serif SC',serif;font-size:16px;color:#264f70}.proper-name-list button span{font-size:11px;color:#536e82}.proper-name-list button small{font-size:10px;color:#728391}
+"""
+          if '.proper-name-panel{' not in s: s += extra
+          p.write_text(s,encoding='utf-8')
+
+          # Strengthen regression audit for source-verified details.
+          p=Path('tools/hsk12-content-audit.mjs'); s=p.read_text(encoding='utf-8')
+          s=s.replace("for(const [id,zh] of [[10,'王方'],[10,'谢朋'],[13,'大卫'],[14,'张']])", "for(const [id,zh] of [[3,'李月'],[3,'中国'],[3,'美国'],[10,'王方'],[10,'谢朋'],[13,'大卫'],[14,'张']])")
+          add="""
+const pos=(data,id,zh)=>data.find(x=>x.id===id)?.vocab?.find(v=>v.zh===zh)?.pos||'';
+ok(pos(h1,3,'是').startsWith('动词'), 'HSK1 L3 是: POS should be verb');
+ok(pos(h1,9,'在').startsWith('动词'), 'HSK1 L9 在: lesson POS should be verb');
+ok(pos(h1,9,'那儿').startsWith('代词'), 'HSK1 L9 那儿: POS should be pronoun');
+ok(pos(h1,9,'下面').startsWith('方位词'), 'HSK1 L9 下面: POS should be localizer');
+ok(pos(h1,10,'这儿').startsWith('代词'), 'HSK1 L10 这儿: POS should be pronoun');
+ok(pos(h1,11,'吃饭').startsWith('动词'), 'HSK1 L11 吃饭: POS should be verb');
+ok(pos(h1,12,'些').startsWith('量词'), 'HSK1 L12 些: POS should be measure word');
+ok(pos(h1,14,'一点儿').startsWith('数量词'), 'HSK1 L14 一点儿: POS should be quantity phrase');
+ok(pos(h1,14,'少').startsWith('形容词'), 'HSK1 L14 少: POS should be adjective');
+ok(h2.find(x=>x.id===11)?.textbookHanzi?.radicals==='户、氵','HSK2 L11: radicals should be 户、氵');
+"""
+          marker="const l11=h1.find(x=>x.id===11),line11=l11?.scenes?.flatMap(s=>s.lines||[]).find(x=>x.zh==='我星期一去北京。');"
+          if "HSK1 L3 是: POS should be verb" not in s: s=s.replace(marker,add+marker)
+          old="for(const token of ['笔画','独体字','笔顺规则','结构','偏旁'])ok(hc.includes(token),`HSK1 Hanzi curriculum dimension missing: ${token}`);"
+          new=old+"\nok(hc.includes(\"8:{chars:'少、个',structure:'汉字结构（3）：上下结构与上中下结构',radicals:'钅、口'}\"),'HSK1 L8: radicals should be 钅、口');"
+          s=s.replace(old,new)
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Run QA before commit
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' f; do node --check "$f"; done < <(find . -type f -name '*.js' -not -path './.git/*' -print0)
+          node tools/site-qa.mjs
+          node tools/hsk12-content-audit.mjs
+      - name: Commit corrections and remove temporary workflow
+        run: |
+          git config user.name "nhiennhientran"
+          git config user.email "liangzeheng221@gmail.com"
+          git rm .github/workflows/tmp-vocab-inspect.yml
+          git add hsk1/content-audit.js assets/hsk2-content-audit.js assets/hanzi-curriculum.js assets/hsk12-audit.css tools/hsk12-content-audit.mjs
+          git commit -m "Finish HSK1 and HSK2 textbook audit corrections"
+          git push origin HEAD:gh-pages
