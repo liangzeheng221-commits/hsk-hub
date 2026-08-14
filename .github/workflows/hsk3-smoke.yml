@@ -9,6 +9,7 @@ on:
       - 'assets/lesson-menu-parity.js'
       - 'assets/hanzi-curriculum.js'
       - 'qa/hsk3-smoke.mjs'
+      - 'qa/find-valid-hsk3-data.mjs'
       - '.github/workflows/hsk3-smoke.yml'
   workflow_dispatch:
 
@@ -21,9 +22,13 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Find valid HSK3 data versions in history
+        run: node qa/find-valid-hsk3-data.mjs
       - name: Install DOM test dependency
         run: npm install --no-save --package-lock=false jsdom@26.1.0
       - name: Syntax checks
@@ -36,5 +41,5 @@ jobs:
           node --check assets/hsk2-parity.js
           node --check assets/lesson-menu-parity.js
           node --check assets/hanzi-curriculum.js
-      - name: Decode data and render all HSK3 lessons
+      - name: Decode current data and render all HSK3 lessons
         run: node qa/hsk3-smoke.mjs
