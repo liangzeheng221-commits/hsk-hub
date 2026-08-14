@@ -21,8 +21,8 @@ function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;',
   const load=(src)=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=()=>reject(new Error('Không tải được '+src));document.head.appendChild(s)});
   const start=()=>{
     if(typeof renderPractice!=='function'){setTimeout(start,40);return}
-    load('assets/practice-explain.js?v=11')
-      .then(()=>load('assets/practice-advanced.js?v=11'))
+    load('assets/practice-explain.js?v=12')
+      .then(()=>load('assets/practice-advanced.js?v=12'))
       .then(()=>{setupPracticeLevels();renderPractice()})
       .catch(e=>console.error('Practice enhancement failed',e));
   };
