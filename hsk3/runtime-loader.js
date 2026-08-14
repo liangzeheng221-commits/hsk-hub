@@ -1,7 +1,7 @@
 /* Robust HSK3 runtime bootstrap. */
 (()=>{
   'use strict';
-  const BUILD='20260814-2105-content-audit';
+  const BUILD='20260814-2118-content-audit';
   const isLesson=()=>!!document.getElementById('lessonTitle');
   const qs=s=>document.querySelector(s);
   const domReady=()=>document.readyState==='loading'?new Promise(r=>document.addEventListener('DOMContentLoaded',r,{once:true})):Promise.resolve();
@@ -35,7 +35,7 @@
 
   async function ensurePako(){
     if(window.pako?.ungzip)return;
-    const urls=['https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js','https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js','https://unpkg.com/pako@2.1.0/pako.min.js'];
+    const urls=['https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js','https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js','https://unpkg.com/pako@2.1.0/dist/pako.min.js'];
     for(const u of urls){try{await loadScript(u,true);if(window.pako?.ungzip)return}catch(e){console.warn('[HSK3] pako fallback failed',u,e)}}
     throw new Error('trình duyệt không hỗ trợ gzip và không tải được pako');
   }
@@ -83,10 +83,10 @@
 
   function verifyHome(){
     const cards=[...document.querySelectorAll('#lessonGrid .lesson-card')];
-    if(cards.length!==20)throw new Error('trang chủ chỉ dựng được '+cards.length+'/20 thẻ bài học');
+    if(cards.length!==20)throw new Error('trang chủ只 dựng được '+cards.length+'/20 thẻ bài học');
     const links=[...document.querySelectorAll('#lessonGrid a[href*="lesson.html?id="]')];
     if(links.length<120)throw new Error('thiếu liên kết vào các phần bài học');
-    const word=qs('#wordStat');if(!word||!/^\d+$/.test(word.textContent.trim()))throw new Error('không tính được总词数');
+    const word=qs('#wordStat');if(!word||!/^\d+$/.test(word.textContent.trim()))throw new Error('không tính được tổng số từ');
     if(!qs('#hsk3SystemNote'))throw new Error('教材口径说明未渲染');
   }
 
@@ -119,7 +119,7 @@
       initGate();
       if(isLesson()){
         if(typeof initLesson!=='function')throw new Error('initLesson không tồn tại');
-        initLesson();verifyLesson();
+        initLesson();await new Promise(r=>setTimeout(r,0));verifyLesson();
         await loadScript('../assets/lesson-menu-parity.js');
         await loadScript('../assets/hanzi-curriculum.js');
       }else{
