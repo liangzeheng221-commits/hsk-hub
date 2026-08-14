@@ -68,20 +68,22 @@ jobs:
             "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=8000 --dump-dom "$BASE/lesson.html?id=$i&sec=vocab&liveqa=$GITHUB_SHA" > "$FILE" 2>"$ERR" || true
             runtime=$(grep -c 'data-hsk3-runtime="ok"' "$FILE" || true)
             title=$(grep -Ec 'id="lessonTitle"[^>]*>[^<]+' "$FILE" || true)
-            vocab=$(grep -c 'vocab-card' "$FILE" || true)
+            vocab=$(grep -c 'class="vcard"' "$FILE" || true)
+            scenes=$(grep -c 'scene-tab' "$FILE" || true)
             grammar=$(grep -c 'grammar-card' "$FILE" || true)
-            basic=$(grep -c 'id="basicPractice"' "$FILE" || true)
-            advanced=$(grep -c 'id="advancedPractice"' "$FILE" || true)
+            hanzi=$(grep -c 'hanzi-chip' "$FILE" || true)
+            basic=$(grep -c 'id="q-mc"' "$FILE" || true)
+            advanced=$(grep -c 'advanced-card' "$FILE" || true)
             menu=$(grep -c 'parity-lesson-menu-wrap' "$FILE" || true)
-            hanzi=$(grep -c 'id="textbookHanziFocus"' "$FILE" || true)
-            echo "LIVE LESSON $i CHECK: runtime=$runtime title=$title vocab=$vocab grammar=$grammar basic=$basic advanced=$advanced menu=$menu textbookHanzi=$hanzi"
-            if [ "$runtime" -lt 1 ] || [ "$title" -lt 1 ] || [ "$vocab" -lt 1 ] || [ "$grammar" -lt 1 ] || [ "$basic" -lt 1 ] || [ "$advanced" -lt 1 ]; then
-              echo "LIVE LESSON $i CORE FAILURE"
+            textbookHanzi=$(grep -c 'id="textbookHanziFocus"' "$FILE" || true)
+            echo "LIVE LESSON $i CHECK: runtime=$runtime title=$title vocab=$vocab scenes=$scenes grammar=$grammar hanzi=$hanzi basic=$basic advanced=$advanced menu=$menu textbookHanzi=$textbookHanzi"
+            if [ "$runtime" -lt 1 ] || [ "$title" -lt 1 ] || [ "$vocab" -lt 1 ] || [ "$scenes" -lt 1 ] || [ "$grammar" -lt 1 ] || [ "$hanzi" -lt 1 ] || [ "$basic" -lt 1 ] || [ "$advanced" -lt 1 ] || [ "$menu" -lt 1 ] || [ "$textbookHanzi" -lt 1 ]; then
+              echo "LIVE LESSON $i FAILURE"
               grep -o 'data-hsk3-runtime="[^"]*"' "$FILE" | head || true
               grep -o 'HSK 3 tải dữ liệu thất bại[^<]*' "$FILE" | head || true
               tail -30 "$ERR" || true
               exit 1
             fi
-            echo "LIVE LESSON $i CORE PASS"
+            echo "LIVE LESSON $i PASS"
           done
-          echo 'HSK3 LIVE BROWSER TEST PASS: public home + all 20 lesson core pages'
+          echo 'HSK3 LIVE BROWSER TEST PASS: public home + all 20 lesson pages and all five modules'
