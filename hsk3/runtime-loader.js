@@ -5,7 +5,7 @@
   const isLesson=()=>!!document.getElementById('lessonTitle');
   const qs=s=>document.querySelector(s);
   const domReady=()=>document.readyState==='loading'?new Promise(r=>document.addEventListener('DOMContentLoaded',r,{once:true})):Promise.resolve();
-  const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
+  const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
   function showFatal(err){
     console.error('[HSK3 bootstrap]',err);
@@ -35,7 +35,7 @@
 
   async function ensurePako(){
     if(window.pako?.ungzip)return;
-    const urls=['https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js','https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js','https://unpkg.com/pako@2.1.0/dist/pako.min.js'];
+    const urls=['https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js','https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js','https://unpkg.com/pako@2.1.0/pako.min.js'];
     for(const u of urls){try{await loadScript(u,true);if(window.pako?.ungzip)return}catch(e){console.warn('[HSK3] pako fallback failed',u,e)}}
     throw new Error('trình duyệt không hỗ trợ gzip và không tải được pako');
   }
