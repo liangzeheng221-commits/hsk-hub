@@ -1,0 +1,31 @@
+name: Temporary vocabulary inspection
+on:
+  push:
+    branches: [gh-pages]
+    paths:
+      - '.github/workflows/tmp-vocab-inspect.yml'
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Print HSK1 and HSK2 vocab metadata
+        run: |
+          node - <<'NODE'
+          const fs=require('fs'),vm=require('vm'),zlib=require('zlib');
+          const ctx1={window:{},console};ctx1.window.window=ctx1.window;
+          for(let i=1;i<=5;i++)vm.runInNewContext(fs.readFileSync(`hsk1/data-${i}.js`,'utf8'),ctx1);
+          vm.runInNewContext(fs.readFileSync('hsk1/corrections.js','utf8'),ctx1);
+          vm.runInNewContext(fs.readFileSync('hsk1/content-audit.js','utf8'),ctx1);
+          console.log('HSK1_VOCAB='+JSON.stringify(ctx1.window.HSK1_LESSONS.map(L=>({id:L.id,words:L.vocab.map(v=>({zh:v.zh,py:v.py,vn:v.vn,pos:v.pos,kind:v.kind}))}))));
+          const ctx2={window:{},console};ctx2.window.window=ctx2.window;
+          for(let i=1;i<=8;i++)vm.runInNewContext(fs.readFileSync(`data/v7-${i}.js`,'utf8'),ctx2);
+          ctx2.window.HSK2_LESSONS=JSON.parse(zlib.gunzipSync(Buffer.from(ctx2.window.__HSK2_V7,'base64')).toString('utf8'));
+          vm.runInNewContext(fs.readFileSync('assets/hsk2-content-audit.js','utf8'),ctx2);
+          console.log('HSK2_VOCAB='+JSON.stringify(ctx2.window.HSK2_LESSONS.map(L=>({id:L.id,words:L.vocab.map(v=>({zh:v.zh,py:v.py,vn:v.vn,pos:v.pos,kind:v.kind}))}))));
+          NODE
