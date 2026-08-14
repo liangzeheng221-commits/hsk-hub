@@ -12,7 +12,7 @@ window.renderLessonShell=function(){
   const tag=q('#lessonTag');
   if(tag)tag.textContent=`第 ${id} 课 · 标准教程 4（下） · 书内第 ${L.bookPage} 页`;
   const hero=q('.open-access-chip');
-  if(hero)hero.textContent=`✓ 教材2014版 · 书内第 ${L.bookPage} 页 · PDF第 ${L.pdfPage} 页 · HSK 2.0教材体系`;
+  if(hero)hero.textContent=`✓ 教材2014版 · 书内第 ${L.bookPage} 页 · PDF第 ${L.pdfPage} 页`;
 };
 
 window.renderVocab=function(){
@@ -64,14 +64,5 @@ window.renderGrammar=function(){
   }
 };
 
-function injectHomeNote(){
-  if(!q('#lessonGrid'))return;
-  let box=q('#hsk4EraNote');
-  if(box)return;
-  box=document.createElement('div');box.id='hsk4EraNote';box.className='course-era-note';
-  box.innerHTML='<b>教材与考试版本说明</b><span>本部分严格对应2014年出版的《HSK标准教程4（下）》及原六级HSK（通常称HSK 2.0）教材体系。2026年HSK 3.0已启动部分考点试行；中文考试服务网同时说明，2026年常规考试日期目前仍执行2.0版，3.0正式开考时间另行通知。学习教材内容与关注最新考试通知应分开理解。</span>';
-  q('.free-banner')?.after(box);
-}
-injectHomeNote();
-document.documentElement.dataset.hsk4UiFinal='20260814-5';
+document.documentElement.dataset.hsk4UiFinal='20260814-6';
 })();
