@@ -8,7 +8,7 @@
     5:{strokes:'汉字的笔画（5）',chars:'水、女、了、大',order:'笔顺（3）：先外后内；先中间后两边'},
     6:{strokes:'汉字的笔画（6）',chars:'东、我、西',structure:'汉字结构（1）：独体结构与合体结构'},
     7:{chars:'四、五、书',structure:'汉字结构（2）：左右结构与左中右结构',radicals:'讠、辶'},
-    8:{chars:'少、个',structure:'汉字结构（3）：上下结构与上中下结构',radicals:'夂、口'},
+    8:{chars:'少、个',structure:'汉字结构（3）：上下结构与上中下结构',radicals:'钅、口'},
     9:{chars:'在、子、工',structure:'汉字结构（4）：半包围结构',radicals:'辶、门'},
     10:{chars:'上、下、本、末',structure:'汉字结构（5）：全包围结构',radicals:'口、木'},
     11:{chars:'牛、电',radicals:'阝、亻'},

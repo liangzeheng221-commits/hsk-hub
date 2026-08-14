@@ -33,7 +33,7 @@
     4:{strokes:'汉字的笔画（10）',chars:'两、乐、长',radicals:'纟、忄'},
     5:{chars:'鱼、衣',radicals:'弓、广'},
     6:{chars:'门、羊',radicals:'扌、心'},
-    7:{radicals:'亻、父'},8:{radicals:'又、巾'},9:{radicals:'土、灬'},10:{radicals:'走、穴'},11:{radicals:'户、冫'},12:{radicals:'止、门'},13:{radicals:'斤、页'},14:{radicals:'雨、贝'},15:{radicals:'山、大'}
+    7:{radicals:'亻、父'},8:{radicals:'又、巾'},9:{radicals:'土、灬'},10:{radicals:'走、穴'},11:{radicals:'户、氵'},12:{radicals:'止、门'},13:{radicals:'斤、页'},14:{radicals:'雨、贝'},15:{radicals:'山、大'}
   };
 
   function textOfExercise(L){return JSON.stringify({mc:L.mc||[],fills:L.fills||[],fixes:L.fixes||[],sorts:L.sorts||[]})}
@@ -45,12 +45,25 @@
   }
   lessons.forEach(L=>{
     const sid=Number(L.id),supp=new Set(SUPPLEMENT[sid]||[]),proper=new Set(PROPER[sid]||[]);
-    (L.vocab||[]).forEach(v=>{v.kind=proper.has(v.zh)?'proper':supp.has(v.zh)?'supplement':'core';v.kind_label=v.kind==='proper'?'专名 · Tên riêng':v.kind==='supplement'?'★ 教材补充词 · Từ bổ sung':'核心词 · Từ trọng tâm';if(!v._audit_pos){v.base_pos=v.pos||'';v.pos=v.kind==='proper'?`专名 · Tên riêng${v.base_pos?' · '+v.base_pos:''}`:v.kind==='supplement'?`★ 补充词${v.base_pos?' · '+v.base_pos:''}`:v.base_pos;v._audit_pos=true}});
+    (L.vocab||[]).forEach(v=>{v.kind=proper.has(v.zh)?'proper':supp.has(v.zh)?'supplement':'core';v.kind_label=v.kind==='proper'?'专名 · Tên riêng':v.kind==='supplement'?'★ 教材补充词 · Từ bổ sung':'核心词 · Từ trọng tâm';if(!v._audit_pos){v.base_pos=v.pos||'';v.pos=v.kind==='proper'?'专名 · Tên riêng':v.kind==='supplement'?`★ 补充词${v.base_pos?' · '+v.base_pos:''}`:v.base_pos;v._audit_pos=true}});
     L.coreVocabCount=(L.vocab||[]).filter(v=>v.kind==='core').length;L.phonetics=[phonetics[sid]];L.textbookHanzi=hanzi[sid];if(cultures[sid])L.culture=cultures[sid];addCoverageMC(L);
   });
 
   if(typeof document==='undefined')return;
   const esc2=s=>typeof esc==='function'?esc(s):String(s??'');
+  function renderProperPanel(){
+    if(typeof L==='undefined'||!L)return;document.getElementById('hsk2ProperPanel')?.remove();
+    const term=String(document.getElementById('vSearch')?.value||'').trim().toLowerCase();
+    const proper=(L.vocab||[]).filter(v=>v.kind==='proper').filter(v=>!term||[v.zh,v.py,v.vn].some(x=>String(x||'').toLowerCase().includes(term)));
+    if(!proper.length)return;const panel=document.createElement('section');panel.id='hsk2ProperPanel';panel.className='proper-name-panel';
+    panel.innerHTML=`<div class="proper-name-head"><b>专有名词 · Danh từ riêng</b><span>${proper.length}</span></div><div class="proper-name-list">${proper.map(v=>{const i=L.vocab.indexOf(v);return `<button type="button" data-i="${i}"><b>${esc2(v.zh)}</b><span>${esc2(v.py)}</span><small>${esc2(v.vn)}</small></button>`}).join('')}</div>`;
+    document.getElementById('vocabGrid')?.after(panel);panel.querySelectorAll('button').forEach(b=>b.onclick=()=>showWord(+b.dataset.i));
+  }
+  function decorateVocabCards(){document.querySelectorAll('#vocabGrid .vcard').forEach(card=>{const zh=card.querySelector('.vzh')?.textContent.trim(),v=(L.vocab||[]).find(x=>x.zh===zh);if(v)card.style.display=v.kind==='proper'?'none':''})}
+  if(typeof renderVocab==='function'){const base=renderVocab;renderVocab=function(...args){const r=base(...args);decorateVocabCards();renderProperPanel();return r}}
+  if(typeof renderVocabQuick==='function'){const base=renderVocabQuick;renderVocabQuick=function(){const r=base();document.querySelectorAll('.vocab-pill[data-i]').forEach(b=>{const v=L.vocab[+b.dataset.i];if(v?.kind==='proper')b.style.display='none'});return r}}
+  if(typeof speakAllVocab==='function')speakAllVocab=function(){if(!('speechSynthesis' in window)){toast('Trình duyệt này chưa hỗ trợ phát âm.');return}speakSequence((L.vocab||[]).filter(v=>v.kind!=='proper').map(v=>v.zh),.75)};
+
   document.querySelectorAll('.section-tab[data-sec="grammar"]').forEach(b=>b.textContent='Ngữ âm & Ngữ pháp');
   const gh=document.querySelector('#grammar .section-head h2');if(gh)gh.textContent='NGỮ ÂM & NGỮ PHÁP — 语音与语言点';
   if(typeof SECTION_LABELS!=='undefined')SECTION_LABELS.grammar='Ngữ âm & Ngữ pháp · 语音与语言点';
