@@ -45,13 +45,13 @@
   document.head.appendChild(style);
 
   function decorateHome(){
-    const hero=q('.hero-inner');if(!hero||q('#hsk3SystemNote'))return;
+    const hero=q('.hero-inner');if(!hero||q('#hsk3TextbookNote'))return;
     const core=HSK3_LESSONS.reduce((n,x)=>n+x.vocab.filter(v=>!v.properName&&!v.aboveLevel).length,0);
     const extras=HSK3_LESSONS.reduce((n,x)=>n+x.vocab.filter(v=>v.aboveLevel).length,0);
     const names=HSK3_LESSONS.reduce((n,x)=>n+x.vocab.filter(v=>v.properName).length,0);
     const total=core+extras+names;
-    const box=document.createElement('div');box.id='hsk3SystemNote';box.className='audit-home-note';
-    box.innerHTML=`<b>教材口径已校准：</b>本课程对应《HSK标准教程3》及传统六级 HSK 教材体系（通常称 HSK 2.0），不与 HSK 3.0 新标准混为一套词表。教材本册共整理 <b>${total}</b> 个词目：<b>${core}</b> 个本级核心词 + <b>${extras}</b> 个教材标星补充词 + <b>${names}</b> 个专有名词。`;
+    const box=document.createElement('div');box.id='hsk3TextbookNote';box.className='audit-home-note';
+    box.innerHTML=`<b>教材内容已校准：</b>本课程严格按照《HSK标准教程3》整理。教材本册共整理 <b>${total}</b> 个词目：<b>${core}</b> 个本级核心词 + <b>${extras}</b> 个教材标星补充词 + <b>${names}</b> 个专有名词。`;
     const anchor=q('.free-access-note',hero);(anchor||hero.lastElementChild)?.after(box);
     const stat=q('#wordStat');if(stat)stat.textContent=String(total);
   }
