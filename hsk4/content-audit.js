@@ -16,7 +16,7 @@
   const vnTitles={
     11:'Đọc sách có rất nhiều lợi ích, đọc sách hay, thích đọc sách',12:'Khám phá thế giới bằng trái tim',
     13:'Uống trà trong lúc xem Kinh kịch',14:'Bảo vệ Mẹ Trái đất',15:'Nghệ thuật giáo dục con cái',
-    16:'Cuộc sống có thể tốt đẹp hơn',17:'Con người và thiên nhiên',18:'Khoa học công nghệ và thế giới',
+    16:'Cuộc sống có thể tốt đẹp hơn.',17:'Con người và thiên nhiên',18:'Khoa học công nghệ và thế giới',
     19:'Mùi vị của cuộc sống',20:'Quang cảnh dọc đường'
   };
   Object.entries(vnTitles).forEach(([id,title])=>lesson(+id).vn_title=title);
@@ -25,12 +25,21 @@
   // Vocabulary: use the target sense/part of speech shown in this lesson, not an unrelated common sense.
   vocab(11,'词语',{vn:'từ ngữ; cách diễn đạt'});
   vocab(11,'之',{vn:'trợ từ văn viết nối định ngữ với trung tâm ngữ; tương đương “的” trong nhiều trường hợp'});
+  vocab(13,'厚',{vn:'sâu sắc; sâu đậm'});
   vocab(13,'省',{vn:'tỉnh (đơn vị hành chính)'});
   vocab(16,'传真',{vn:'gửi fax; gửi bằng fax'});
   vocab(16,'推',{vn:'hoãn; dời lại'});
+  vocab(14,'丢',{vn:'vứt; ném'});
+  vocab(15,'骄傲',{vn:'kiêu ngạo; tự mãn'});
   vocab(17,'照',{vn:'chụp; chụp ảnh'});
   vocab(18,'火',{vn:'hot; nổi tiếng, thịnh hành (khẩu ngữ)'});
+  vocab(18,'举',{vn:'nêu; đưa ra (ví dụ)'});
+  vocab(18,'收',{vn:'nhận'});
+  vocab(19,'功夫',{vn:'võ công; kung fu'});
   vocab(20,'怪',{vn:'khá; thật là; tương đối (phó từ khẩu ngữ)'});
+  vocab(20,'打扮',{vn:'ăn mặc; sửa soạn, chưng diện'});
+  vocab(20,'存',{vn:'cất giữ; gửi giữ; lưu trữ'});
+  vocab(20,'小吃',{vn:'món ăn nhẹ; món ăn bình dân địa phương'});
 
   // Lesson 11.
   grammar(11,'连',{
@@ -53,6 +62,18 @@
   });
 
   // Lesson 12.
+  grammar(12,'名量词重叠',{
+    vn_title:'Lặp danh từ / lượng từ',
+    structure:'AA（如：人人、天天、件件）',
+    desc:'Danh từ hoặc lượng từ được lặp theo dạng AA để biểu thị ý “mỗi/từng”. Sau khi lặp, chúng có thể làm chủ ngữ, định ngữ của chủ ngữ hoặc trạng ngữ; không dùng làm tân ngữ hay định ngữ của tân ngữ theo cách dùng được dạy trong bài.',
+    examples:['人人都应该有自己的学习方法。','件件小事都应该认真做好。','他天天都坚持阅读半个小时。']
+  });
+  grammar(12,'相反',{
+    vn_title:'Liên từ / tính từ “相反”',
+    structure:'…，相反，… / A 和 B 相反 / 相反的 + N',
+    desc:'Là liên từ khi đứng ở đầu hoặc giữa vế sau để nêu ý trái ngược hay tăng tiến theo hướng ngược lại. “相反” còn là tính từ, chỉ hai mặt đối lập nhau; khi làm định ngữ phải dùng “相反的 + danh từ”.',
+    examples:['方法不对不但不能省力，相反会浪费更多时间。','调查结果和我们原来的想法完全相反。','两个人选择了相反的方向。']
+  });
   grammar(12,'对于',{
     structure:'对于 + đối tượng，… / Chủ ngữ + 对于 + đối tượng + …',
     desc:'Giới từ đưa ra đối tượng/đích mà một tình huống, thái độ hay nhận xét hướng tới. Cụm 对于 có thể đứng trước hoặc sau chủ ngữ.'
@@ -96,6 +117,18 @@
   });
 
   // Lesson 15.
+  grammar(15,'来',{
+    vn_title:'Động từ “来” đứng trước động từ khác',
+    structure:'来 + V',
+    desc:'Trong khẩu ngữ, “来” đứng trước một động từ khác để biểu thị “sẽ/để ai đó làm việc ấy”. Nếu bỏ “来”, ý chính của câu thường không thay đổi.',
+    examples:['这个沙发太重了，我来帮你一起抬。','这次活动让李老师来负责吧。','记者需要到处调查，来了解真实情况。']
+  });
+  grammar(15,'左右',{
+    vn_title:'Danh từ “左右”',
+    structure:'số lượng + 左右',
+    desc:'Chỉ dùng sau cụm số lượng để biểu thị con số thực tế hơi nhiều hơn hoặc ít hơn con số được nêu, tương đương “khoảng/xấp xỉ”.',
+    examples:['那本书三天左右就能到。','前方五百米左右有一个停车场。','七岁左右的儿童普遍比较好动。']
+  });
   compare(15,{
     title:'千万 — 一定',
     vn:'Cả hai có thể dùng để nhấn mạnh lời yêu cầu/dặn dò. “千万” thường đi với 别/不要/不能 và mang sắc thái tha thiết nhắc nhở; “一定” thường gặp trong yêu cầu khẳng định và mạnh hơn. “一定” còn có thể diễn đạt quyết tâm của ngôi thứ nhất, sự chắc chắn/tất yếu, hoặc trong “不一定” = chưa chắc; “千万” không có các cách dùng này.'
@@ -211,7 +244,7 @@
   }
 
   window.HSK4_LOWER_CONTENT_AUDIT={
-    version:'2026-08-14.2',
+    version:'2026-08-14.3',
     textbook:'《Chuẩn HSK4 下》 / HSK Standard Course 4B',
     corrected:true,
     cultureTitles:10,
