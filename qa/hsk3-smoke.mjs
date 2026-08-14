@@ -49,9 +49,12 @@ function baseRuntime(env,lesson=false){
   env.w.HSK3_LESSONS=cloneData();
   run(env.ctx,'hsk3/corrections.js');
   run(env.ctx,'hsk3/textbook-baseline.js');
+  run(env.ctx,'hsk3/textbook-audit.js');
+  assert.equal(env.w.__HSK3_CONTENT_AUDITED,true,'content audit layer must initialize');
   run(env.ctx,'hsk3/app-core.js');
   if(lesson)run(env.ctx,'assets/hsk2-parity.js');
   run(env.ctx,'hsk3/app-practice.js');
+  run(env.ctx,'hsk3/textbook-audit-ui.js');
 }
 
 {
@@ -60,9 +63,10 @@ function baseRuntime(env,lesson=false){
   vm.runInContext('renderHome()',env.ctx);
   assert.equal(env.w.document.querySelectorAll('#lessonGrid .lesson-card').length,20,'home: 20 lesson cards expected');
   assert(env.w.document.querySelectorAll('#lessonGrid a[href*="lesson.html?id="]').length>=120,'home: lesson links missing');
-  assert(/^\d+$/.test(env.w.document.querySelector('#wordStat').textContent.trim()),'home: wordStat not rendered');
+  assert.equal(env.w.document.querySelector('#wordStat').textContent.trim(),'325','home: audited textbook item count should be 325');
+  assert(env.w.document.querySelector('#hsk3SystemNote'),'home: HSK textbook-system note missing');
   env.dom.window.close();
-  console.log('HOME PASS: 20 cards and direct section links rendered');
+  console.log('HOME PASS: 20 cards, 325 audited textbook items and system note rendered');
 }
 
 for(let id=1;id<=20;id++){
@@ -81,12 +85,18 @@ for(let id=1;id<=20;id++){
   for(const sec of ['vocab','text','grammar','hanzi','practice'])vm.runInContext(`showSection('${sec}',false)`,env.ctx);
   run(env.ctx,'assets/lesson-menu-parity.js');
   run(env.ctx,'assets/hanzi-curriculum.js');
-  await new Promise(r=>setTimeout(r,10));
+  await new Promise(r=>setTimeout(r,15));
   assert(d.querySelector('.parity-lesson-menu-wrap'),`lesson ${id}: custom lesson menu missing`);
   assert(d.querySelector('#textbookHanziFocus'),`lesson ${id}: textbook hanzi focus missing`);
+  assert(d.querySelector('#auditVocabSummary'),`lesson ${id}: audited vocab summary missing`);
+  assert(d.querySelector('#auditTextbookSource'),`lesson ${id}: textbook text/source panel missing`);
+  assert(d.querySelector('#auditGrammarNote'),`lesson ${id}: audited grammar note missing`);
+  assert(d.querySelector('#auditPracticeNote'),`lesson ${id}: audited practice scope missing`);
+  const textbookCount=env.w.HSK3_LESSONS[id-1].vocab.length;
+  assert.equal(textbookCount,env.w.HSK3_AUDIT_META.counts[id],`lesson ${id}: audited textbook count mismatch`);
   const fatal=env.errors.filter(e=>!/Could not load|Not implemented/.test(String(e?.message||e)));
   assert.equal(fatal.length,0,`lesson ${id}: jsdom runtime errors: ${fatal.map(e=>e.message).join(' | ')}`);
   env.dom.window.close();
 }
-console.log('LESSON PASS: all 20 lessons rendered vocab/text/grammar/hanzi/practice and navigation');
+console.log('LESSON PASS: all 20 lessons rendered audited vocab/text/grammar/hanzi/practice and navigation');
 console.log('HSK3 SMOKE TEST PASS');
