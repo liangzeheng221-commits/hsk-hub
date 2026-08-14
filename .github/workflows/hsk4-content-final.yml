@@ -53,13 +53,14 @@ jobs:
 
           FILE16=/tmp/hsk4-final-16.html
           "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=9000 --dump-dom "$BASE/lesson.html?id=16&sec=vocab&finalqa=$GITHUB_SHA" > "$FILE16" 2>/tmp/hsk4-final16.err || true
-          grep -q 'id="lessonTitle" class="zh">生活可以更美好<' "$FILE16"
-          ! grep -q 'id="lessonTitle" class="zh">生活可以更美好。<' "$FILE16"
+          grep -Eq 'id="lessonTitle"[^>]*>生活可以更美好<' "$FILE16"
+          ! grep -Eq 'id="lessonTitle"[^>]*>生活可以更美好。<' "$FILE16"
 
           curl -fsSL "$BASE/content-final.js?v=20260814f&finalqa=$GITHUB_SHA" > /tmp/content-final-live.js
+          curl -fsSL "$BASE/practice-final.js?v=20260814f&finalqa=$GITHUB_SHA" > /tmp/practice-final-live.js
           grep -q 'Dúshū hǎo, dú hǎo shū, hào dúshū' /tmp/content-final-live.js
-          grep -q 'properNouns' /tmp/content-final-live.js || grep -q 'const PROPER=' /tmp/content-final-live.js
-          grep -q '从理解到复述' "$BASE/practice-final.js?v=20260814f&finalqa=$GITHUB_SHA" || true
+          grep -q 'const PROPER=' /tmp/content-final-live.js
+          grep -q '从理解到复述' /tmp/practice-final-live.js
           grep -q '海底的动物们一直在“说话”' /tmp/content-final-live.js
           grep -q '各种颜色的亮光' /tmp/content-final-live.js
           grep -q '上海话本身和普通话差别很大' /tmp/content-final-live.js
