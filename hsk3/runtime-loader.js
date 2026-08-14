@@ -1,11 +1,11 @@
 /* Robust HSK3 runtime bootstrap. */
 (()=>{
   'use strict';
-  const BUILD='20260814-2118-content-audit';
+  const BUILD='20260814-2140-content-final';
   const isLesson=()=>!!document.getElementById('lessonTitle');
   const qs=s=>document.querySelector(s);
   const domReady=()=>document.readyState==='loading'?new Promise(r=>document.addEventListener('DOMContentLoaded',r,{once:true})):Promise.resolve();
-  const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
 
   function showFatal(err){
     console.error('[HSK3 bootstrap]',err);
@@ -83,7 +83,7 @@
 
   function verifyHome(){
     const cards=[...document.querySelectorAll('#lessonGrid .lesson-card')];
-    if(cards.length!==20)throw new Error('trang chủ只 dựng được '+cards.length+'/20 thẻ bài học');
+    if(cards.length!==20)throw new Error('trang chủ chỉ dựng được '+cards.length+'/20 thẻ bài học');
     const links=[...document.querySelectorAll('#lessonGrid a[href*="lesson.html?id="]')];
     if(links.length<120)throw new Error('thiếu liên kết vào các phần bài học');
     const word=qs('#wordStat');if(!word||!/^\d+$/.test(word.textContent.trim()))throw new Error('không tính được tổng số từ');
