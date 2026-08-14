@@ -78,15 +78,18 @@ jobs:
               tail -30 "/tmp/chrome-$i.err" || true
               exit 1
             fi
-            if [ "$i" = "19" ]; then
-              grep -q '运动员发球时' "$FILE"
-              grep -q '记错了一个电话号码数字' "$FILE"
-            fi
-            if [ "$i" = "20" ]; then
-              grep -q '不是少数民族' "$FILE"
-              grep -q '广西冬天也比较暖和' "$FILE"
-              grep -q '咸辣、香辣、酸辣' "$FILE"
-            fi
             echo "LIVE LESSON $i PASS"
           done
+          # The lesson page renders only the active text scene into the DOM. Verify factual
+          # regressions against the actual public data assets rather than incorrectly grepping
+          # hidden/non-rendered scenes from dump-dom.
+          curl -fsSL "$BASE/data/19.js?v=20260814d&liveqa=$GITHUB_SHA" > /tmp/live-19.js
+          curl -fsSL "$BASE/data/20.js?v=20260814d&liveqa=$GITHUB_SHA" > /tmp/live-20.js
+          curl -fsSL "$BASE/content-audit.js?v=20260814d&liveqa=$GITHUB_SHA" > /tmp/live-audit.js
+          grep -q '运动员发球时' /tmp/live-19.js
+          grep -q '记错了一个电话号码数字' /tmp/live-19.js
+          grep -q '不是少数民族' /tmp/live-20.js
+          grep -q '广西冬天也比较暖和' /tmp/live-20.js
+          grep -q '咸辣、香辣、酸辣' /tmp/live-audit.js
+          echo 'LIVE FACTUAL ASSET REGRESSION PASS'
           echo 'HSK4 LOWER LIVE BROWSER TEST PASS: public home + lessons 11–20 + audited factual regressions'
