@@ -3,7 +3,7 @@
   const level=document.body.classList.contains('hsk3')?3:document.body.classList.contains('hsk1')?1:0;
   if(!level)return;
   const q=(s,r=document)=>r.querySelector(s), qa=(s,r=document)=>[...r.querySelectorAll(s)];
-  const escHtml=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const escHtml=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[m]));
   function lessons(){return level===1?(window.HSK1_LESSONS||[]): (window.HSK3_LESSONS||[])}
   function section(){try{return typeof currentSec==='string'?currentSec:'vocab'}catch{return 'vocab'}}
   function lessonId(){try{return Number(id)||1}catch{return 1}}
@@ -25,5 +25,6 @@
     render();
   }
   const start=()=>setTimeout(setup,0);
-  if(document.readyState==='loading')window.addEventListener('DOMContentLoaded',start,{once:true});else start();
+  start();
+  if(document.readyState==='loading')window.addEventListener('DOMContentLoaded',start,{once:true});
 })();
