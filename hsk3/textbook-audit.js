@@ -117,7 +117,7 @@
     ],
     8:[
       ['又（đã lặp lại）/ 再（chưa xảy ra, sẽ lặp lại）','“又” thường nói một việc đã lặp lại trong quá khứ/hiện tại; “再” thường nói việc sẽ lặp lại trong tương lai hoặc sau đó.',['他昨天又迟到了。','这本书很好，我想再看一遍。'],'又'],
-      ['疑问代词 + ... + 疑问代词 + ...','Đại từ nghi vấn có thể dùng phi nghi vấn để chỉ toàn thể/tùy ý: “ai... thì người đó”, “cái gì... thì cái đó”, “đâu... thì đó”.',['你想吃什么就点什么。','谁先来谁先坐。'],'什么']
+      ['疑问代词 + …… + 就 + 同一疑问代词 + ……','“就” có thể đứng giữa hai đại từ nghi vấn giống nhau. Lúc này chúng không dùng để hỏi mà cùng chỉ một người/sự vật/cách thức chưa xác định; nếu hai vế khác chủ ngữ, chủ ngữ vế sau đặt trước “就”.',['你想吃什么就点什么。','谁先来谁先坐。'],'就']
     ],
     9:[
       ['越 A 越 B','“越A越B” cho biết khi A tăng/tiến triển thì B cũng thay đổi theo.',['天气越冷，我越想喝热茶。','他越说越快。'],'越'],
@@ -145,7 +145,7 @@
     ],
     15:[
       ['除了……以外，都/还/也……','“除了A以外，都……” loại trừ A khỏi toàn thể; “除了A以外，还/也……” bổ sung thêm A bên cạnh những mục khác.',['除了小王以外，大家都来了。','除了汉语以外，我还学英语。'],'除了'],
-      ['疑问代词活用 2','Đại từ nghi vấn có thể chỉ mọi người/mọi vật không có ngoại lệ, thường kết hợp “都/也”.',['谁都可以参加。','我什么都想试试。'],'谁'],
+      ['什么 + 名词 / 有（没）有什么……','Trong cách dùng linh hoạt (2), “什么” có thể dùng như đại từ chỉ định thay cho người/sự vật chưa xác định, làm cách nói khách sáo hơn; bỏ “什么” thì ý cơ bản của câu không đổi.',['周末你有没有什么打算？','以后有什么不明白的地方，可以给我打电话。'],'什么'],
       ['形容词 + 极了','“极了” đứng sau tính từ để biểu thị mức độ rất cao, thường mang sắc thái cảm thán.',['今天热极了。','这个地方漂亮极了。'],'极了']
     ],
     16:[
@@ -155,7 +155,7 @@
     ],
     17:[
       ['双音节动词重叠：ABAB','Động từ hai âm tiết lặp theo dạng ABAB, thường biểu thị hành động ngắn, thử làm hoặc sắc thái nhẹ nhàng.',['我们讨论讨论这个问题吧。','你休息休息再走。'],'讨论讨论'],
-      ['疑问代词活用 3','Đại từ nghi vấn có thể dùng để chỉ không xác định/nhượng bộ; ý nghĩa cụ thể phụ thuộc cấu trúc như “谁都…、什么都…、哪儿都…”.',['谁都有自己的办法。','哪儿都有人喜欢运动。'],'谁']
+      ['疑问代词活用 3','Đại từ nghi vấn có thể dùng để chỉ mọi đối tượng trong một phạm vi, tất cả đều có cùng đặc điểm và không có ngoại lệ.',['谁都有自己的办法。','哪儿都有人喜欢运动。'],'谁']
     ],
     18:[
       ['只要……，就……','“只要……就……” nêu một điều kiện đủ: chỉ cần điều kiện ở vế trước được thỏa mãn thì kết quả ở vế sau có thể xảy ra.',['只要你同意，我们就开始。','只要认真学习，就会有进步。'],'只要'],
@@ -198,7 +198,7 @@
     if(L.vocab.length<expected)throw new Error(`HSK3 textbook audit: lesson ${L.id} vocab ${L.vocab.length}/${expected}`);
     const p=pos[L.id]||[];
     if(p.length!==expected)throw new Error(`HSK3 textbook audit: lesson ${L.id} POS ${p.length}/${expected}`);
-    L.vocab.forEach((w,i)=>{w.textbook=true;w.pos=p[i];w.properName=(proper[L.id]||[]).includes(w.zh);w.aboveLevel=(extra[L.id]||[]).includes(w.zh);w.supplemental=!!w.aboveLevel;w.displayZh=(display[L.id]||{})[w.zh]||w.zh;const o=(overrides[L.id]||{})[w.zh];if(o)Object.assign(w,o)});
+    L.vocab.forEach((w,i)=>{w.textbook=true;w.pos=p[i];w.properName=(proper[L.id]||[]).includes(w.zh);w.aboveLevel=(extra[L.id]||[]).includes(w.zh);w.supplemental=!!w.aboveLevel;w.displayZh=(display[L.id]||{})[w.zh]||w.zh;if(!w.py&&window.pinyinPro?.pinyin){try{w.py=window.pinyinPro.pinyin(w.zh,{toneType:'symbol',type:'array'}).join(' ')}catch(e){}}const o=(overrides[L.id]||{})[w.zh];if(o)Object.assign(w,o)});
     L.textbookVocabCount=expected;L.lessonPage=pages[L.id];L.proverb={zh:proverbs[L.id][0],vn:proverbs[L.id][1]};L.culture=cultures[L.id]||null;
     applyGrammar(L);
   });
