@@ -26,7 +26,6 @@
       if(ticket!==renderTicket)return;
       if(!hanziSectionVisible()){deferred=true;return}
       deferred=false;
-      // A second frame guarantees layout after display/class changes before HanziWriter measures the canvas.
       nextFrame(()=>{
         if(ticket!==renderTicket||!hanziSectionVisible())return;
         baseRenderHanzi();
@@ -50,7 +49,6 @@
     return result;
   };
 
-  // Recover if another script makes the section visible without using showSection().
   const section=document.getElementById('hanzi');
   if(section&&window.MutationObserver){
     new MutationObserver(()=>{
@@ -63,5 +61,5 @@
 (()=>{
   if(document.querySelector('script[data-vocab-unified]'))return;
   const l=document.createElement('link');l.rel='stylesheet';l.href='../assets/vocab-unified.css?v=20260815-3';l.dataset.vocabUnified='1';document.head.appendChild(l);
-  const s=document.createElement('script');s.src='../assets/vocab-unified.js?v=20260815-2';s.dataset.vocabUnified='1';document.body.appendChild(s);
+  const s=document.createElement('script');s.src='../assets/vocab-unified.js?v=20260815-4';s.dataset.vocabUnified='1';document.body.appendChild(s);
 })();
