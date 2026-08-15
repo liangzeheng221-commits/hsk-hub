@@ -131,3 +131,4 @@
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{installLegacyWriteGuard();syncGate()},{once:true});
   window.__HSK_SESSION_AUTH_API={version:'20260815-2',unlock,syncGate,portalUnlocked,hsk4Unlocked,currentStage,portalKey:PORTAL_KEY,hsk4Key:HSK4_KEY};
 })();
+/* deployment sync: two-stage HSK4 authentication */
