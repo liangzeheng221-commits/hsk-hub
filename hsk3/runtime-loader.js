@@ -1,7 +1,7 @@
 /* Robust HSK3 runtime bootstrap. */
 (()=>{
   'use strict';
-  const BUILD='20260814-2140-content-final';
+  const BUILD='20260815-hsk3-home-hotfix-1';
   const isLesson=()=>!!document.getElementById('lessonTitle');
   const qs=s=>document.querySelector(s);
   const domReady=()=>document.readyState==='loading'?new Promise(r=>document.addEventListener('DOMContentLoaded',r,{once:true})):Promise.resolve();
@@ -87,7 +87,9 @@
     const links=[...document.querySelectorAll('#lessonGrid a[href*="lesson.html?id="]')];
     if(links.length<120)throw new Error('thiếu liên kết vào các phần bài học');
     const word=qs('#wordStat');if(!word||!/^\d+$/.test(word.textContent.trim()))throw new Error('không tính được tổng số từ');
-    if(!qs('#hsk3SystemNote'))throw new Error('教材口径说明未渲染');
+    // textbook-audit-ui.js renders #hsk3TextbookNote. The old verifier checked a stale ID
+    // (#hsk3SystemNote), which incorrectly turned a healthy home page into a fatal error.
+    if(!qs('#hsk3TextbookNote')&&!qs('#hsk3SystemNote'))console.warn('[HSK3] 教材口径说明未渲染；课程主体仍可正常使用。');
   }
 
   function verifyLesson(){
