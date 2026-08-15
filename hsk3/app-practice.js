@@ -146,5 +146,6 @@ function switchPracticeLevel(level){
   const advanced=level==='advanced';
   $('#basicPractice')?.classList.toggle('hidden-level',advanced);
   $('#advancedPractice')?.classList.toggle('active',advanced);
-  $$('.practice-level-btn','#practice').forEach(b=>b.classList.toggle('active',b.dataset.level===level));
+  const section=$('#practice');
+  if(section)$$('.practice-level-btn',section).forEach(b=>b.classList.toggle('active',b.dataset.level===level));
 }
