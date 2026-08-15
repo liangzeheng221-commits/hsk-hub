@@ -71,10 +71,10 @@ jobs:
             culture=$( (grep -o '文化' "$FILE" || true) | wc -l | tr -d ' ')
             hanzi=$( (grep -o 'hanzi-char-btn' "$FILE" || true) | wc -l | tr -d ' ')
             stroke_ui=$( (grep -o '逐笔写法 · Từng bước viết' "$FILE" || true) | wc -l | tr -d ' ')
-            basic=$( (grep -o 'id="q-mc"' "$FILE" || true) | wc -l | tr -d ' ')
+            basic=$( (grep -o 'reviewed-card' "$FILE" || true) | wc -l | tr -d ' ')
             advanced=$( (grep -o 'advanced-card' "$FILE" || true) | wc -l | tr -d ' ')
             echo "LIVE LESSON $i: runtime=$runtime title=$title vocab=$vocab texts=$texts grammar=$grammar compare=$compare culture=$culture hanzi=$hanzi stroke_ui=$stroke_ui basic=$basic advanced=$advanced"
-            if [ "$runtime" -lt 1 ] || [ "$title" -lt 1 ] || [ "$vocab" -lt 1 ] || [ "$texts" -lt 5 ] || [ "$grammar" -lt 5 ] || [ "$compare" -lt 1 ] || [ "$culture" -lt 1 ] || [ "$hanzi" -lt 1 ] || [ "$stroke_ui" -lt 1 ] || [ "$basic" -lt 1 ] || [ "$advanced" -lt 1 ]; then
+            if [ "$runtime" -lt 1 ] || [ "$title" -lt 1 ] || [ "$vocab" -lt 1 ] || [ "$texts" -lt 5 ] || [ "$grammar" -lt 5 ] || [ "$compare" -lt 1 ] || [ "$culture" -lt 1 ] || [ "$hanzi" -lt 1 ] || [ "$stroke_ui" -lt 1 ] || [ "$basic" -lt 36 ] || [ "$advanced" -lt 16 ]; then
               echo "LIVE LESSON $i FAILURE"
               grep -o 'data-hsk4-runtime="[^"]*"' "$FILE" | head || true
               tail -30 "/tmp/chrome-$i.err" || true

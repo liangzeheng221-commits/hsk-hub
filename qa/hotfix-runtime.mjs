@@ -7,7 +7,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
 // HSK3 regression: the home renderer creates #hsk3TextbookNote; this must never be treated as fatal.
 {
-  const src=read('hsk3/runtime-loader.js');
+  const src=read('hsk3/runtime-loader-core.js');
   assert(src.includes("qs('#hsk3TextbookNote')"),'HSK3 runtime must recognize #hsk3TextbookNote');
   assert(!src.includes("if(!qs('#hsk3SystemNote'))throw new Error('教材口径说明未渲染')"),'stale HSK3 fatal verifier is still present');
   console.log('HSK3 HOTFIX PASS: textbook note ID no longer causes false fatal error');
