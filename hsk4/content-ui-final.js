@@ -12,7 +12,7 @@ window.renderLessonShell=function(){
   const tag=q('#lessonTag');
   if(tag)tag.textContent=`第 ${id} 课 · 标准教程 4（下） · 书内第 ${L.bookPage} 页`;
   const hero=q('.open-access-chip');
-  if(hero)hero.textContent=`✓ 教材2014版 · 书内第 ${L.bookPage} 页 · PDF第 ${L.pdfPage} 页`;
+  if(hero)hero.textContent=`✓ 教材第 ${L.bookPage} 页 · Bài ${id}`;
 };
 
 window.renderVocab=function(){
@@ -44,7 +44,7 @@ window.renderText=function(){
   const tabs=q('#sceneTabs');
   let meta=q('#textbookTextMeta');
   if(!meta){meta=document.createElement('div');meta.id='textbookTextMeta';tabs.before(meta)}
-  meta.innerHTML=`<div class="textbook-page-meta"><b>教材定位</b><span>书内第 ${L.bookPage} 页起 · PDF第 ${L.pdfPage} 页起 · 2014年版</span></div>${L.titleToneNote?`<div class="tone-note"><b>课题读音：</b>${e(L.titlePinyin)}<br>${e(L.titleToneNote)}</div>`:''}${L.eraNote?`<div class="era-note">${e(L.eraNote)}</div>`:''}${properNounHTML()}`;
+  meta.innerHTML=`<div class="textbook-page-meta"><b>教材 · Giáo trình</b><span>书内第 ${L.bookPage} 页起</span></div>${L.titleToneNote?`<div class="tone-note"><b>课题读音：</b>${e(L.titlePinyin)}<br>${e(L.titleToneNote)}</div>`:''}${L.eraNote?`<div class="era-note">${e(L.eraNote)}</div>`:''}${properNounHTML()}`;
   qa('.proper-noun-item',meta).forEach(b=>b.onclick=()=>speak(b.dataset.speak));
   tabs.innerHTML=L.scenes.map((s,i)=>`<button class="scene-tab ${i===0?'active':''}" data-i="${i}">${i+1}. ${e(s.vn_title)}</button>`).join('');
   qa('.scene-tab',tabs).forEach(b=>b.onclick=()=>{sceneIndex=+b.dataset.i;qa('.scene-tab',tabs).forEach(x=>x.classList.toggle('active',x===b));drawScene()});
@@ -52,7 +52,7 @@ window.renderText=function(){
 };
 window.drawScene=function(){
   const s=L.scenes[sceneIndex],pts=pointsOf(s);
-  q('#scenePane').innerHTML=`<article class="text-card"><div class="text-card-head"><div><span class="text-no">${e(s.title)}</span><h3>${e(s.vn_title)}</h3></div><button class="ghost-btn" onclick='speak(${JSON.stringify(pts.join('，'))})'>🔊 Nghe câu trọng điểm</button></div><div class="text-summary">${e(s.summary)}</div>${s.contextNote?`<div class="context-note"><b>教材语境说明 · Lưu ý ngữ cảnh</b><span>${e(s.contextNote)}</span></div>`:''}<div class="key-lines">${pts.map(x=>`<div class="key-line"><div><div class="line-py">${e(pyOf(x))}</div><div class="line-zh">${e(x)}</div></div><button onclick='speak(${JSON.stringify(x)})'>🔊</button></div>`).join('')}</div><div class="source-boundary">教材对应：第 ${L.id} 课 · ${e(s.title)} · 书内页码约从 ${L.bookPage} 页开始。本站用摘要与重点句服务学习，不复制整篇课文。</div></article>`;
+  q('#scenePane').innerHTML=`<article class="text-card"><div class="text-card-head"><div><span class="text-no">${e(s.title)}</span><h3>${e(s.vn_title)}</h3></div><button class="ghost-btn" onclick='speak(${JSON.stringify(pts.join('，'))})'>🔊 Nghe câu trọng điểm</button></div><div class="text-summary">${e(s.summary)}</div>${s.contextNote?`<div class="context-note"><b>教材语境说明 · Lưu ý ngữ cảnh</b><span>${e(s.contextNote)}</span></div>`:''}<div class="key-lines">${pts.map(x=>`<div class="key-line"><div><div class="line-py">${e(pyOf(x))}</div><div class="line-zh">${e(x)}</div></div><button onclick='speak(${JSON.stringify(x)})'>🔊</button></div>`).join('')}</div><div class="source-boundary">教材位置：第 ${L.id} 课 · ${e(s.title)} · 第 ${L.bookPage} 页起。</div></article>`;
 };
 
 const baseGrammar=window.renderGrammar;
