@@ -15,7 +15,7 @@ permissions:
 jobs:
   locked-textbook:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -48,21 +48,41 @@ jobs:
           test "$OK" = 1
           grep -Eq 'id="wordStat">324<' /tmp/hsk4u-home.html
           echo 'LIVE HSK4 UPPER HOME PASS'
+
+          check_lesson() {
+            local lesson="$1" text="$2" file="$3" failed=0
+            grep -q 'data-hsk4-upper="ready"' "$file" || { echo "FAIL L${lesson}T${text}: runtime not ready"; failed=1; }
+            grep -q 'data-hsk4-upper-textbook-locked="ok"' "$file" || { echo "FAIL L${lesson}T${text}: locked corpus not ok"; failed=1; }
+            grep -q 'data-hsk4-upper-textbook-ui="ok"' "$file" || { echo "FAIL L${lesson}T${text}: locked UI not ok"; failed=1; }
+            grep -Eq "class=\"text-card textbook-locked-card\"[^>]*data-text-no=\"$text\"|data-text-no=\"$text\"[^>]*class=\"text-card textbook-locked-card\"" "$file" || { echo "FAIL L${lesson}T${text}: requested canonical text card not rendered"; failed=1; }
+            local line_count zh_count py_count vi_count
+            line_count=$( (grep -o 'class="textbook-locked-line"' "$file" || true) | wc -l | tr -d ' ')
+            zh_count=$( (grep -o 'class="line-zh zh"' "$file" || true) | wc -l | tr -d ' ')
+            py_count=$( (grep -o 'class="line-py"' "$file" || true) | wc -l | tr -d ' ')
+            vi_count=$( (grep -o 'class="line-vn"' "$file" || true) | wc -l | tr -d ' ')
+            [ "$line_count" -ge 1 ] || { echo "FAIL L${lesson}T${text}: no canonical lines"; failed=1; }
+            [ "$zh_count" -eq "$line_count" ] || { echo "FAIL L${lesson}T${text}: zh count $zh_count != lines $line_count"; failed=1; }
+            [ "$py_count" -eq "$line_count" ] || { echo "FAIL L${lesson}T${text}: pinyin count $py_count != lines $line_count"; failed=1; }
+            [ "$vi_count" -eq "$line_count" ] || { echo "FAIL L${lesson}T${text}: vi count $vi_count != lines $line_count"; failed=1; }
+            ! grep -q 'BÀI KHOÁ — 课文重点' "$file" || { echo "FAIL L${lesson}T${text}: legacy heading leaked"; failed=1; }
+            ! grep -q 'Đọc tóm tắt, nghe câu trọng điểm' "$file" || { echo "FAIL L${lesson}T${text}: legacy summary-only copy leaked"; failed=1; }
+            if [ "$failed" -ne 0 ]; then
+              echo '--- DATASETS ---'
+              grep -o 'data-hsk4-upper[^ >]*="[^"]*"' "$file" | head -20 || true
+              echo '--- TEXT MARKERS ---'
+              grep -o 'textbook-locked[^ <]*' "$file" | head -30 || true
+              echo '--- CHROME STDERR ---'
+              tail -80 /tmp/hsk4u-lesson.err || true
+              return 1
+            fi
+            echo "LIVE HSK4 UPPER L${lesson} T${text} PASS: lines=$line_count"
+          }
+
           for lesson in $(seq 1 10); do
             for text in $(seq 1 5); do
               FILE="/tmp/hsk4u-${lesson}-${text}.html"
               "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=14000 --dump-dom "$BASE/lesson.html?id=$lesson&sec=text&text=$text&lockedqa=$GITHUB_SHA" > "$FILE" 2>/tmp/hsk4u-lesson.err || true
-              grep -q 'data-hsk4-upper="ready"' "$FILE"
-              grep -q 'data-hsk4-upper-textbook-locked="ok"' "$FILE"
-              grep -q 'data-hsk4-upper-textbook-ui="ok"' "$FILE"
-              grep -q "class=\"text-card textbook-locked-card\" data-text-no=\"$text\"" "$FILE"
-              test "$(grep -o 'class="textbook-locked-line"' "$FILE" | wc -l | tr -d ' ')" -ge 1
-              grep -q 'class="line-zh zh"' "$FILE"
-              grep -q 'class="line-py"' "$FILE"
-              grep -q 'class="line-vn"' "$FILE"
-              ! grep -q 'BÀI KHOÁ — 课文重点' "$FILE"
-              ! grep -q 'Đọc tóm tắt, nghe câu trọng điểm' "$FILE"
-              echo "LIVE HSK4 UPPER L${lesson} T${text} PASS"
+              check_lesson "$lesson" "$text" "$FILE"
             done
           done
           echo 'HSK4 UPPER LIVE BROWSER PASS: 10 lessons · 50 full textbook units · locked Chinese/pinyin/Vietnamese renderer'
