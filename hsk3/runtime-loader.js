@@ -5,7 +5,7 @@
     if(!document.querySelector('script[data-vocab-unified]')){
       const l=document.createElement('link');
       l.rel='stylesheet';
-      l.href='../assets/vocab-unified.css?v=20260816-1';
+      l.href='../assets/vocab-unified.css?v=20260816-4';
       l.dataset.vocabUnified='1';
       document.head.appendChild(l);
       const u=document.createElement('script');
