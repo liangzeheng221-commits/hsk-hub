@@ -30,7 +30,35 @@ for(const L of data){
 }
 console.log(`DATA PASS: 20 lessons, ${data.reduce((n,L)=>n+L.vocab.length,0)} raw vocab entries`);
 
+const practiceB64=Array.from({length:9},(_,i)=>read(`practice/reviewed/hsk3-v1.1.part${String(i+1).padStart(2,'0')}.b64`).trim()).join('');
+const practiceBank=JSON.parse(zlib.gunzipSync(Buffer.from(practiceB64,'base64')).toString('utf8'));
+assert.equal(practiceBank.version,'V1.1','reviewed practice version mismatch');
+assert.equal(practiceBank.lessons?.length,20,'reviewed practice must contain 20 lessons');
+assert.equal(practiceBank.qa?.total_questions,640,'reviewed practice must contain 640 questions');
+let practiceTotal=0;const practiceIds=new Set();
+for(const L of practiceBank.lessons){
+  assert.equal(L.basic?.length,18,`practice lesson ${L.lesson_id}: basic count must be 18`);
+  assert.equal(L.advanced?.length,14,`practice lesson ${L.lesson_id}: advanced count must be 14`);
+  for(const q of [...L.basic,...L.advanced]){
+    practiceTotal++;
+    assert(q.id&&!practiceIds.has(q.id),`practice duplicate/missing ID ${q.id}`);practiceIds.add(q.id);
+    assert(String(q.answer||'').trim(),`${q.id}: answer missing`);
+    assert(String(q.explanation_vi||'').trim(),`${q.id}: Vietnamese explanation missing`);
+    assert.equal(q.explanation_zh,undefined,`${q.id}: Chinese explanation field should not exist`);
+    for(const key of ['source_mode','source_page','source_id','source_basis'])assert.equal(q[key],undefined,`${q.id}: internal source field ${key} should not exist`);
+    if(q.type==='语序排序')assert(Array.isArray(q.segments)&&q.segments.length>=2,`${q.id}: sort segments missing`);
+    else{
+      assert(Array.isArray(q.options)&&q.options.length>=2,`${q.id}: options missing`);
+      assert.equal(new Set(q.options).size,q.options.length,`${q.id}: duplicate options`);
+      assert(q.options.includes(q.answer),`${q.id}: answer not in options`);
+    }
+  }
+}
+assert.equal(practiceTotal,640,'reviewed practice total mismatch');
+console.log('PRACTICE DATA PASS: 20 lessons · 640 questions · 18 basic + 14 advanced per lesson');
+
 const cloneData=()=>JSON.parse(JSON.stringify(data));
+const clonePractice=()=>JSON.parse(JSON.stringify(practiceBank));
 const run=(ctx,path)=>vm.runInContext(read(path),ctx,{filename:path});
 function makeDom(file,url){
   const errors=[];
@@ -47,6 +75,7 @@ function makeDom(file,url){
 }
 function baseRuntime(env,lesson=false){
   env.w.HSK3_LESSONS=cloneData();
+  env.w.HSK3_PRACTICE_V11=clonePractice();
   run(env.ctx,'hsk3/corrections.js');
   run(env.ctx,'hsk3/textbook-baseline.js');
   run(env.ctx,'hsk3/textbook-audit.js');
@@ -73,6 +102,7 @@ for(let id=1;id<=20;id++){
   const env=makeDom('hsk3/lesson.html',`https://example.test/hsk3/lesson.html?id=${id}&sec=vocab`);
   baseRuntime(env,true);
   vm.runInContext('initLesson()',env.ctx);
+  await new Promise(r=>setTimeout(r,0));
   const d=env.w.document;
   assert(d.querySelector('#lessonTitle').textContent.trim(),`lesson ${id}: title not rendered`);
   assert.equal(d.querySelectorAll('#lessonSelect option').length,20,`lesson ${id}: selector not 20 lessons`);
@@ -80,8 +110,14 @@ for(let id=1;id<=20;id++){
   assert(d.querySelector('#sceneTabs').children.length>0,`lesson ${id}: text scenes not rendered`);
   assert(d.querySelector('#grammarList').children.length>0,`lesson ${id}: grammar not rendered`);
   assert(d.querySelector('#hanziWordMap').children.length>0,`lesson ${id}: hanzi not rendered`);
-  assert(d.querySelector('#basicPractice').children.length>0,`lesson ${id}: basic practice not rendered`);
-  assert(d.querySelector('#advancedPractice').children.length>0,`lesson ${id}: advanced practice not rendered`);
+  assert.equal(d.querySelectorAll('#basicPractice .reviewed-card').length,18,`lesson ${id}: basic practice must render 18 questions`);
+  assert.equal(d.querySelectorAll('#advancedPractice .reviewed-card').length,14,`lesson ${id}: advanced practice must render 14 questions`);
+  const practiceText=d.querySelector('#practice').textContent;
+  assert(!/依据官方练习册|练习册第|改编为|source_mode|source_page|source_id|source_basis|怎么做网站|如何做网站/.test(practiceText),`lesson ${id}: internal production/source note leaked into practice UI`);
+  vm.runInContext(`checkReviewedTier('basic')`,env.ctx);
+  const firstFeedback=d.querySelector('#basicPractice .reviewed-card .feedback');
+  assert(firstFeedback.textContent.includes('Đáp án / 正确答案'),`lesson ${id}: answer not shown after submit`);
+  assert(firstFeedback.textContent.includes('Giải thích'),`lesson ${id}: Vietnamese explanation not shown after submit`);
   for(const sec of ['vocab','text','grammar','hanzi','practice'])vm.runInContext(`showSection('${sec}',false)`,env.ctx);
   run(env.ctx,'assets/lesson-menu-parity.js');
   run(env.ctx,'assets/hanzi-curriculum.js');
@@ -91,12 +127,12 @@ for(let id=1;id<=20;id++){
   assert(d.querySelector('#auditVocabSummary'),`lesson ${id}: audited vocab summary missing`);
   assert(d.querySelector('#auditTextbookSource'),`lesson ${id}: textbook text/source panel missing`);
   assert(d.querySelector('#auditGrammarNote'),`lesson ${id}: audited grammar note missing`);
-  assert(d.querySelector('#auditPracticeNote'),`lesson ${id}: audited practice scope missing`);
+  assert(d.querySelector('#practice .practice-note'),`lesson ${id}: practice note missing`);
   const textbookCount=env.w.HSK3_LESSONS[id-1].vocab.length;
   assert.equal(textbookCount,env.w.HSK3_AUDIT_META.counts[id],`lesson ${id}: audited textbook count mismatch`);
   const fatal=env.errors.filter(e=>!/Could not load|Not implemented/.test(String(e?.message||e)));
   assert.equal(fatal.length,0,`lesson ${id}: jsdom runtime errors: ${fatal.map(e=>e.message).join(' | ')}`);
   env.dom.window.close();
 }
-console.log('LESSON PASS: all 20 lessons rendered audited vocab/text/grammar/hanzi/practice and navigation');
+console.log('LESSON PASS: all 20 lessons rendered 18 basic + 14 advanced reviewed questions, answers and explanations');
 console.log('HSK3 SMOKE TEST PASS');
