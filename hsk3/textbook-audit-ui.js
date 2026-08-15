@@ -51,7 +51,7 @@
     const names=HSK3_LESSONS.reduce((n,x)=>n+x.vocab.filter(v=>v.properName).length,0);
     const total=core+extras+names;
     const box=document.createElement('div');box.id='hsk3TextbookNote';box.className='audit-home-note';
-    box.innerHTML=`<b>教材内容已校准：</b>本课程严格按照《HSK标准教程3》整理。教材本册共整理 <b>${total}</b> 个词目：<b>${core}</b> 个本级核心词 + <b>${extras}</b> 个教材标星补充词 + <b>${names}</b> 个专有名词。`;
+    box.innerHTML=`<b>词汇：</b>${total} 项 · ${core} 核心词 · ${extras} 补充词 · ${names} 专有名词。`;
     const anchor=q('.free-access-note',hero);(anchor||hero.lastElementChild)?.after(box);
     const stat=q('#wordStat');if(stat)stat.textContent=String(total);
   }
@@ -60,7 +60,7 @@
     const section=q('#vocab');if(!section||q('#auditVocabSummary',section))return;
     const core=coreWords().length,extras=regularWords().filter(w=>w.aboveLevel).length,names=properWords().length;
     const box=document.createElement('div');box.id='auditVocabSummary';box.className='audit-vocab-summary';
-    box.innerHTML=`<b>本课教材词目：</b>${L.vocab.length} 项 · 核心词 ${core} · 教材补充词 ${extras} · 专有名词 ${names}<div class="audit-core-note">带“教材补充”标记的词保留学习，但不计入本级核心练习抽题；专有名词单独列出。</div>`;
+    box.innerHTML=`<b>本课词汇：</b>${L.vocab.length} 项 · 核心词 ${core} · 补充词 ${extras} · 专有名词 ${names}<div class="audit-core-note">补充词与专有名词单独标注。</div>`;
     q('.tool-row',section)?.before(box);
   }
   function renderProperPanel(){
@@ -99,16 +99,16 @@
 
   function decorateText(){
     const sec=q('#text');if(!sec||q('#auditTextbookSource',sec))return;
-    const h=q('.section-head h2',sec);if(h)h.textContent='教材课文定位 & 情景练习 — 课文定位与自编练习';
-    const note=q('.source-note',sec);if(note)note.innerHTML='下方“情景练习”为网站根据本课主题、核心词汇和语法重新编写的口语/理解练习，<b>不是教材四篇课文的逐字转载</b>。教材信息与本站原创练习在此明确分层。';
+    const h=q('.section-head h2',sec);if(h)h.textContent='课文与情景练习 · Bài khoá & Luyện tình huống';
+    const note=q('.source-note',sec);if(note)note.textContent='Các tình huống luyện tập dùng để củng cố chủ đề, từ vựng và ngữ pháp của bài. Hãy kết hợp với bài khoá trong giáo trình.';
     const box=document.createElement('div');box.id='auditTextbookSource';box.className='audit-source-box';
-    box.innerHTML=`<b>教材定位 · Bám sát giáo trình</b><div class="audit-textbook-grid"><div class="audit-textbook-card"><strong>课文起始页 · Trang bắt đầu</strong><span>《HSK标准教程3》第 ${L.lessonPage} 页</span><small>教材每课含 4 个课文场景；本站不将原创情景冒充原文。</small></div><div class="audit-textbook-card"><strong>俗语 · Tục ngữ</strong><span>${escHtml(L.proverb.zh)}</span><small>${escHtml(L.proverb.vn)}</small></div>${L.culture?`<div class="audit-textbook-card"><strong>文化 · Văn hóa（第 ${L.culture.page} 页）</strong><span>${escHtml(L.culture.zh)}</span><small>${escHtml(L.culture.vn)}</small></div>`:''}<div class="audit-textbook-card"><strong>热身与运用 · Khởi động & vận dụng</strong><span>先按教材完成热身/双人或小组活动，再使用本站情景练习巩固。</span><small>本站练习为补充教学材料，不替代教材原题。</small></div></div>`;
+    box.innerHTML=`<b>教材 · Giáo trình</b><div class="audit-textbook-grid"><div class="audit-textbook-card"><strong>课文起始页 · Trang bắt đầu</strong><span>《HSK标准教程3》第 ${L.lessonPage} 页</span></div><div class="audit-textbook-card"><strong>俗语 · Tục ngữ</strong><span>${escHtml(L.proverb.zh)}</span><small>${escHtml(L.proverb.vn)}</small></div>${L.culture?`<div class="audit-textbook-card"><strong>文化 · Văn hóa（第 ${L.culture.page} 页）</strong><span>${escHtml(L.culture.zh)}</span><small>${escHtml(L.culture.vn)}</small></div>`:''}</div>`;
     q('#sceneTabs',sec)?.before(box);
   }
   function decorateGrammar(){
     const sec=q('#grammar');if(!sec||q('#auditGrammarNote',sec))return;
     const box=document.createElement('div');box.id='auditGrammarNote';box.className='audit-grammar-note';
-    box.innerHTML=`<b>语法已按教材重新核对：</b>本课 ${L.grammar.length} 个语言点的结构、解释和示例已统一到《HSK标准教程3》口径。示例句为本站重新编写，用于说明规则，不冒充教材原句。`;
+    box.innerHTML=`<b>本课语言点：</b>${L.grammar.length} 个。`;
     q('#grammarList',sec)?.before(box);
   }
 
@@ -128,7 +128,7 @@
     window.renderFill=renderFill;window.checkFill=checkFill;
   }
   if(typeof renderMatch==='function'){
-    renderMatch=function(){matchState={};const words=buckets()[2].map((w,i)=>({...w,key:'k'+i})),cols={zh:shuffle(words),py:shuffle(words),vn:shuffle(words)};window._matchWords=words;$('#q-match').innerHTML=`<div class="practice-note">Chọn lần lượt một mục ở mỗi cột: Hán tự → pinyin → nghĩa Việt. Ba dạng từ vựng cơ bản cùng nhau bao phủ toàn bộ từ cốt lõi của bài.</div><div class="match-grid"><div class="match-col" id="m-zh">${cols.zh.map(w=>`<button class="match-item" data-col="zh" data-key="${w.key}">${esc(w.zh)}</button>`).join('')}</div><div class="match-col" id="m-py">${cols.py.map(w=>`<button class="match-item" data-col="py" data-key="${w.key}">${esc(w.py||pyOf(w.zh))}</button>`).join('')}</div><div class="match-col" id="m-vn">${cols.vn.map(w=>`<button class="match-item" data-col="vn" data-key="${w.key}">${esc(w.vn)}</button>`).join('')}</div></div><div class="feedback" id="matchFeedback"></div>`;$$('.match-item',$('#q-match')).forEach(b=>b.onclick=()=>selectMatch(b,words))};window.renderMatch=renderMatch;
+    renderMatch=function(){matchState={};const words=buckets()[2].map((w,i)=>({...w,key:'k'+i})),cols={zh:shuffle(words),py:shuffle(words),vn:shuffle(words)};window._matchWords=words;$('#q-match').innerHTML=`<div class="practice-note">Chọn lần lượt một mục ở mỗi cột: Hán tự → pinyin → nghĩa Việt.</div><div class="match-grid"><div class="match-col" id="m-zh">${cols.zh.map(w=>`<button class="match-item" data-col="zh" data-key="${w.key}">${esc(w.zh)}</button>`).join('')}</div><div class="match-col" id="m-py">${cols.py.map(w=>`<button class="match-item" data-col="py" data-key="${w.key}">${esc(w.py||pyOf(w.zh))}</button>`).join('')}</div><div class="match-col" id="m-vn">${cols.vn.map(w=>`<button class="match-item" data-col="vn" data-key="${w.key}">${esc(w.vn)}</button>`).join('')}</div></div><div class="feedback" id="matchFeedback"></div>`;$$('.match-item',$('#q-match')).forEach(b=>b.onclick=()=>selectMatch(b,words))};window.renderMatch=renderMatch;
   }
   if(typeof grammarFocus==='function'){
     grammarFocus=function(g){return g.auditFocus||''};window.grammarFocus=grammarFocus;
@@ -144,7 +144,7 @@
     };window.segmentSentence=segmentSentence;
   }
 
-  function decoratePractice(){const sec=q('#practice');if(!sec||q('#auditPracticeNote',sec))return;const box=document.createElement('div');box.id='auditPracticeNote';box.className='audit-grammar-note';box.innerHTML=`<b>练习抽题口径：</b>基础词汇题只从本课 HSK3 核心词抽取；专有名词和教材标星补充词不计入核心得分。选择 / 填空 / 连线三个词汇题型合计覆盖本课全部核心词；语法干扰项只取本课及此前已学课次，避免提前引入后续语言点。`;q('.practice-level-tabs',sec)?.before(box)}
+  function decoratePractice(){const sec=q('#practice');if(!sec||q('#auditPracticeNote',sec))return;const box=document.createElement('div');box.id='auditPracticeNote';box.className='audit-grammar-note';box.innerHTML=`<b>练习：</b>词汇、语法、句型与阅读理解；完成后查看答案与解析。`;q('.practice-level-tabs',sec)?.before(box)}
 
   // Wrap page renderers before initLesson/renderHome runs.
   if(typeof renderHome==='function'){const old=renderHome;renderHome=function(){old();decorateHome()};window.renderHome=renderHome}
