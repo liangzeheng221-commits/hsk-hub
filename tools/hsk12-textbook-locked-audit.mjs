@@ -49,7 +49,9 @@ const h1Auth=read('hsk1/auth-patch.js');
 if(!h1Auth.includes('textbook-locked.js')||!h1Auth.includes("window.addEventListener('load'")) fail('HSK1 locked corpus is not wired after page audits');
 
 const h2Loader=read('data/v8-load.js');
-for(let i=1;i<=4;i++)if(!h2Loader.includes(`hsk2-textbook-locked-${i}.js`)) fail(`HSK2 loader missing locked corpus chunk ${i}`);
+const hasChunkLoop=/for\s*\(let\s+i\s*=\s*1\s*;\s*i\s*<=\s*4\s*;\s*i\+\+\)/.test(h2Loader)&&h2Loader.includes('hsk2-textbook-locked-${i}.js');
+const hasExplicitChunks=[1,2,3,4].every(i=>h2Loader.includes(`hsk2-textbook-locked-${i}.js`));
+if(!(hasChunkLoop||hasExplicitChunks)) fail('HSK2 loader is not wired to all four locked corpus chunks');
 if(!h2Loader.includes('hsk2-textbook-locked.js')) fail('HSK2 loader missing locked canonical layer');
 const h2Nav=read('assets/hsk2-nav-fix.js');
 if(!h2Nav.includes('hsk2-textbook-locked-ui.js')) fail('HSK2 lesson does not load locked renderer');
