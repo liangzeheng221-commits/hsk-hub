@@ -10,7 +10,7 @@ ReviewedPractice.install({
 
 /* Locked textbook full-text boot: HSK4 下 lessons 11–20. */
 (()=>{
-  const v='20260815-locked-1';
+  const v='20260815-locked-2';
   const css=document.createElement('link');
   css.rel='stylesheet'; css.href='locked-text.css?v='+v; document.head.appendChild(css);
   const srcs=[
@@ -22,7 +22,7 @@ ReviewedPractice.install({
   const apply=()=>{
     const sec=document.getElementById('text');
     if(sec){const h=sec.querySelector('.section-head h2');if(h)h.textContent='BÀI KHOÁ — 课文全文';const n=sec.querySelector('.source-note');if(n)n.textContent='Đầy đủ 5 phần bài khoá theo giáo trình: chữ Hán, pinyin chuẩn đã khóa và bản dịch tiếng Việt từng câu.';}
-    if(window.L&&typeof window.renderText==='function')window.renderText();
+    if(typeof window.renderText==='function')window.renderText();
   };
   (async()=>{try{for(const src of srcs)await load(src);if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(apply,0),{once:true});else apply();}catch(err){console.error('[HSK4 locked text]',err);document.documentElement.dataset.hsk4LockedTextData='load-error';}})();
 })();
