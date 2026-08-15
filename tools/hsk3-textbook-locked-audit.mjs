@@ -5,13 +5,19 @@ const read=p=>fs.readFileSync(p,'utf8');
 const fail=m=>{throw new Error(m)};
 const ok=(v,m)=>{if(!v)fail(m)};
 
-const packed=read('hsk3/textbook-locked-data.js');
-const m=packed.match(/__HSK3_LOCKED_B64\s*=\s*['"]([A-Za-z0-9+/=]+)['"]/);
-ok(m,'HSK3 packed locked corpus missing');
-const corpus=JSON.parse(zlib.gunzipSync(Buffer.from(m[1],'base64')).toString('utf8'));
+const files=['hsk3/textbook-locked-data.js','hsk3/textbook-locked-data-2.js','hsk3/textbook-locked-data-3.js','hsk3/textbook-locked-data-4.js'];
+const parts=files.map((file,i)=>{
+  const code=read(file);
+  const m=code.match(new RegExp(`__HSK3_LOCKED_B64_${i+1}\\s*=\\s*['\"]([A-Za-z0-9+/=]+)['\"]`));
+  ok(m,`HSK3 packed locked corpus chunk ${i+1} missing`);
+  return m[1];
+});
+const packed=parts.join('');
+ok(packed.length===63532,`HSK3 packed gzip base64 length mismatch: ${packed.length}`);
+const corpus=JSON.parse(zlib.gunzipSync(Buffer.from(packed,'base64')).toString('utf8'));
 
 ok(corpus.corpus_id==='HSK3-CANONICAL-LOCKED-v1','HSK3 corpus id mismatch');
-ok(corpus.source_pdf?.file_name==='HSK 3 Sách giáo khoa.pdf','HSK3 source filename mismatch');
+ok(String(corpus.source_pdf?.file_name||'').normalize('NFC')==='HSK 3 Sách giáo khoa.pdf','HSK3 source filename mismatch');
 ok(corpus.source_pdf?.sha256==='f415d2233eeb18ef843514335ca5f09aae861d9c9a068f4908637e2f7fa43975','HSK3 Tier-0 SHA-256 mismatch');
 ok(corpus.source_pdf?.physical_pages===207,'HSK3 source page count mismatch');
 ok(corpus.unit_count===80&&corpus.units?.length===80,'HSK3 expected 80 text units');
@@ -50,14 +56,17 @@ const l18t2=corpus.units.find(u=>u.lesson===18&&u.text_no===2)?.lines?.[0];
 ok(l18t2?.speaker==='小明','HSK3 L18 T2 speaker cross-check lost');
 
 const runtime=read('hsk3/runtime-loader-core.js');
-for(const asset of ['textbook-locked-data.js','textbook-locked.js','textbook-locked-ui.js'])ok(runtime.includes(asset),`HSK3 runtime missing ${asset}`);
+for(const asset of ['textbook-locked-data.js','textbook-locked-data-2.js','textbook-locked-data-3.js','textbook-locked-data-4.js','textbook-locked.js','textbook-locked-ui.js'])ok(runtime.includes(asset),`HSK3 runtime missing ${asset}`);
 ok(runtime.includes('await window.HSK3_TEXTBOOK_LOCKED_READY'),'HSK3 runtime does not await locked corpus');
 ok(runtime.indexOf("loadScript('textbook-audit-ui.js')")<runtime.indexOf("loadScript('textbook-locked-ui.js')"),'HSK3 locked UI must load after legacy audit UI');
 
+const layer=read('hsk3/textbook-locked.js');
+ok(layer.includes('__HSK3_LOCKED_B64_1')&&layer.includes('__HSK3_LOCKED_B64_4'),'HSK3 canonical layer does not concatenate all gzip chunks');
+ok(layer.includes("DecompressionStream('gzip')")&&layer.includes('pako.ungzip'),'HSK3 canonical layer lacks gzip browser/fallback decoding');
 const ui=read('hsk3/textbook-locked-ui.js');
 ok(ui.includes("x.py||''"),'HSK3 textbook renderer does not use canonical pinyin');
 ok(!ui.includes('pyOf(x.zh)'),'HSK3 textbook renderer still generates runtime pinyin');
 ok(ui.includes("document.getElementById(id)?.remove()"),'HSK3 student UI does not remove audit metadata boxes');
 ok(!ui.includes('source_printed_page')&&!ui.includes('source_pdf_page'),'HSK3 student UI exposes source coordinate metadata');
 
-console.log(JSON.stringify({ok:true,corpus_id:corpus.corpus_id,source_pdf_sha256:corpus.source_pdf.sha256,lessons:20,text_units:80,lines:443,direct_uploaded_pdf_units:76,direct_uploaded_pdf_lines:424,external_exception_units:4,external_exception_lines:19,lesson18_missing_printed_pages:[168,169],runtime_pinyin_for_text:false,student_source_metadata:false},null,2));
+console.log(JSON.stringify({ok:true,corpus_id:corpus.corpus_id,source_pdf_sha256:corpus.source_pdf.sha256,lessons:20,text_units:80,lines:443,direct_uploaded_pdf_units:76,direct_uploaded_pdf_lines:424,external_exception_units:4,external_exception_lines:19,lesson18_missing_printed_pages:[168,169],gzip_base64_length:packed.length,runtime_pinyin_for_text:false,student_source_metadata:false},null,2));
