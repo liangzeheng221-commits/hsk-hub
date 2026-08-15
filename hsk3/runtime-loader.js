@@ -1,7 +1,7 @@
 /* Robust HSK3 runtime bootstrap. */
 (()=>{
   'use strict';
-  const BUILD='20260815-session-auth-1';
+  const BUILD='20260815-hsk3-practice-v11-1';
   const isLesson=()=>!!document.getElementById('lessonTitle');
   const qs=s=>document.querySelector(s);
   const domReady=()=>document.readyState==='loading'?new Promise(r=>document.addEventListener('DOMContentLoaded',r,{once:true})):Promise.resolve();
