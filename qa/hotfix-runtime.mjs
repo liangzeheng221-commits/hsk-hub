@@ -5,12 +5,16 @@ import assert from 'node:assert/strict';
 const read=p=>fs.readFileSync(p,'utf8');
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
-// HSK3 regression: the home renderer creates #hsk3TextbookNote; this must never be treated as fatal.
+// HSK3 regression: canonical textbook text is mandatory; old audit/source boxes must not be required or shown to learners.
 {
   const src=read('hsk3/runtime-loader-core.js');
-  assert(src.includes("qs('#hsk3TextbookNote')"),'HSK3 runtime must recognize #hsk3TextbookNote');
-  assert(!src.includes("if(!qs('#hsk3SystemNote'))throw new Error('教材口径说明未渲染')"),'stale HSK3 fatal verifier is still present');
-  console.log('HSK3 HOTFIX PASS: textbook note ID no longer causes false fatal error');
+  const ui=read('hsk3/textbook-locked-ui.js');
+  assert(src.includes('__HSK3_TEXTBOOK_LOCKED'),'HSK3 runtime must require the locked textbook corpus');
+  assert(src.includes("loadScript('textbook-locked-ui.js')"),'HSK3 runtime must load the final locked textbook renderer');
+  assert(!src.includes("qs('#hsk3TextbookNote')"),'HSK3 runtime must not require the removed textbook-note audit box');
+  assert(ui.includes("'auditTextbookSource','auditVocabSummary','auditGrammarNote','hsk3TextbookNote'"),'HSK3 locked UI must remove legacy audit/source boxes');
+  assert(!ui.includes('source_printed_page')&&!ui.includes('source_pdf_page'),'HSK3 learner UI must not expose source coordinates');
+  console.log('HSK3 HOTFIX PASS: locked textbook text required; legacy audit/source boxes removed from learner UI');
 }
 
 // HSK1 regression: the real patch must speak synchronously inside the click/user-gesture task,
