@@ -1,19 +1,25 @@
 import fs from 'node:fs';
 import zlib from 'node:zlib';
+import crypto from 'node:crypto';
 
 const read=p=>fs.readFileSync(p,'utf8');
 const fail=m=>{throw new Error(m)};
 const ok=(v,m)=>{if(!v)fail(m)};
+const sha=s=>crypto.createHash('sha256').update(s).digest('hex');
 
 const files=['hsk3/textbook-locked-data.js','hsk3/textbook-locked-data-2.js','hsk3/textbook-locked-data-3.js','hsk3/textbook-locked-data-4.js'];
+const expectedHashes=['5690af82d76427f61e6a674119803e66b74f4391adf9841468525d6d0e2e7dbc','fa2dfef945df5b8cb89268012be3c6c3e1dc231d160b6a6738c3018a82339319','0a1ae62ffef014c3ff28b56ea50a891de2326ebb3e0f60efb1bbc1be4b9c0292','ee7955f4731aff0ec42df1530ceb9c4e877127629181ee1133f5ddff5326288b'];
 const parts=files.map((file,i)=>{
   const code=read(file);
   const m=code.match(new RegExp(`__HSK3_LOCKED_B64_${i+1}\\s*=\\s*['\"]([A-Za-z0-9+/=]+)['\"]`));
   ok(m,`HSK3 packed locked corpus chunk ${i+1} missing`);
+  const actual=sha(m[1]);
+  ok(actual===expectedHashes[i],`HSK3 locked chunk ${i+1} SHA mismatch: expected ${expectedHashes[i]}, got ${actual}`);
   return m[1];
 });
 const packed=parts.join('');
 ok(packed.length===63532,`HSK3 packed gzip base64 length mismatch: ${packed.length}`);
+ok(sha(packed)==='0f1838163135fdf3906ed6fbec3f6d04243e820f74e0d0e38761c894b302d5d7','HSK3 packed gzip aggregate SHA mismatch');
 const corpus=JSON.parse(zlib.gunzipSync(Buffer.from(packed,'base64')).toString('utf8'));
 
 ok(corpus.corpus_id==='HSK3-CANONICAL-LOCKED-v1','HSK3 corpus id mismatch');
@@ -69,4 +75,4 @@ ok(!ui.includes('pyOf(x.zh)'),'HSK3 textbook renderer still generates runtime pi
 ok(ui.includes("document.getElementById(id)?.remove()"),'HSK3 student UI does not remove audit metadata boxes');
 ok(!ui.includes('source_printed_page')&&!ui.includes('source_pdf_page'),'HSK3 student UI exposes source coordinate metadata');
 
-console.log(JSON.stringify({ok:true,corpus_id:corpus.corpus_id,source_pdf_sha256:corpus.source_pdf.sha256,lessons:20,text_units:80,lines:443,direct_uploaded_pdf_units:76,direct_uploaded_pdf_lines:424,external_exception_units:4,external_exception_lines:19,lesson18_missing_printed_pages:[168,169],gzip_base64_length:packed.length,runtime_pinyin_for_text:false,student_source_metadata:false},null,2));
+console.log(JSON.stringify({ok:true,corpus_id:corpus.corpus_id,source_pdf_sha256:corpus.source_pdf.sha256,lessons:20,text_units:80,lines:443,direct_uploaded_pdf_units:76,direct_uploaded_pdf_lines:424,external_exception_units:4,external_exception_lines:19,lesson18_missing_printed_pages:[168,169],gzip_base64_length:packed.length,gzip_base64_sha256:sha(packed),chunk_sha256:expectedHashes,runtime_pinyin_for_text:false,student_source_metadata:false},null,2));
