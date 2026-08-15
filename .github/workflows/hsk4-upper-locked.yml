@@ -57,9 +57,9 @@ jobs:
             grep -Eq "class=\"text-card textbook-locked-card\"[^>]*data-text-no=\"$text\"|data-text-no=\"$text\"[^>]*class=\"text-card textbook-locked-card\"" "$file" || { echo "FAIL L${lesson}T${text}: requested canonical text card not rendered"; failed=1; }
             local line_count zh_count py_count vi_count
             line_count=$( (grep -o 'class="textbook-locked-line"' "$file" || true) | wc -l | tr -d ' ')
-            zh_count=$( (grep -o 'class="line-zh zh"' "$file" || true) | wc -l | tr -d ' ')
-            py_count=$( (grep -o 'class="line-py"' "$file" || true) | wc -l | tr -d ' ')
-            vi_count=$( (grep -o 'class="line-vn"' "$file" || true) | wc -l | tr -d ' ')
+            zh_count=$( (grep -o 'locked-line-zh' "$file" || true) | wc -l | tr -d ' ')
+            py_count=$( (grep -o 'locked-line-py' "$file" || true) | wc -l | tr -d ' ')
+            vi_count=$( (grep -o 'locked-line-vn' "$file" || true) | wc -l | tr -d ' ')
             [ "$line_count" -ge 1 ] || { echo "FAIL L${lesson}T${text}: no canonical lines"; failed=1; }
             [ "$zh_count" -eq "$line_count" ] || { echo "FAIL L${lesson}T${text}: zh count $zh_count != lines $line_count"; failed=1; }
             [ "$py_count" -eq "$line_count" ] || { echo "FAIL L${lesson}T${text}: pinyin count $py_count != lines $line_count"; failed=1; }
