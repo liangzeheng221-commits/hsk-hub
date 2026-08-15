@@ -32,6 +32,8 @@ jobs:
         run: node tools/hsk12-content-audit.mjs
       - name: Validate reviewed HSK3 and HSK4 practice banks
         run: node qa/reviewed-practice-smoke.mjs
+      - name: Validate HSK4 vocabulary stroke-order panels
+        run: node qa/hsk4-vocab-hanzi-smoke.mjs
       - name: Upload QA reports
         if: always()
         uses: actions/upload-artifact@v4

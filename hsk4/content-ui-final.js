@@ -32,7 +32,8 @@ window.renderVocab=function(){
 };
 
 window.showWordDetail=function(w){
-  q('#wordPanel').innerHTML=`<div class="word-detail final-word-detail"><div><div class="word-main">${e(w.zh)}</div><div class="word-py">${e(wordPy(w))}</div><div class="word-pos">${e(posText(w))}</div><div class="word-context">${e(w.vn)}</div></div><button class="ghost-btn" onclick='speak(${JSON.stringify(w.zh)})'>🔊 Nghe phát âm</button></div>`;
+  q('#wordPanel').innerHTML=`<div class="word-detail final-word-detail"><div><div class="word-main">${e(w.zh)}</div><div class="word-py">${e(wordPy(w))}</div><div class="word-pos">${e(posText(w))}</div><div class="word-context">${e(w.vn)}</div></div><button class="ghost-btn" onclick='speak(${JSON.stringify(w.zh)})'>🔊 Nghe phát âm</button></div><div id="hsk4VocabHanziMount"></div>`;
+  window.HSK4VocabHanzi?.render(w);
 };
 
 function properNounHTML(){
