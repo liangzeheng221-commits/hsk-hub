@@ -24,7 +24,7 @@
       const note=g.logic_note||g.textbook_note||'';
       if(!structures.length&&!atoms.length&&!note)return;
       const box=document.createElement('section');box.className='textbook-detail';
-      let html='<div class="textbook-detail-head">教材用法细则 · Chi tiết theo giáo trình</div>';
+      let html='<div class="textbook-detail-head">用法细则 · Chi tiết cách dùng</div>';
       if(structures.length>1){
         html+='<div class="textbook-sub"><b>结构 · Cấu trúc</b><ol>'+structures.map(x=>`<li><code>${escHtml(x)}</code></li>`).join('')+'</ol></div>';
       }
@@ -32,11 +32,6 @@
         html+='<div class="textbook-sub"><b>规则 · Quy tắc</b><ul>'+atoms.map(a=>`<li><span class="rule-type">${escHtml(LABELS[a.type]||LABELS.note)}</span><span>${escHtml(a.text)}</span></li>`).join('')+'</ul></div>';
       }
       if(note)html+=`<div class="textbook-note"><b>说明 · Ghi chú</b><span>${escHtml(note)}</span></div>`;
-      const source=g.source||{};
-      if(source.book||source.lesson_start_page){
-        const parts=[source.book,source.lesson?`第 ${source.lesson} 课`:'',source.lesson_start_page?`约第 ${source.lesson_start_page} 页起`:'' ].filter(Boolean);
-        html+=`<div class="textbook-source">教材定位 · ${escHtml(parts.join(' · '))}</div>`;
-      }
       box.innerHTML=html;card.appendChild(box);
     });
   }
@@ -47,10 +42,10 @@
     const c=lesson.compare;if(!c||!Array.isArray(c.differences)||!c.differences.length)return;
     const names=String(c.title||'').split(/\s*[—–-]\s*/);const left=names[0]||'A',right=names[1]||'B';
     const wrap=document.createElement('div');wrap.className='compare-detail-table';
-    wrap.innerHTML=`<div class="compare-detail-head">教材辨析 · So sánh chi tiết</div><div class="compare-grid"><div class="compare-th">比较点</div><div class="compare-th">${escHtml(left)}</div><div class="compare-th">${escHtml(right)}</div>${c.differences.map(d=>`<div class="compare-dim">${escHtml(d.dimension)}</div><div>${escHtml(d.left)}</div><div>${escHtml(d.right)}</div>`).join('')}</div>`;
+    wrap.innerHTML=`<div class="compare-detail-head">辨析 · So sánh chi tiết</div><div class="compare-grid"><div class="compare-th">比较点</div><div class="compare-th">${escHtml(left)}</div><div class="compare-th">${escHtml(right)}</div>${c.differences.map(d=>`<div class="compare-dim">${escHtml(d.dimension)}</div><div>${escHtml(d.left)}</div><div>${escHtml(d.right)}</div>`).join('')}</div>`;
     panel.appendChild(wrap);
   }
-  function decorate(){addGrammarDetails();addCompareDetails();document.documentElement.dataset.hsk4UpperTextbookDetail='20260815-1'}
+  function decorate(){addGrammarDetails();addCompareDetails();document.documentElement.dataset.hsk4UpperTextbookDetail='20260815-2'}
   if(typeof renderGrammar==='function'){
     const base=renderGrammar;
     window.renderGrammar=function(){const result=base.apply(this,arguments);decorate();return result};
