@@ -44,7 +44,10 @@
     L.grammarManifestVersion='2026-08-15';
   }
 
-  /* Proper names explicitly listed in the textbook contents. */
+  /* 教材专有名词：统一补入课程数据，避免依赖后续审计层临时补词。 */
+  addVocab(3,{zh:'李月',py:'Lǐ Yuè',vn:'Lý Nguyệt (tên người)'});
+  addVocab(3,{zh:'中国',py:'Zhōngguó',vn:'Trung Quốc'});
+  addVocab(3,{zh:'美国',py:'Měiguó',vn:'Mỹ, Hoa Kỳ'});
   addVocab(10,{zh:'王方',py:'Wáng Fāng',vn:'Vương Phương (tên người)'});
   addVocab(10,{zh:'谢朋',py:'Xiè Péng',vn:'Tạ Bằng (tên người)'});
   addVocab(13,{zh:'大卫',py:'Dàwèi',vn:'David (tên người)'});
@@ -58,5 +61,40 @@
     const phone=(L13.grammar||[]).find(g=>g.title==='电话号码的表达');
     if(phone){phone.structure='逐个数字读；电话号码中的 1 → yāo';phone.desc='Số điện thoại thường đọc từng chữ số riêng lẻ. Theo mẫu của giáo trình, chữ số “1” trong số điện thoại đọc là yāo; pinyin phải ghi theo cách đọc thực tế.';phone.canonicalized='2026-08-15'}
   }
+
+  /* 教材末尾词表最终口径：10 个★补充词 + 8 个专有名词。 */
+  const VOCAB_SUPPLEMENT={1:['您'],5:['口'],6:['好吃'],7:['问'],12:['身体'],13:['给','吧','也'],14:['啊'],15:['一起']};
+  const VOCAB_PROPER={3:['李月','中国','美国'],10:['王方','谢朋'],11:['北京'],13:['大卫'],14:['张']};
+  const entries=o=>Object.entries(o).flatMap(([lesson,words])=>words.map(zh=>({lesson:Number(lesson),zh})));
+  function applyVocabContract(){
+    const supp=new Set(entries(VOCAB_SUPPLEMENT).map(x=>`${x.lesson}:${x.zh}`));
+    const proper=new Set(entries(VOCAB_PROPER).map(x=>`${x.lesson}:${x.zh}`));
+    for(const L of lessons){
+      for(const v of L.vocab||[]){
+        const key=`${Number(L.id)}:${v.zh}`;
+        if(proper.has(key)){
+          v.kind='proper';v.kind_label='专名 · Tên riêng';v.pos='专名 · Tên riêng';
+        }else if(supp.has(key)){
+          v.kind='supplement';v.kind_label='★ 教材补充词 · Từ bổ sung';
+        }
+      }
+      L.coreVocabCount=(L.vocab||[]).filter(v=>v.kind==='core').length;
+    }
+    const missing=[...entries(VOCAB_SUPPLEMENT),...entries(VOCAB_PROPER)].filter(x=>!get(x.lesson)?.vocab?.some(v=>v.zh===x.zh)).map(x=>`L${x.lesson}:${x.zh}`);
+    const suppCount=lessons.reduce((n,L)=>n+(L.vocab||[]).filter(v=>v.kind==='supplement').length,0);
+    const properCount=lessons.reduce((n,L)=>n+(L.vocab||[]).filter(v=>v.kind==='proper').length,0);
+    const ok=!missing.length&&suppCount===10&&properCount===8;
+    window.__HSK1_VOCAB_CONTRACT={version:'2026-08-15-vocab-1',ok,supplement:VOCAB_SUPPLEMENT,proper:VOCAB_PROPER,suppCount,properCount,missing};
+    if(typeof document!=='undefined')document.documentElement.dataset.hsk1VocabContract=ok?'ok':'error';
+    if(!ok)console.error('[HSK1 vocab contract]',window.__HSK1_VOCAB_CONTRACT);
+    if(typeof L!=='undefined'&&L&&typeof renderVocab==='function'){
+      try{renderVocab(document.getElementById('vSearch')?.value||'')}catch(e){console.error('[HSK1 vocab redraw]',e)}
+    }
+  }
+  if(typeof window!=='undefined'){
+    if(document.readyState==='complete')applyVocabContract();
+    else window.addEventListener('load',applyVocabContract,{once:true});
+  }
+
   window.HSK1_GRAMMAR_CANONICAL={version:'2026-08-15',total:45,classified:true};
 })();
