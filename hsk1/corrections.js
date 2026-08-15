@@ -8,6 +8,36 @@
   lessons.forEach(L=>{const o=official[L.id];if(o){L.title=o.zh;L.vn_title=o.vn}});
   const get=id=>lessons.find(x=>x.id===id);
   const addVocab=(id,item)=>{const L=get(id);if(L&&!L.vocab.some(v=>v.zh===item.zh))L.vocab.push(item)};
+  const norm=s=>String(s??'').replace(/[()]/g,ch=>ch==='('?'（':'）').replace(/\s+/g,'').trim();
+  const formal={
+    3:['疑问代词“什么”','“是”字句','用“吗”的疑问句'],
+    4:['疑问代词“谁”“哪”','结构助词“的”','疑问助词“呢”（1）'],
+    5:['疑问代词“几”','百以内的数字','“了”表变化','“多 + 大”表示疑问'],
+    6:['能愿动词“会”（1）','形容词谓语句','疑问代词“怎么”（1）'],
+    7:['日期的表达（1）：月、日/号、星期','名词谓语句','连动句（1）：去 + 地方 + 做什么'],
+    8:['能愿动词“想”','疑问代词“多少”','量词“个”“口”','钱数的表达'],
+    9:['动词“在”','疑问代词“哪儿”','介词“在”','疑问助词“呢”（2）'],
+    10:['“有”字句：表示存在','连词“和”','能愿动词“能”','用“请”的祈使句'],
+    11:['时间的表达','时间词做状语','名词“前”'],
+    12:['疑问代词“怎么样”','主谓谓语句','程度副词“太”','能愿动词“会”（2）'],
+    13:['叹词“喂”','“在……呢”表示动作正在进行','电话号码的表达','语气助词“吧”'],
+    14:['“了”表发生或完成','名词“后”','语气助词“啊”','副词“都”'],
+    15:['“是……的”句：强调时间、地点、方式','日期的表达（2）：年、月、日/号、星期']
+  };
+  const aliases={
+    '100以内的数字':'百以内的数字','“了”表示变化':'“了”表变化','日期的表达（1）':'日期的表达（1）：月、日/号、星期','日期的表达（2）':'日期的表达（2）：年、月、日/号、星期'
+  };
+  for(const L of lessons){
+    const expected=formal[L.id]||[],expectedNorm=new Map(expected.map(x=>[norm(x),x]));
+    for(const g of L.grammar||[]){
+      if(aliases[g.title])g.title=aliases[g.title];
+      const canonical=expectedNorm.get(norm(g.title));
+      if(canonical){g.title=canonical;g.textbook_title=canonical;g.content_type='grammar'}else g.content_type='phonetics';
+    }
+    L.phonetics=(L.grammar||[]).filter(g=>g.content_type==='phonetics').map(g=>({...g}));
+    L.formalGrammarCount=(L.grammar||[]).filter(g=>g.content_type==='grammar').length;
+    L.grammarManifestVersion='2026-08-15';
+  }
 
   /* Proper names explicitly listed in the textbook contents. */
   addVocab(10,{zh:'王方',py:'Wáng Fāng',vn:'Vương Phương (tên người)'});
@@ -20,6 +50,8 @@
   if(L13){
     if(L13.scenes?.[2]?.lines?.[0])L13.scenes[2].lines[0].py='Bā èr sān líng sì yāo wǔ wǔ, zhè shì Lǐ lǎoshī de diànhuà ma?';
     if(L13.scenes?.[2]?.lines?.[1])L13.scenes[2].lines[1].py='Bú shì, tā de diànhuà shì bā èr sān líng sì yāo wǔ liù.';
-    if(L13.grammar?.[2])L13.grammar[2].desc='Số điện thoại thường đọc từng chữ số riêng lẻ. “1” trong số điện thoại đọc là yāo theo mẫu của giáo trình; các chữ số được đọc lần lượt từng số.';
+    const phone=(L13.grammar||[]).find(g=>g.title==='电话号码的表达');
+    if(phone){phone.structure='逐个数字读；电话号码中的 1 → yāo';phone.desc='Số điện thoại thường đọc từng chữ số riêng lẻ. Theo mẫu của giáo trình, chữ số “1” trong số điện thoại đọc là yāo; pinyin phải ghi theo cách đọc thực tế.';phone.canonicalized='2026-08-15'}
   }
+  window.HSK1_GRAMMAR_CANONICAL={version:'2026-08-15',total:45,classified:true};
 })();
