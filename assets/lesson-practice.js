@@ -1,44 +1,194 @@
-function toggleHint(qi){$('#mh-'+qi)?.classList.toggle('show')}
-function renderMC(){
-  mcSelected={};
-  $('#q-mc').innerHTML=L.mc.map((q,qi)=>`<div class="qcard" data-qi="${qi}"><div class="qmeta"><span class="qindex">Câu ${qi+1}/${L.mc.length}</span>${q.hint?`<button class="hint-btn" onclick="toggleHint(${qi})">💡 Gợi ý</button><span class="hint-text" id="mh-${qi}">${esc(q.hint)}</span>`:''}</div><div class="qtitle">${esc(q.q)}</div><div class="opts">${shuffle(q.opts).map(o=>`<button class="opt" data-val="${esc(o)}">${esc(o)}</button>`).join('')}</div><div class="feedback"></div></div>`).join('')+`<div class="quiz-actions"><button class="primary-btn" onclick="checkMC()">✓ Nộp bài</button><button class="ghost-btn" onclick="revealMC()">👁 Xem đáp án</button><button class="ghost-btn" onclick="renderMC()">↺ Làm lại</button></div>`;
-  $$('.qcard',$('#q-mc')).forEach((c,qi)=>$$('.opt',c).forEach(b=>b.onclick=()=>{if(c.dataset.checked)return;$$('.opt',c).forEach(x=>x.classList.remove('sel'));b.classList.add('sel');mcSelected[qi]=b.dataset.val}));
+let reviewedSelected={basic:{},advanced:{}};
+let reviewedSortState={basic:{},advanced:{}};
+let reviewedBankPromise=null;
+
+function practiceEscHtml(s){return esc(s??'').replace(/\n/g,'<br>')}
+function practiceNorm(s){return String(s??'').replace(/[\s，。！？,.!?；;：:、“”‘’'"（）()]/g,'').trim()}
+
+async function ensureReviewedBank(){
+  if(window.HSK2_PRACTICE_V58)return window.HSK2_PRACTICE_V58;
+  if(reviewedBankPromise)return reviewedBankPromise;
+  reviewedBankPromise=(async()=>{
+    const paths=[
+      'practice/reviewed/hsk2-v5.8.part01.b64',
+      'practice/reviewed/hsk2-v5.8.part02.b64',
+      'practice/reviewed/hsk2-v5.8.part03.b64',
+      'practice/reviewed/hsk2-v5.8.part04.b64',
+      'practice/reviewed/hsk2-v5.8.part05.b64'
+    ];
+    const parts=await Promise.all(paths.map(async p=>{
+      const r=await fetch(p,{cache:'no-store'});
+      if(!r.ok)throw new Error('Không tải được dữ liệu luyện tập: '+r.status);
+      return (await r.text()).trim();
+    }));
+    const bytes=Uint8Array.from(atob(parts.join('')),c=>c.charCodeAt(0));
+    const bank=JSON.parse(pako.ungzip(bytes,{to:'string'}));
+    if(bank.version!=='HSK2-V5.8-2026-08-15'||bank.course!=='HSK2'||!Array.isArray(bank.lessons)||bank.lessons.length!==15||bank.qa?.total_questions!==360){
+      throw new Error('Dữ liệu luyện tập HSK2 không hợp lệ');
+    }
+    window.HSK2_PRACTICE_V58=bank;
+    return bank;
+  })();
+  return reviewedBankPromise;
 }
-function checkMC(){
-  let ok=0;$$('.qcard',$('#q-mc')).forEach((c,qi)=>{c.dataset.checked='1';const ans=L.mc[qi].ans;$$('.opt',c).forEach(b=>{b.disabled=true;if(b.dataset.val===ans)b.classList.add('correct');if(b.classList.contains('sel')&&b.dataset.val!==ans)b.classList.add('wrong')});if(mcSelected[qi]===ans)ok++;const fb=$('.feedback',c);fb.textContent=mcSelected[qi]===ans?'✅ Đúng':(mcSelected[qi]?'❌ Đáp án: '+ans:'⚠️ Chưa chọn · Đáp án: '+ans);fb.className='feedback '+(mcSelected[qi]===ans?'good':'bad')});setScore(`Trắc nghiệm: ${ok}/${L.mc.length} · ${Math.round(ok/L.mc.length*100)}%`)
+
+function currentReviewedLesson(){
+  const bank=window.HSK2_PRACTICE_V58;
+  return bank?.lessons?.find(x=>Number(x.lesson_id)===Number(id))||null;
 }
-function revealMC(){$$('.qcard',$('#q-mc')).forEach((c,qi)=>{c.dataset.checked='1';const ans=L.mc[qi].ans;$$('.opt',c).forEach(b=>{b.disabled=true;b.classList.toggle('correct',b.dataset.val===ans)});const fb=$('.feedback',c);fb.textContent='✓ Đáp án: '+ans;fb.className='feedback good'});setScore('Đã hiển thị đáp án phần trắc nghiệm.')}
-function renderFill(){
-  $('#q-fill').innerHTML=L.fills.map((q,i)=>`<div class="fill-row">${i+1}. ${esc(q.q).replace('______',`<input class="fill-input" data-i="${i}" autocomplete="off">`)}${q.hint?`<span class="fill-hint">💡 ${esc(q.hint)}</span>`:''}</div>`).join('')+`<div class="quiz-actions"><button class="primary-btn" onclick="checkFill()">✓ Kiểm tra</button><button class="ghost-btn" onclick="revealFill()">👁 Đáp án</button><button class="ghost-btn" onclick="renderFill()">↺ Làm lại</button></div>`
+
+function renderPracticeShell(){
+  const section=$('#practice');
+  if(!section)return;
+  section.innerHTML=`
+    <div class="section-head"><h2>LUYỆN TẬP — 练一练</h2><span class="chip">24 câu · Cơ bản + Nâng cao</span></div>
+    <div class="practice-note">Mỗi bài gồm 14 câu cơ bản và 10 câu nâng cao. Làm bài rồi nộp để xem đáp án và giải thích cho từng câu.</div>
+    <div class="practice-level-tabs">
+      <button class="practice-level-btn active" data-level="basic">基础测试 · Cơ bản<small>14 câu · đúng mức HSK 2</small></button>
+      <button class="practice-level-btn advanced" data-level="advanced">进阶测试 · Nâng cao<small>10 câu · ngữ cảnh và vận dụng</small></button>
+    </div>
+    <div id="basicPractice"></div>
+    <div id="advancedPractice" class="advanced-practice"></div>`;
+  $$('.practice-level-btn',section).forEach(b=>b.onclick=()=>switchPracticeLevel(b.dataset.level));
 }
-function norm(s){return String(s).replace(/[\s，。！？,.!?]/g,'').toLowerCase()}
-function checkFill(){let ok=0;$$('.fill-input').forEach(inp=>{const ans=L.fills[+inp.dataset.i].ans,good=norm(inp.value)===norm(ans);inp.classList.toggle('good',good);inp.classList.toggle('bad',!good);if(good)ok++});setScore(`Điền từ: ${ok}/${L.fills.length} · ${Math.round(ok/L.fills.length*100)}%`)}
-function revealFill(){$$('.fill-input').forEach(inp=>{inp.value=L.fills[+inp.dataset.i].ans;inp.classList.add('good');inp.classList.remove('bad')});setScore('Đã hiển thị đáp án phần điền từ.')}
-function renderFix(){
-  $('#q-fix').innerHTML=L.fixes.map((q,i)=>`<div class="qcard"><div class="qmeta"><span class="qindex">Câu ${i+1}/${L.fixes.length}</span></div><div class="fix-wrong">✕ ${esc(q.wrong)}</div><input class="fix-input" data-i="${i}" autocomplete="off" placeholder="Viết lại câu đúng…"><div class="feedback" id="ff-${i}"></div></div>`).join('')+`<div class="quiz-actions"><button class="primary-btn" onclick="checkFix()">✓ Kiểm tra</button><button class="ghost-btn" onclick="revealFix()">👁 Đáp án + giải thích</button><button class="ghost-btn" onclick="renderFix()">↺ Làm lại</button></div>`
+
+function renderPractice(){
+  renderPracticeShell();
+  const basic=$('#basicPractice'),advanced=$('#advancedPractice');
+  if(!basic||!advanced)return;
+  basic.innerHTML='<div class="practice-note">Đang tải câu hỏi…</div>';
+  ensureReviewedBank().then(()=>{
+    const lp=currentReviewedLesson();
+    if(!lp)throw new Error('Không tìm thấy bài luyện tập');
+    reviewedSelected={basic:{},advanced:{}};
+    reviewedSortState={basic:{},advanced:{}};
+    basic.innerHTML=renderReviewedTier(lp.basic,'basic','基础测试 · Cơ bản');
+    advanced.innerHTML=renderReviewedTier(lp.advanced,'advanced','进阶测试 · Nâng cao');
+    bindReviewedTier('basic');
+    bindReviewedTier('advanced');
+    switchPracticeLevel('basic');
+  }).catch(err=>{
+    console.error(err);
+    basic.innerHTML='<div class="feedback bad">Không tải được bài tập. Vui lòng tải lại trang.</div>';
+    advanced.innerHTML='';
+  });
 }
-function checkFix(){let ok=0;$$('.fix-input').forEach(inp=>{const q=L.fixes[+inp.dataset.i],good=norm(inp.value)===norm(q.correct);inp.classList.toggle('good',good);inp.classList.toggle('bad',!good);const f=$('#ff-'+inp.dataset.i);f.innerHTML=good?'✅ Đúng':`❌ Chưa đúng<div class="fix-why">${esc(q.why)}</div>`;f.className='feedback '+(good?'good':'bad');if(good)ok++});setScore(`Sửa câu: ${ok}/${L.fixes.length} · ${Math.round(ok/L.fixes.length*100)}%`)}
-function revealFix(){$$('.fix-input').forEach(inp=>{const q=L.fixes[+inp.dataset.i];inp.value=q.correct;inp.classList.add('good');inp.classList.remove('bad');const f=$('#ff-'+inp.dataset.i);f.innerHTML=`✓ ${esc(q.correct)}<div class="fix-why">${esc(q.why)}</div>`;f.className='feedback good'});setScore('Đã hiển thị đáp án phần sửa câu.')}
-function renderMatch(){
-  matchState={zh:null,py:null,vn:null};const words=L.vocab.slice(0,Math.min(6,L.vocab.length));const cols={zh:shuffle(words.map(x=>x.zh)),py:shuffle(words.map(x=>x.py)),vn:shuffle(words.map(x=>x.vn.split(/[;,]/)[0]))};
-  $('#q-match').innerHTML=`<div class="match-headline"><div><b>Nối đúng 3 phần của cùng một từ</b><div class="match-progress" id="matchProgress">Đã nối 0/${words.length}</div></div><button class="ghost-btn" onclick="renderMatch()">↺ Trộn lại</button></div><div class="match-grid">${['zh','py','vn'].map(k=>`<div class="match-col" id="m-${k}"><h4>${k==='zh'?'汉字':k==='py'?'Pinyin':'Nghĩa Việt'}</h4>${cols[k].map(x=>`<div class="match-item ${k==='zh'?'zhitem':''}" data-col="${k}" data-val="${esc(x)}">${esc(x)}</div>`).join('')}</div>`).join('')}</div><div class="feedback" id="matchFeedback"></div>`;
-  $$('.match-item',$('#q-match')).forEach(el=>el.onclick=()=>selectMatch(el,words));
+
+function renderReviewedTier(questions,level,title){
+  return `<div class="advanced-intro"><div><span class="advanced-badge">${title}</span><h3>${questions.length} câu</h3></div><div class="advanced-count">${questions.length} câu</div></div>
+  <div class="advanced-score" id="${level}Score">Làm bài rồi bấm “Nộp bài” để xem đáp án và giải thích.</div>
+  ${questions.map((q,i)=>renderReviewedQuestion(q,i,level,questions.length)).join('')}
+  <div class="quiz-actions"><button class="primary-btn reviewed-submit" data-level="${level}">✓ Nộp bài</button><button class="ghost-btn reviewed-reset" data-level="${level}">↺ Làm lại</button></div>`;
 }
-function selectMatch(el,words){
-  if(el.classList.contains('matched'))return;const col=el.dataset.col;$$(`#m-${col} .match-item`).forEach(x=>x.classList.remove('sel'));el.classList.add('sel');matchState[col]=el.dataset.val;
-  if(matchState.zh&&matchState.py&&matchState.vn){const w=words.find(x=>x.zh===matchState.zh),ok=w&&w.py===matchState.py&&w.vn.split(/[;,]/)[0]===matchState.vn;if(ok){['zh','py','vn'].forEach(k=>{const e=$(`#m-${k} .match-item.sel`);e.classList.remove('sel');e.classList.add('matched')});$('#matchFeedback').textContent='✅ Chính xác';$('#matchFeedback').className='feedback good'}else{$('#matchFeedback').textContent='❌ Chưa đúng, thử lại.';$('#matchFeedback').className='feedback bad';$$('.match-item.sel').forEach(x=>x.classList.remove('sel'))}matchState={zh:null,py:null,vn:null};const done=$$('.match-item.matched').length/3;$('#matchProgress').textContent=`Đã nối ${done}/${words.length}`;if(done===words.length)setScore(`Nối cột: ${words.length}/${words.length} · 100%`)}
+
+function renderReviewedQuestion(q,i,level,total){
+  const prompt=q.prompt_vi?`<div class="practice-prompt" style="margin-bottom:8px;color:var(--sub);font-weight:600">${practiceEscHtml(q.prompt_vi)}</div>`:'';
+  const stem=q.stem?`<div class="qtitle">${practiceEscHtml(q.stem)}</div>`:'';
+  let body='';
+  if(q.type==='语序排序'&&Array.isArray(q.segments)){
+    reviewedSortState[level][i]=[];
+    body=`<div class="sort-answer reviewed-sort-answer" id="rsa-${level}-${i}"></div><div class="sort-bank reviewed-sort-bank" id="rsb-${level}-${i}">${q.segments.map((seg,j)=>`<button class="token reviewed-sort-token" data-level="${level}" data-q="${i}" data-key="${j}" data-word="${practiceEscHtml(seg)}">${practiceEscHtml(seg)}</button>`).join('')}</div>`;
+  }else{
+    const letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    body=`<div class="opts">${(q.options||[]).map((o,j)=>`<button class="opt reviewed-opt" data-opt="${j}"><b>${letters[j]||''}.</b> ${practiceEscHtml(o)}</button>`).join('')}</div>`;
+  }
+  return `<div class="qcard reviewed-card ${level==='advanced'?'advanced-card':''}" data-level="${level}" data-i="${i}"><div class="qmeta"><span class="qindex">Câu ${i+1}/${total}</span><span class="difficulty-chip">${practiceEscHtml(q.type)}</span></div>${prompt}${stem}${body}<div class="feedback"></div></div>`;
 }
-function renderSort(){
-  sortState=L.sorts.map(()=>[]);$('#q-sort').innerHTML=L.sorts.map((q,i)=>`<div class="qcard"><div class="qtitle">${i+1}. Sắp xếp thành câu hoàn chỉnh:</div><div class="sort-answer" id="sa-${i}"></div><div class="sort-bank" id="sb-${i}">${shuffle(q.words).map(w=>`<button class="token" data-i="${i}" data-word="${esc(w)}">${esc(w)}</button>`).join('')}</div>${q.vn?`<div class="sort-hint">💡 ${esc(q.vn)}</div>`:''}<div class="feedback" id="sf-${i}"></div></div>`).join('')+`<div class="quiz-actions"><button class="primary-btn" onclick="checkSort()">✓ Kiểm tra</button><button class="ghost-btn" onclick="revealSort()">👁 Đáp án</button><button class="ghost-btn" onclick="renderSort()">↺ Làm lại</button></div>`;
-  bindBankTokens();
+
+function bindReviewedTier(level){
+  const root=level==='basic'?$('#basicPractice'):$('#advancedPractice');
+  if(!root)return;
+  $$('.reviewed-card',root).forEach(card=>{
+    const qi=Number(card.dataset.i);
+    $$('.reviewed-opt',card).forEach(btn=>btn.onclick=()=>{
+      if(card.dataset.checked)return;
+      $$('.reviewed-opt',card).forEach(x=>x.classList.remove('sel'));
+      btn.classList.add('sel');
+      reviewedSelected[level][qi]=Number(btn.dataset.opt);
+    });
+    $$('.reviewed-sort-token',card).forEach(btn=>btn.onclick=()=>moveReviewedSortToken(btn,level,qi));
+  });
+  $('.reviewed-submit',root)?.addEventListener('click',()=>checkReviewedTier(level));
+  $('.reviewed-reset',root)?.addEventListener('click',()=>resetReviewedTier(level));
 }
-function bindBankTokens(root=$('#q-sort')){$$('.token',root).forEach(t=>{if(t.dataset.bound)return;t.dataset.bound='1';t.onclick=()=>{const i=+t.dataset.i;sortState[i].push(t.dataset.word);t.remove();const x=document.createElement('button');x.className='token';x.textContent=t.dataset.word;x.dataset.word=t.dataset.word;x.onclick=()=>{const pos=[...x.parentNode.children].indexOf(x);sortState[i].splice(pos,1);x.remove();renderOneBank(i)};$('#sa-'+i).appendChild(x)}})}
-function renderOneBank(i){const q=L.sorts[i],used=[...sortState[i]],remaining=[...q.words];used.forEach(w=>{const x=remaining.indexOf(w);if(x>=0)remaining.splice(x,1)});$('#sb-'+i).innerHTML=remaining.map(w=>`<button class="token" data-i="${i}" data-word="${esc(w)}">${esc(w)}</button>`).join('');bindBankTokens($('#sb-'+i))}
-function checkSort(){let ok=0;L.sorts.forEach((q,i)=>{const got=sortState[i].join(''),good=norm(got)===norm(q.answer),f=$('#sf-'+i);f.textContent=good?'✅ Đúng':'❌ Đáp án: '+q.answer;f.className='feedback '+(good?'good':'bad');if(good)ok++});setScore(`Sắp xếp câu: ${ok}/${L.sorts.length} · ${Math.round(ok/L.sorts.length*100)}%`)}
-function revealSort(){L.sorts.forEach((q,i)=>{sortState[i]=[...q.words];const a=$('#sa-'+i);a.innerHTML='';q.words.forEach(w=>{const x=document.createElement('span');x.className='token';x.textContent=w;a.appendChild(x)});$('#sb-'+i).innerHTML='';const f=$('#sf-'+i);f.textContent='✓ '+q.answer;f.className='feedback good'});setScore('Đã hiển thị đáp án phần sắp xếp câu.')}
-function renderPractice(){renderMC();renderFill();renderFix();renderMatch();renderSort()}
-function setScore(s){$('#scoreText').textContent=s}
-function resetPractice(){renderPractice();setScore('Đã làm mới toàn bộ phần luyện tập.');toast('Đã làm lại bài tập.')}
+
+function moveReviewedSortToken(btn,level,qi){
+  const card=btn.closest('.reviewed-card');
+  if(card?.dataset.checked)return;
+  const answer=$(`#rsa-${level}-${qi}`),bank=$(`#rsb-${level}-${qi}`);
+  const state=reviewedSortState[level][qi]||[];
+  const key=btn.dataset.key,word=btn.dataset.word;
+  if(btn.parentElement===bank){
+    state.push({key,word});
+    answer.appendChild(btn);
+  }else{
+    const pos=state.findIndex(x=>x.key===key);
+    if(pos>=0)state.splice(pos,1);
+    const siblings=[...bank.children];
+    const target=siblings.find(x=>Number(x.dataset.key)>Number(key));
+    if(target)bank.insertBefore(btn,target);else bank.appendChild(btn);
+  }
+  reviewedSortState[level][qi]=state;
+}
+
+function checkReviewedTier(level){
+  const lp=currentReviewedLesson();
+  if(!lp)return;
+  const questions=lp[level]||[];
+  const root=level==='basic'?$('#basicPractice'):$('#advancedPractice');
+  let ok=0;
+  $$('.reviewed-card',root).forEach((card,i)=>{
+    const q=questions[i];
+    let good=false,chosen=null;
+    if(q.type==='语序排序'){
+      const words=(reviewedSortState[level][i]||[]).map(x=>x.word);
+      chosen=words.join('');
+      good=practiceNorm(chosen)===practiceNorm(q.answer);
+      $$('.reviewed-sort-token',card).forEach(b=>b.disabled=true);
+    }else{
+      const chosenIndex=reviewedSelected[level][i];
+      chosen=Number.isInteger(chosenIndex)?q.options[chosenIndex]:null;
+      good=chosen===q.answer;
+      $$('.reviewed-opt',card).forEach((btn,j)=>{
+        btn.disabled=true;
+        if(q.options[j]===q.answer)btn.classList.add('correct');
+        if(j===chosenIndex&&!good)btn.classList.add('wrong');
+      });
+    }
+    if(good)ok++;
+    card.dataset.checked='1';
+    const f=$('.feedback',card);
+    f.innerHTML=`<div>${good?'✅ Đúng':chosen?'❌ Chưa đúng':'⚠️ Chưa chọn'} · Đáp án / 正确答案: <b>${practiceEscHtml(q.answer)}</b></div><div class="answer-explain"><b>Giải thích</b><div>${practiceEscHtml(q.explanation_vi)}</div></div>`;
+    f.className='feedback '+(good?'good':'bad');
+  });
+  const score=$('#'+level+'Score');
+  if(score)score.innerHTML=`Kết quả: <b>${ok}/${questions.length}</b> · ${questions.length?Math.round(ok/questions.length*100):0}%`;
+}
+
+function resetReviewedTier(level){
+  const lp=currentReviewedLesson();
+  if(!lp)return;
+  reviewedSelected[level]={};
+  reviewedSortState[level]={};
+  const root=level==='basic'?$('#basicPractice'):$('#advancedPractice');
+  root.innerHTML=renderReviewedTier(lp[level]||[],level,level==='basic'?'基础测试 · Cơ bản':'进阶测试 · Nâng cao');
+  bindReviewedTier(level);
+}
+
+function switchPracticeLevel(level){
+  const adv=level==='advanced';
+  $('#basicPractice')?.classList.toggle('hidden-level',adv);
+  $('#advancedPractice')?.classList.toggle('active',adv);
+  $$('.practice-level-btn').forEach(b=>b.classList.toggle('active',b.dataset.level===level));
+}
+
+function resetPractice(){
+  const lp=currentReviewedLesson();
+  if(!lp){renderPractice();return;}
+  resetReviewedTier('basic');resetReviewedTier('advanced');switchPracticeLevel('basic');
+  toast('Đã làm lại bài tập.');
+}
+
 function toggleComplete(){const p=getProgress();p[id]=p[id]||{};p[id].complete=!p[id].complete;p[id].visited=true;saveProgress(p);$('#completeBtn').textContent=p[id].complete?'✓ Đã hoàn thành':'✓ Đánh dấu hoàn thành';$('#completeBtn').style.background=p[id].complete?'var(--moss)':'var(--pine)';toast(p[id].complete?'Đã lưu: hoàn thành bài '+id+'.':'Đã bỏ đánh dấu hoàn thành.')}
 function updateModuleStepNav(){
   const idx=SECTION_ORDER.indexOf(activeSection),prev=$('#prevModuleBtn'),next=$('#nextModuleBtn');
@@ -62,7 +212,6 @@ function activateSection(sec,scroll=true,updateUrl=true){
 }
 function setupTabs(){
   $$('.section-tab').forEach(b=>b.onclick=()=>activateSection(b.dataset.sec));
-  $$('.quiz-tab').forEach(b=>b.onclick=()=>{$$('.quiz-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');$$('.quiz-pane').forEach(p=>p.classList.toggle('active',p.id==='q-'+b.dataset.q))});
   document.addEventListener('click',e=>{if(!e.target.closest('.lesson-menu-wrap'))closeLessonMenu()});
 }
 
