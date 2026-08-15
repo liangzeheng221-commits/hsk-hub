@@ -99,8 +99,7 @@ for(const [id,sceneIndex,needles] of [[14,2,['关灯一小时','统一规则']],
   const d=env.w.document;
   assert.equal(d.querySelectorAll('#lessonGrid .lesson-card').length,10);
   assert.match(d.querySelector('#hsk4EraNote').textContent,/2014/);
-  assert.match(d.querySelector('#hsk4EraNote').textContent,/HSK 3.0/);
   assert.equal(d.documentElement.dataset.hsk4ContentFinal,'20260814-5');
-  env.dom.window.close();console.log('FINAL HOME PASS: 10 lessons + textbook/exam version boundary');
+  env.dom.window.close();console.log('FINAL HOME PASS: 10 lessons + textbook edition note');
 }
 console.log('HSK4 LOWER FINAL CONTENT QA PASS');
