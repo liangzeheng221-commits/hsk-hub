@@ -1,113 +1,133 @@
-/* Unified session-only password gate for the HSK site.
-   One successful unlock applies to all levels in the current tab session only.
-   Closing the tab/browser session requires the password again. */
+/* Two-stage session-only password gate for the HSK site.
+   Stage 1: website password unlocks the general portal for the current tab session.
+   Stage 2: HSK 4 上 / 下 share one additional password, also for the current tab session.
+   Closing the tab/browser session requires the relevant password(s) again. */
 (()=>{
   'use strict';
-  const SESSION_KEY='hsk_portal_unlocked_v2';
+  if(window.__HSK_SESSION_AUTH_V2_LOADED)return;
+  window.__HSK_SESSION_AUTH_V2_LOADED=true;
+
+  const PORTAL_KEY='hsk_portal_unlocked_v2';
+  const HSK4_KEY='hsk4_extra_unlocked_v1';
   const LEGACY_LOCAL_KEY='hsk_site_unlocked_v1';
-  const COMPAT_SESSION_KEYS=[
-    'hsk_portal_unlocked',
-    'hsk1_ranteacher_unlocked',
-    'hsk2_ranteacher_unlocked',
-    'hsk3_ranteacher_unlocked',
-    'hsk4_upper_ranteacher_unlocked',
-    'hsk4_lower_ranteacher_unlocked'
-  ];
-  const PASSWORD_HASH='5b363ff1986142a6f34d3e259948aa38ec4773ad293a0cc03f2357877433a0c5';
-  const PASSWORD_SIG='52.61.6e.6c.61.6f.73.68.69.6d.65.69.6d.65.69';
+  const GENERAL_COMPAT_KEYS=['hsk1_ranteacher_unlocked','hsk2_ranteacher_unlocked','hsk3_ranteacher_unlocked'];
+  const HSK4_COMPAT_KEYS=['hsk4_upper_ranteacher_unlocked','hsk4_lower_ranteacher_unlocked'];
+  const PORTAL_HASH='5b363ff1986142a6f34d3e259948aa38ec4773ad293a0cc03f2357877433a0c5';
+  const HSK4_HASH='1e1d7bc6d9ad86a5edb1d27eb5a0ebc96a9fddb952842bc96bc21adc53eef445';
 
   const byId=id=>document.getElementById(id);
-  const signature=text=>[...String(text)].map(c=>c.codePointAt(0).toString(16)).join('.');
+  const isHsk4Page=()=>document.body?.classList.contains('hsk4-upper')||document.body?.classList.contains('hsk4-lower')||/(?:^|\/)hsk4(?:up)?\//i.test(location.pathname||'');
   async function digest(text){
     if(!globalThis.crypto?.subtle)return null;
-    const data=new TextEncoder().encode(text);
+    const data=new TextEncoder().encode(String(text));
     const hash=await crypto.subtle.digest('SHA-256',data);
     return [...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,'0')).join('');
   }
-  function clearLegacyPersistence(){
-    try{localStorage.removeItem(LEGACY_LOCAL_KEY)}catch(_e){}
+  function clearLegacyPersistence(){try{localStorage.removeItem(LEGACY_LOCAL_KEY)}catch(_e){}}
+  function getSession(key){try{return sessionStorage.getItem(key)==='1'}catch(_e){return false}}
+  function setSession(key,on=true){try{if(on)sessionStorage.setItem(key,'1');else sessionStorage.removeItem(key)}catch(_e){}}
+  function portalUnlocked(){return getSession(PORTAL_KEY)}
+  function hsk4Unlocked(){return getSession(HSK4_KEY)}
+  function setGeneralCompat(){GENERAL_COMPAT_KEYS.forEach(k=>setSession(k,true))}
+  function setHsk4Compat(on){HSK4_COMPAT_KEYS.forEach(k=>setSession(k,on))}
+  function normalizeCompat(){
+    clearLegacyPersistence();
+    if(portalUnlocked())setGeneralCompat();
+    if(hsk4Unlocked())setHsk4Compat(true);else setHsk4Compat(false);
+    /* Do not set the old hsk_portal_unlocked key: legacy HSK4 code treated it as a full HSK4 unlock. */
+    setSession('hsk_portal_unlocked',false);
   }
-  function setCompatSession(){
-    try{
-      sessionStorage.setItem(SESSION_KEY,'1');
-      COMPAT_SESSION_KEYS.forEach(k=>sessionStorage.setItem(k,'1'));
-    }catch(_e){}
+  function currentStage(){
+    if(!portalUnlocked())return 'portal';
+    if(isHsk4Page()&&!hsk4Unlocked())return 'hsk4';
+    return null;
   }
-  function clearCompatSession(){
-    try{COMPAT_SESSION_KEYS.forEach(k=>sessionStorage.removeItem(k))}catch(_e){}
+  function updateGateCopy(stage){
+    const overlay=byId('pwOverlay');if(!overlay)return;
+    const title=overlay.querySelector('h2'),desc=overlay.querySelector('p'),btn=byId('pwBtn'),input=byId('pwInput'),err=byId('pwError');
+    if(stage==='hsk4'){
+      if(title)title.textContent='Nhập mật khẩu riêng cho HSK 4';
+      if(desc)desc.textContent='HSK 4 上 / HSK 4 下 · Mở khóa thêm một lần trong phiên hiện tại';
+      if(btn)btn.textContent='Vào HSK 4';
+      if(input)input.placeholder='Mật khẩu HSK 4';
+    }else{
+      if(title)title.textContent='Nhập mật khẩu để vào website';
+      if(desc)desc.textContent='然老师课堂 · HSK 1 / HSK 2 / HSK 3 / HSK 4';
+      if(btn)btn.textContent='Vào website';
+      if(input)input.placeholder='Mật khẩu website';
+    }
+    err?.classList.remove('show');
   }
-  function isUnlocked(){
-    try{return sessionStorage.getItem(SESSION_KEY)==='1'}catch(_e){return false}
-  }
-  function setOverlay(open){
-    const overlay=byId('pwOverlay');
-    if(!overlay)return;
+  function setOverlay(open,stage=currentStage()){
+    const overlay=byId('pwOverlay');if(!overlay)return;
+    if(open)updateGateCopy(stage||'portal');
     overlay.style.display=open?'':'none';
     document.body.style.overflow=open?'hidden':'';
-    if(open){
-      const input=byId('pwInput');
-      if(input&&!input.disabled)setTimeout(()=>input.focus(),0);
-    }
+    if(open){const input=byId('pwInput');if(input){input.disabled=false;setTimeout(()=>input.focus(),0)}}
   }
   function syncGate(){
-    clearLegacyPersistence();
-    if(isUnlocked()){
-      setCompatSession();
-      setOverlay(false);
-    }else{
-      clearCompatSession();
-      setOverlay(true);
-    }
+    normalizeCompat();
+    const stage=currentStage();
+    setOverlay(!!stage,stage);
+    updateNotes();
+    window.__HSK_SESSION_AUTH={ok:!stage,stage,version:'20260815-2',sessionOnly:true,portalUnlocked:portalUnlocked(),hsk4Unlocked:hsk4Unlocked()};
+    return !stage;
+  }
+  async function verify(raw,stage){
+    let hash=null;try{hash=await digest(raw)}catch(_e){}
+    if(!hash)return false;
+    return hash===(stage==='hsk4'?HSK4_HASH:PORTAL_HASH);
   }
   async function unlock(){
     const input=byId('pwInput'),btn=byId('pwBtn'),err=byId('pwError');
     if(!input)return false;
+    const stage=currentStage();
+    if(!stage){syncGate();return true}
     if(btn)btn.disabled=true;
     const raw=input.value.trim();
-    let hash=null;
-    try{hash=await digest(raw)}catch(_e){}
-    const ok=hash?hash===PASSWORD_HASH:signature(raw)===PASSWORD_SIG;
+    const ok=await verify(raw,stage);
     if(btn)btn.disabled=false;
     if(ok){
-      err?.classList.remove('show');
-      setCompatSession();
-      setOverlay(false);
-      window.__HSK_SESSION_AUTH={ok:true,version:'20260815-1',sessionOnly:true};
+      if(stage==='portal')setSession(PORTAL_KEY,true);else setSession(HSK4_KEY,true);
+      input.value='';err?.classList.remove('show');
+      syncGate();
       return true;
     }
-    err?.classList.add('show');
-    input.select();
-    window.__HSK_SESSION_AUTH={ok:false,version:'20260815-1',sessionOnly:true};
+    err?.classList.add('show');input.select();
+    window.__HSK_SESSION_AUTH={ok:false,stage,version:'20260815-2',sessionOnly:true,portalUnlocked:portalUnlocked(),hsk4Unlocked:hsk4Unlocked()};
     return false;
   }
+  function updateNotes(){
+    const note=document.querySelector('.portal-note');
+    if(note)note.innerHTML='🔐 <b>Mật khẩu website chỉ cần nhập một lần trong phiên hiện tại.</b> HSK 1 / 2 / 3 không cần nhập lại. Khi vào HSK 4 上 hoặc HSK 4 下, cần mở khóa thêm lớp mật khẩu HSK 4 một lần; sau đó có thể chuyển tự do giữa HSK 4 上 và HSK 4 下 trong cùng phiên.';
+    const banner=document.querySelector('.hsk4-upper .free-banner');
+    if(banner&&/Mật khẩu/i.test(banner.textContent||''))banner.innerHTML='<b>✓ HSK 4 上 / 下 dùng chung một lớp mở khóa riêng.</b> Sau khi nhập mật khẩu HSK 4 một lần trong phiên hiện tại, có thể chuyển tự do giữa hai quyển; tiến độ HSK 4 上 vẫn được lưu riêng.';
+  }
+  function installLegacyWriteGuard(){
+    if(!isHsk4Page()||document.__hsk4AuthWriteGuard)return;
+    const original=document.write.bind(document);
+    document.__hsk4AuthWriteGuard=true;
+    document.write=function(...args){
+      const html=args.join('');
+      if(/assets\/session-auth\.js/i.test(html))return;
+      return original(...args);
+    };
+  }
 
-  // Override global gate functions where classic scripts exposed them.
   window.checkPassword=unlock;
   window.initGate=syncGate;
 
-  // Capture before legacy inline/onclick handlers so only the new password is accepted.
   document.addEventListener('click',ev=>{
-    const btn=ev.target?.closest?.('#pwBtn');
-    if(!btn)return;
-    ev.preventDefault();
-    ev.stopImmediatePropagation();
-    unlock();
+    const btn=ev.target?.closest?.('#pwBtn');if(!btn)return;
+    ev.preventDefault();ev.stopImmediatePropagation();unlock();
   },true);
   document.addEventListener('keydown',ev=>{
     if(ev.key!=='Enter'||ev.target!==byId('pwInput'))return;
-    ev.preventDefault();
-    ev.stopImmediatePropagation();
-    unlock();
+    ev.preventDefault();ev.stopImmediatePropagation();unlock();
   },true);
 
-  function updatePortalNote(){
-    const note=document.querySelector('.portal-note');
-    if(note)note.innerHTML='🔐 <b>Chỉ nhập mật khẩu một lần trong phiên mở website hiện tại.</b> Có thể chuyển tự do giữa HSK 1 / 2 / 3 / HSK 4 上 / HSK 4 下; sau khi đóng tab/trình duyệt và mở lại website, cần nhập mật khẩu lại.';
-  }
-
-  clearLegacyPersistence();
+  installLegacyWriteGuard();
   syncGate();
-  updatePortalNote();
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{syncGate();updatePortalNote()},{once:true});
-  window.__HSK_SESSION_AUTH_API={version:'20260815-1',unlock,syncGate,isUnlocked,sessionKey:SESSION_KEY};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{installLegacyWriteGuard();syncGate()},{once:true});
+  window.__HSK_SESSION_AUTH_API={version:'20260815-2',unlock,syncGate,portalUnlocked,hsk4Unlocked,currentStage,portalKey:PORTAL_KEY,hsk4Key:HSK4_KEY};
 })();
