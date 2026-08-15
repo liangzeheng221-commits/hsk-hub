@@ -8,7 +8,6 @@
   }
   fixTop();
 
-  /* lesson-core.js is already loaded when this patch runs. Replace only the textbook text renderer so the 60 locked units use stored canonical pinyin instead of runtime pinyin generation. */
   const loadLockedUI=()=>{
     if(window.__HSK2_LOCKED_UI_LOADING)return window.__HSK2_LOCKED_UI_LOADING;
     window.__HSK2_LOCKED_UI_LOADING=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='assets/hsk2-textbook-locked-ui.js?v=20260815-1';s.onload=resolve;s.onerror=()=>reject(new Error('Không tải được HSK2 locked textbook renderer'));document.head.appendChild(s)});
@@ -19,6 +18,6 @@
   /* Shared vocabulary presentation: Hanzi → pinyin → bilingual POS. */
   if(!document.querySelector('script[data-vocab-unified]')){
     const l=document.createElement('link');l.rel='stylesheet';l.href='assets/vocab-unified.css?v=20260815-3';l.dataset.vocabUnified='1';document.head.appendChild(l);
-    const s=document.createElement('script');s.src='assets/vocab-unified.js?v=20260815-2';s.dataset.vocabUnified='1';document.body.appendChild(s);
+    const s=document.createElement('script');s.src='assets/vocab-unified.js?v=20260815-4';s.dataset.vocabUnified='1';document.body.appendChild(s);
   }
 })();
