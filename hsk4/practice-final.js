@@ -10,12 +10,12 @@
   }
   function renderTextbookTasks(){
     const tasks=L?.tasks;if(!tasks)return '';
-    return `<div class="textbook-task-panel"><div class="textbook-task-title"><div><span>教材能力链 · NHIỆM VỤ VẬN DỤNG</span><h3>从理解到复述，再到真实表达</h3></div><small>原创互动任务 · không sao chép nguyên bài tập</small></div><div class="textbook-task-grid">${renderTaskList('Khởi động','热身',tasks.warmup,'warmup')}${renderTaskList('Kể lại','复述',tasks.retell,'retell')}${renderTaskList('Vận dụng','运用',tasks.application,'application')}</div></div>`;
+    return `<div class="textbook-task-panel"><div class="textbook-task-title"><div><span>教材能力链 · NHIỆM VỤ VẬN DỤNG</span><h3>从理解到复述，再到真实表达</h3></div><small>Bài ${id}</small></div><div class="textbook-task-grid">${renderTaskList('Khởi động','热身',tasks.warmup,'warmup')}${renderTaskList('Kể lại','复述',tasks.retell,'retell')}${renderTaskList('Vận dụng','运用',tasks.application,'application')}</div></div>`;
   }
 
   window.renderPractice=function(){
     const n=L.vocab.length,mc=Math.min(MC_COUNT,n),fill=Math.max(0,n-mc);
-    q('#basicPractice').innerHTML=`<div class="practice-coverage"><b>词汇覆盖 · Phủ từ vựng</b><span id="vocabCoverage">${n}/${n} · 100%</span><small>${mc} câu chọn nghĩa + ${fill} câu viết từ; mỗi từ mới của Bài ${id} xuất hiện ít nhất một lần trong lượt này.</small></div><div class="quiz-tabs"><button class="quiz-tab active" data-q="mc">Từ vựng 1 · ${mc}</button><button class="quiz-tab" data-q="fill">Từ vựng 2 · ${fill}</button><button class="quiz-tab" data-q="grammar">Ngữ pháp</button><button class="quiz-tab" data-q="read">Đọc hiểu</button></div><div class="quiz-pane active" id="q-mc"></div><div class="quiz-pane" id="q-fill"></div><div class="quiz-pane" id="q-grammar"></div><div class="quiz-pane" id="q-read"></div><div class="scorebar" id="scoreText">Làm bài và nộp để xem đáp án + giải thích.</div>${renderTextbookTasks()}`;
+    q('#basicPractice').innerHTML=`<div class="practice-coverage"><b>本课词汇 · Từ vựng</b><span id="vocabCoverage">${n}/${n}</span><small>${mc} câu chọn nghĩa + ${fill} câu viết từ.</small></div><div class="quiz-tabs"><button class="quiz-tab active" data-q="mc">Từ vựng 1 · ${mc}</button><button class="quiz-tab" data-q="fill">Từ vựng 2 · ${fill}</button><button class="quiz-tab" data-q="grammar">Ngữ pháp</button><button class="quiz-tab" data-q="read">Đọc hiểu</button></div><div class="quiz-pane active" id="q-mc"></div><div class="quiz-pane" id="q-fill"></div><div class="quiz-pane" id="q-grammar"></div><div class="quiz-pane" id="q-read"></div><div class="scorebar" id="scoreText">Làm bài và nộp để xem đáp án + giải thích.</div>${renderTextbookTasks()}`;
     qa('.quiz-tab',q('#basicPractice')).forEach(b=>b.onclick=()=>{qa('.quiz-tab',q('#basicPractice')).forEach(x=>x.classList.toggle('active',x===b));qa('.quiz-pane',q('#basicPractice')).forEach(x=>x.classList.toggle('active',x.id==='q-'+b.dataset.q))});
     renderMC();renderFill();renderGrammarQuiz();renderReadQuiz();renderAdvanced();
   };
@@ -54,7 +54,7 @@
   const oldAdvanced=window.renderAdvanced;
   window.renderAdvanced=function(){
     oldAdvanced();
-    const p=q('#advancedPractice .advanced-intro p');if(p)p.textContent=`5 câu nhận diện cấu trúc; phần từ vựng cơ bản phía trên đã phủ đủ ${L.vocab.length}/${L.vocab.length} từ của Bài ${id}.`;
+    const p=q('#advancedPractice .advanced-intro p');if(p)p.textContent='5 câu nhận diện cấu trúc và bài đọc hiểu nâng cao.';
   };
 
   document.documentElement.dataset.hsk4PracticeFinal='20260814-5';
