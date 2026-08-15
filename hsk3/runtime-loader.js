@@ -1,7 +1,7 @@
 /* Robust HSK3 runtime bootstrap. */
 (()=>{
   'use strict';
-  const BUILD='20260815-hsk3-home-hotfix-1';
+  const BUILD='20260815-student-ui-1';
   const isLesson=()=>!!document.getElementById('lessonTitle');
   const qs=s=>document.querySelector(s);
   const domReady=()=>document.readyState==='loading'?new Promise(r=>document.addEventListener('DOMContentLoaded',r,{once:true})):Promise.resolve();
@@ -87,9 +87,7 @@
     const links=[...document.querySelectorAll('#lessonGrid a[href*="lesson.html?id="]')];
     if(links.length<120)throw new Error('thiếu liên kết vào các phần bài học');
     const word=qs('#wordStat');if(!word||!/^\d+$/.test(word.textContent.trim()))throw new Error('không tính được tổng số từ');
-    // textbook-audit-ui.js renders #hsk3TextbookNote. The old verifier checked a stale ID
-    // (#hsk3SystemNote), which incorrectly turned a healthy home page into a fatal error.
-    if(!qs('#hsk3TextbookNote')&&!qs('#hsk3SystemNote'))console.warn('[HSK3] 教材口径说明未渲染；课程主体仍可正常使用。');
+    if(!qs('#hsk3TextbookNote')&&!qs('#hsk3SystemNote'))console.warn('[HSK3] 词汇摘要未渲染；课程主体仍可正常使用。');
   }
 
   function verifyLesson(){
@@ -98,10 +96,10 @@
     if(!qs('#vocabGrid')?.children.length)throw new Error('từ vựng chưa render');
     if(!qs('#grammarList')?.children.length)throw new Error('ngữ pháp chưa render');
     if(!qs('#basicPractice')?.children.length)throw new Error('luyện tập chưa render');
-    if(!qs('#auditVocabSummary'))throw new Error('教材词表摘要未渲染');
-    if(!qs('#auditTextbookSource'))throw new Error('教材课文定位未渲染');
-    if(!qs('#auditGrammarNote'))throw new Error('教材语法说明未渲染');
-    if(!qs('#auditPracticeNote'))throw new Error('练习口径说明未渲染');
+    if(!qs('#auditVocabSummary'))throw new Error('词汇摘要未渲染');
+    if(!qs('#auditTextbookSource'))throw new Error('教材信息未渲染');
+    if(!qs('#auditGrammarNote'))throw new Error('语言点摘要未渲染');
+    if(!qs('#auditPracticeNote'))throw new Error('练习提示未渲染');
   }
 
   async function boot(){
@@ -129,7 +127,7 @@
         renderHome();verifyHome();
       }
       const words=window.HSK3_LESSONS.reduce((n,L)=>n+L.vocab.length,0);
-      const coreWords=window.HSK3_LESSONS.reduce((n,L)=>n+L.vocab.filter(v=>!v.properName&&!v.aboveLevel).length,0);
+      const coreWords=window.HSK3_LESSONS.reduce((n,L)=>n+x.vocab.filter(v=>!v.properName&&!v.aboveLevel).length,0);
       window.__HSK3_DIAGNOSTICS={ok:true,build:BUILD,lessons:window.HSK3_LESSONS.length,words,coreWords,page:isLesson()?'lesson':'home',contentAudited:true};
       document.documentElement.dataset.hsk3Runtime='ok';window.__HSK3_RUNTIME_OK=true;
       console.info('[HSK3 bootstrap] OK',window.__HSK3_DIAGNOSTICS);
