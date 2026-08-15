@@ -13,29 +13,45 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
   console.log('HSK3 HOTFIX PASS: textbook note ID no longer causes false fatal error');
 }
 
-// HSK1 regression: execute the real audio patch against a mocked Web Speech engine.
+// HSK1 regression: the real patch must speak synchronously inside the click/user-gesture task,
+// select a Mandarin voice when available, and turn phonetics-only examples into speakable Hanzi.
 {
   const spoken=[];
-  class Utterance{constructor(text){this.text=text;this.lang='';this.rate=1;this.pitch=1;this.volume=1;}}
+  const listeners={};
+  class Utterance{constructor(text){this.text=text;this.lang='';this.rate=1;this.pitch=1;this.volume=1;this.voice=null;}}
   const synth={
     speaking:false,pending:false,paused:false,
-    getVoices(){return [{lang:'zh-CN',name:'Chinese Test Voice'}]},
-    addEventListener(){},cancel(){},resume(){this.paused=false},
-    speak(u){spoken.push(u);u.onstart?.();setTimeout(()=>u.onend?.(),0)}
+    getVoices(){return [
+      {lang:'en-US',name:'English Test Voice',localService:true},
+      {lang:'zh-CN',name:'Chinese Local Test Voice',localService:true}
+    ]},
+    addEventListener(name,fn){listeners[name]=fn},
+    cancel(){this.speaking=false;this.pending=false},
+    resume(){this.paused=false},
+    speak(u){this.speaking=true;spoken.push(u);u.onstart?.();setTimeout(()=>{this.speaking=false;u.onend?.()},0)}
   };
-  const window={speechSynthesis:synth,SpeechSynthesisUtterance:Utterance,toast(){}};
-  const ctx={window,SpeechSynthesisUtterance:Utterance,console,setTimeout,clearTimeout};
+  const document={
+    addEventListener(name,fn,capture){listeners['document:'+name]={fn,capture}},
+    querySelectorAll(){return []}
+  };
+  const window={speechSynthesis:synth,SpeechSynthesisUtterance:Utterance,HSK1_LESSONS:[],toast(){}};
+  const ctx={window,document,SpeechSynthesisUtterance:Utterance,console,setTimeout,clearTimeout};
   vm.runInNewContext(read('hsk1/audio-fix.js'),ctx,{filename:'hsk1/audio-fix.js'});
   assert.equal(typeof window.speak,'function','HSK1 audio patch did not install window.speak');
   window.speak('你好');
-  await sleep(90);
-  assert(spoken.length>=1,'HSK1 speech engine was not invoked');
+  assert.equal(spoken.length,1,'HSK1 first speak() must be synchronous; do not defer the user gesture');
   assert.equal(spoken[0].text,'你好','HSK1 speech text mismatch');
   assert.equal(spoken[0].lang,'zh-CN','HSK1 speech language must be zh-CN');
-  assert.equal(spoken[0].voice?.name,'Chinese Test Voice','HSK1 Chinese voice selection failed');
-  assert(window.__HSK1_AUDIO_FIX,'HSK1 audio diagnostics marker missing');
-  assert(read('hsk1/lesson.html').includes('audio-fix.js?v=20260815-1'),'HSK1 lesson does not load audio-fix.js');
-  console.log('HSK1 AUDIO PASS: real patch invokes zh-CN speech with Chinese voice');
+  assert.equal(spoken[0].voice?.name,'Chinese Local Test Voice','HSK1 must prefer a local Chinese voice');
+  assert.equal(window.__HSK1_AUDIO_FIX.normalizeText('mā / má / mǎ / mà'),'妈，麻，马，骂','tone demo must speak actual Mandarin syllables');
+  assert.equal(window.__HSK1_AUDIO_FIX.normalizeText('māo 猫, yú 鱼, jiě 姐, èr 二'),'猫，鱼，姐，二','mixed pinyin/Hanzi example must speak Hanzi only');
+  assert.equal(window.__HSK1_AUDIO_FIX.normalizeText('nǐ + hǎo → ní hǎo'),'你好','3+3 tone-sandhi demo must speak 你好');
+  assert.equal(window.__HSK1_AUDIO_FIX.normalizeText('kě + yǐ → ké yǐ'),'可以','3+3 tone-sandhi demo must speak 可以');
+  assert.equal(listeners['document:click']?.capture,true,'HSK1 audio must capture lesson audio buttons before legacy handlers');
+  assert.equal(window.__HSK1_AUDIO_FIX.version,'20260815-2','HSK1 audio patch version mismatch');
+  assert(read('hsk1/lesson.html').includes('audio-fix.js?v=20260815-2'),'HSK1 lesson does not load audio-fix v2');
+  await sleep(20);
+  console.log('HSK1 AUDIO PASS: synchronous gesture-safe playback + local Mandarin voice + phonetics normalization');
 }
 
 // HSK4 上 regression: execute the real progressive-stroke script against a tiny DOM/HanziWriter mock.
