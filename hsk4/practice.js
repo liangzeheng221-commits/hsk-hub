@@ -27,3 +27,4 @@ function boot(){
   try{validateData();initGate();if($('#lessonGrid'))renderHome();if($('#lessonTitle'))initLesson();document.documentElement.dataset.hsk4Runtime='ok';window.__HSK4_LOWER_RUNTIME_OK=true;window.__HSK4_LOWER_DIAGNOSTICS={ok:true,lessons:10,words:window.HSK4_LOWER_LESSONS.reduce((n,L)=>n+L.vocab.length,0),page:$('#lessonGrid')?'home':'lesson'};console.info('[HSK4 Lower] OK',window.__HSK4_LOWER_DIAGNOSTICS)}catch(e){showFatal(e)}
 }
 if(!window.HSK4_BOOT_DISABLE_AUTO){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot()}
+document.write('<script src="../assets/session-auth.js?v=20260815-1"><\/script>');
