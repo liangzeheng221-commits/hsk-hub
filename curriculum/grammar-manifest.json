@@ -1,0 +1,158 @@
+{
+  "version": "2026-08-15",
+  "total": 236,
+  "books": {
+    "HSK1": {
+      "expected": 45,
+      "lessons": {
+        "3": [
+          {"textbook_title":"疑问代词“什么”","site_title":"疑问代词“什么”"},
+          {"textbook_title":"“是”字句","site_title":"“是”字句"},
+          {"textbook_title":"用“吗”的疑问句","site_title":"用“吗”的疑问句"}
+        ],
+        "4": [
+          {"textbook_title":"疑问代词“谁”“哪”","site_title":"疑问代词“谁”“哪”"},
+          {"textbook_title":"结构助词“的”","site_title":"结构助词“的”"},
+          {"textbook_title":"“呢”字疑问句","site_title":"“呢”字疑问句"}
+        ],
+        "5": [
+          {"textbook_title":"名词谓语句","site_title":"名词谓语句"},
+          {"textbook_title":"百以内的数字","site_title":"100以内的数字"},
+          {"textbook_title":"“了”表变化","site_title":"“了”表示变化"},
+          {"textbook_title":"“几”和“多少”","site_title":"“几”和“多少”"}
+        ],
+        "6": [
+          {"textbook_title":"能愿动词“会”","site_title":"能愿动词“会”"},
+          {"textbook_title":"“会……吗？”","site_title":"“会……吗？”"},
+          {"textbook_title":"用“怎么”提问","site_title":"用“怎么”提问"}
+        ],
+        "7": [
+          {"textbook_title":"日期的表达（1）：月、日/号、星期","site_title":"日期的表达（1）"},
+          {"textbook_title":"“去+地点+V”","site_title":"“去+地点+V”"},
+          {"textbook_title":"“呢”表示动作正在进行","site_title":"“呢”表示动作正在进行"}
+        ],
+        "8": [
+          {"textbook_title":"能愿动词“想”","site_title":"能愿动词“想”"},
+          {"textbook_title":"量词“个”“口”","site_title":"量词“个”“口”"},
+          {"textbook_title":"“多少钱”","site_title":"“多少钱”"},
+          {"textbook_title":"钱数的表达","site_title":"钱数的表达"}
+        ],
+        "9": [
+          {"textbook_title":"“在”字句","site_title":"“在”字句"},
+          {"textbook_title":"方位词","site_title":"方位词"},
+          {"textbook_title":"“哪儿”","site_title":"“哪儿”"},
+          {"textbook_title":"“在……呢”","site_title":"“在……呢”"}
+        ],
+        "10": [
+          {"textbook_title":"能愿动词“能”","site_title":"能愿动词“能”"},
+          {"textbook_title":"“请+V”","site_title":"“请+V”"},
+          {"textbook_title":"“这儿/那儿”","site_title":"“这儿/那儿”"},
+          {"textbook_title":"用“吗”提问","site_title":"用“吗”提问"}
+        ],
+        "11": [
+          {"textbook_title":"时间的表达","site_title":"时间的表达"},
+          {"textbook_title":"时间词作状语","site_title":"时间词作状语"},
+          {"textbook_title":"“前”与“后”","site_title":"“前”与“后”"}
+        ],
+        "12": [
+          {"textbook_title":"程度副词“太”","site_title":"程度副词“太”"},
+          {"textbook_title":"程度副词“很”","site_title":"程度副词“很”"},
+          {"textbook_title":"“怎么样”","site_title":"“怎么样”"},
+          {"textbook_title":"天气的表达","site_title":"天气的表达"}
+        ],
+        "13": [
+          {"textbook_title":"动作的进行","site_title":"动作的进行"},
+          {"textbook_title":"“在/正/正在……呢”","site_title":"“在/正/正在……呢”"},
+          {"textbook_title":"电话号码的表达","site_title":"电话号码的表达"},
+          {"textbook_title":"“吧”表示猜测","site_title":"“吧”表示猜测"}
+        ],
+        "14": [
+          {"textbook_title":"“了”表完成","site_title":"“了”表完成"},
+          {"textbook_title":"数量词作定语","site_title":"数量词作定语"},
+          {"textbook_title":"“一点儿”","site_title":"“一点儿”"},
+          {"textbook_title":"“不少”","site_title":"“不少”"}
+        ],
+        "15": [
+          {"textbook_title":"“是……的”句","site_title":"“是……的”句"},
+          {"textbook_title":"日期的表达（2）：年、月、日/号、星期","site_title":"日期的表达（2）"}
+        ]
+      }
+    },
+    "HSK2": {
+      "expected": 44,
+      "lessons": {
+        "1":[{"textbook_title":"能愿动词“要”","site_title":"能愿动词“要”"},{"textbook_title":"程度副词“最”","site_title":"程度副词“最”"},{"textbook_title":"概数的表达：几、多","site_title":"概数的表达：几、多"}],
+        "2":[{"textbook_title":"“的”字短语","site_title":"“的”字短语"},{"textbook_title":"一下","site_title":"一下"},{"textbook_title":"真+形容词","site_title":"真+形容词"}],
+        "3":[{"textbook_title":"“过”表经历","site_title":"“过”表经历"},{"textbook_title":"又……又……","site_title":"又……又……"},{"textbook_title":"“一起”","site_title":"“一起”"}],
+        "4":[{"textbook_title":"“比”字句（1）","site_title":"“比”字句（1）"},{"textbook_title":"“可能”","site_title":"“可能”"},{"textbook_title":"“每……都……”","site_title":"“每……都……”"}],
+        "5":[{"textbook_title":"能愿动词“可以”","site_title":"能愿动词“可以”"},{"textbook_title":"“有点儿”","site_title":"“有点儿”"},{"textbook_title":"“怎么”表方式","site_title":"“怎么”表方式"}],
+        "6":[{"textbook_title":"“是不是”问句","site_title":"“是不是”问句"},{"textbook_title":"“多+形容词”问句","site_title":"“多+形容词”问句"},{"textbook_title":"“每+量词+名词”","site_title":"“每+量词+名词”"}],
+        "7":[{"textbook_title":"“一……就……”","site_title":"“一……就……”"},{"textbook_title":"“还”表继续","site_title":"“还”表继续"},{"textbook_title":"“再”表再次","site_title":"“再”表再次"},{"textbook_title":"“过”表经过","site_title":"“过”表经过"}],
+        "8":[{"textbook_title":"“比”字句（2）","site_title":"“比”字句（2）"},{"textbook_title":"“得”字补语","site_title":"“得”字补语"},{"textbook_title":"“别……了”","site_title":"“别……了”"},{"textbook_title":"“吧”表建议","site_title":"“吧”表建议"}],
+        "9":[{"textbook_title":"“虽然……但是……”","site_title":"“虽然……但是……”"},{"textbook_title":"“已经……了”","site_title":"“已经……了”"},{"textbook_title":"“离”表距离","site_title":"“离”表距离"}],
+        "10":[{"textbook_title":"“比”字句（3）","site_title":"“比”字句（3）"},{"textbook_title":"“往”表方向","site_title":"“往”表方向"}],
+        "11":[{"textbook_title":"“着”表状态持续","site_title":"“着”表状态持续"},{"textbook_title":"“有的……有的……”","site_title":"“有的……有的……”"},{"textbook_title":"“一点儿也不……”","site_title":"“一点儿也不……”"}],
+        "12":[{"textbook_title":"“把”字句","site_title":"“把”字句"},{"textbook_title":"“被”字句","site_title":"“被”字句"}],
+        "13":[{"textbook_title":"“一边……一边……”","site_title":"“一边……一边……”"},{"textbook_title":"“从……到……”","site_title":"“从……到……”"},{"textbook_title":"“一直”","site_title":"“一直”"}],
+        "14":[{"textbook_title":"“因为……所以……”","site_title":"“因为……所以……”"},{"textbook_title":"“着急”","site_title":"“着急”"},{"textbook_title":"“一下儿”","site_title":"“一下儿”"}],
+        "15":[{"textbook_title":"“越来越……”","site_title":"“越来越……”"},{"textbook_title":"“更”表比较","site_title":"“更”表比较"}]
+      }
+    },
+    "HSK3": {
+      "expected": 47,
+      "lessons": {
+        "1":[{"textbook_title":"结果补语“好”","site_title":"结果补语“好”"},{"textbook_title":"“一……也/都 + 不/没……”表否定","site_title":"“一……也/都 + 不/没……”表否定"},{"textbook_title":"连词“那”","site_title":"连词“那”"}],
+        "2":[{"textbook_title":"简单趋向补语","site_title":"简单趋向补语"},{"textbook_title":"两个动作连续发生","site_title":"两个动作连续发生"},{"textbook_title":"反问的表达：能……吗？","site_title":"反问的表达：能……吗？"}],
+        "3":[{"textbook_title":"“还是”和“或者”","site_title":"“还是”和“或者”"},{"textbook_title":"存在的表达","site_title":"存在的表达"},{"textbook_title":"“会”表示可能","site_title":"“会”表示可能"}],
+        "4":[{"textbook_title":"又……又……","site_title":"又……又……"},{"textbook_title":"动作的伴随","site_title":"动作的伴随"}],
+        "5":[{"textbook_title":"“了”表示变化","site_title":"“了”表示变化"},{"textbook_title":"越来越 + 形容词/心理动词","site_title":"越来越 + 形容词/心理动词"}],
+        "6":[{"textbook_title":"可能补语","site_title":"可能补语"},{"textbook_title":"“呢”询问处所","site_title":"“呢”询问处所"},{"textbook_title":"“刚”和“刚才”","site_title":"“刚”和“刚才”"}],
+        "7":[{"textbook_title":"时段的表达","site_title":"时段的表达"},{"textbook_title":"表达兴趣","site_title":"表达兴趣"},{"textbook_title":"用“半”“刻”“差”表示时间","site_title":"用“半”“刻”“差”表示时间"}],
+        "8":[{"textbook_title":"“又”和“再”","site_title":"“又”和“再”"},{"textbook_title":"疑问代词活用 1","site_title":"疑问代词活用 1"}],
+        "9":[{"textbook_title":"越A越B","site_title":"越A越B"},{"textbook_title":"比较句 1","site_title":"比较句 1"}],
+        "10":[{"textbook_title":"比较句 2","site_title":"比较句 2"},{"textbook_title":"概数的表达 1","site_title":"概数的表达 1"}],
+        "11":[{"textbook_title":"“把”字句 1","site_title":"“把”字句 1"},{"textbook_title":"概数的表达 2：左右","site_title":"概数的表达 2：左右"}],
+        "12":[{"textbook_title":"“才”和“就”","site_title":"“才”和“就”"},{"textbook_title":"“把”字句 2","site_title":"“把”字句 2"}],
+        "13":[{"textbook_title":"复合趋向补语","site_title":"复合趋向补语"},{"textbook_title":"一边……一边……","site_title":"一边……一边……"}],
+        "14":[{"textbook_title":"“把”字句 3","site_title":"“把”字句 3"},{"textbook_title":"先……，再/又……，然后……","site_title":"先……，再/又……，然后……"}],
+        "15":[{"textbook_title":"除了……以外，都/还/也……","site_title":"除了……以外，都/还/也……"},{"textbook_title":"疑问代词活用 2","site_title":"疑问代词活用 2"},{"textbook_title":"程度的表达：极了","site_title":"程度的表达：极了"}],
+        "16":[{"textbook_title":"如果……（就）……","site_title":"如果……（就）……"},{"textbook_title":"又……又……","site_title":"又……又……"},{"textbook_title":"比较句 3","site_title":"比较句 3"}],
+        "17":[{"textbook_title":"越来越……","site_title":"越来越……"},{"textbook_title":"疑问代词活用 3","site_title":"疑问代词活用 3"}],
+        "18":[{"textbook_title":"一……也没/都没……","site_title":"一……也没/都没……"},{"textbook_title":"一……就……","site_title":"一……就……"}],
+        "19":[{"textbook_title":"要……了/就要……了","site_title":"要……了/就要……了"},{"textbook_title":"“把”字句 4","site_title":"“把”字句 4"}],
+        "20":[{"textbook_title":"被字句","site_title":"被字句"},{"textbook_title":"只有……才……","site_title":"只有……才……"}]
+      }
+    },
+    "HSK4上": {
+      "expected": 50,
+      "lessons": {
+        "1":[{"textbook_title":"不仅……也/还/而且……","site_title":"不仅……也/还/而且……"},{"textbook_title":"从来","site_title":"从来"},{"textbook_title":"刚","site_title":"刚"},{"textbook_title":"即使……也……","site_title":"即使……也……"},{"textbook_title":"(在)……上","site_title":"(在)……上"}],
+        "2":[{"textbook_title":"正好","site_title":"正好"},{"textbook_title":"差不多","site_title":"差不多"},{"textbook_title":"尽管","site_title":"尽管"},{"textbook_title":"却","site_title":"却"},{"textbook_title":"而","site_title":"而"}],
+        "3":[{"textbook_title":"挺","site_title":"挺"},{"textbook_title":"本来","site_title":"本来"},{"textbook_title":"另外","site_title":"另外"},{"textbook_title":"首先……其次……","site_title":"首先……其次……"},{"textbook_title":"不管","site_title":"不管"}],
+        "4":[{"textbook_title":"以为","site_title":"以为"},{"textbook_title":"原来","site_title":"原来"},{"textbook_title":"并","site_title":"并"},{"textbook_title":"按照","site_title":"按照"},{"textbook_title":"甚至","site_title":"甚至"}],
+        "5":[{"textbook_title":"肯定","site_title":"肯定"},{"textbook_title":"再说","site_title":"再说"},{"textbook_title":"实际","site_title":"实际"},{"textbook_title":"对……来说","site_title":"对……来说"},{"textbook_title":"尤其","site_title":"尤其"}],
+        "6":[{"textbook_title":"使","site_title":"使"},{"textbook_title":"既……又/也/还……","site_title":"既……又/也/还……"},{"textbook_title":"只要……就……","site_title":"只要……就……"},{"textbook_title":"因此","site_title":"因此"},{"textbook_title":"往往","site_title":"往往"}],
+        "7":[{"textbook_title":"估计","site_title":"估计"},{"textbook_title":"来不及","site_title":"来不及"},{"textbook_title":"离合词重叠","site_title":"离合词重叠"},{"textbook_title":"要是","site_title":"要是"},{"textbook_title":"既……又/也/还……","site_title":"既……又/也/还……"}],
+        "8":[{"textbook_title":"使","site_title":"使"},{"textbook_title":"只要","site_title":"只要"},{"textbook_title":"可不是","site_title":"可不是"},{"textbook_title":"因此","site_title":"因此"},{"textbook_title":"往往","site_title":"往往"}],
+        "9":[{"textbook_title":"仍然","site_title":"仍然"},{"textbook_title":"结果","site_title":"结果"},{"textbook_title":"是否","site_title":"是否"},{"textbook_title":"甚至","site_title":"甚至"},{"textbook_title":"通过","site_title":"通过"}],
+        "10":[{"textbook_title":"由于","site_title":"由于"},{"textbook_title":"再……也……","site_title":"再……也……"},{"textbook_title":"尤其","site_title":"尤其"},{"textbook_title":"于是","site_title":"于是"},{"textbook_title":"总的来说","site_title":"总的来说"}]
+      }
+    },
+    "HSK4下": {
+      "expected": 50,
+      "lessons": {
+        "11":[{"textbook_title":"连","site_title":"连"},{"textbook_title":"否则","site_title":"否则"},{"textbook_title":"无论","site_title":"无论"},{"textbook_title":"然而","site_title":"然而"},{"textbook_title":"同时","site_title":"同时"}],
+        "12":[{"textbook_title":"并且","site_title":"并且"},{"textbook_title":"再……也……","site_title":"再……也……"},{"textbook_title":"对于","site_title":"对于"},{"textbook_title":"名量词重叠","site_title":"名量词重叠"},{"textbook_title":"相反","site_title":"相反"}],
+        "13":[{"textbook_title":"大概","site_title":"大概"},{"textbook_title":"偶尔","site_title":"偶尔"},{"textbook_title":"由","site_title":"由"},{"textbook_title":"进行","site_title":"进行"},{"textbook_title":"随着","site_title":"随着"}],
+        "14":[{"textbook_title":"够","site_title":"够"},{"textbook_title":"以","site_title":"以"},{"textbook_title":"既然","site_title":"既然"},{"textbook_title":"于是","site_title":"于是"},{"textbook_title":"什么的","site_title":"什么的"}],
+        "15":[{"textbook_title":"想起来","site_title":"想起来"},{"textbook_title":"弄","site_title":"弄"},{"textbook_title":"千万","site_title":"千万"},{"textbook_title":"来","site_title":"来"},{"textbook_title":"左右","site_title":"左右"}],
+        "16":[{"textbook_title":"可","site_title":"可"},{"textbook_title":"恐怕","site_title":"恐怕"},{"textbook_title":"到底","site_title":"到底"},{"textbook_title":"拿……来说","site_title":"拿……来说"},{"textbook_title":"敢","site_title":"敢"}],
+        "17":[{"textbook_title":"倒","site_title":"倒"},{"textbook_title":"干","site_title":"干"},{"textbook_title":"趟","site_title":"趟"},{"textbook_title":"为了……而……","site_title":"为了……而……"},{"textbook_title":"仍然","site_title":"仍然"}],
+        "18":[{"textbook_title":"是否","site_title":"是否"},{"textbook_title":"受不了","site_title":"受不了"},{"textbook_title":"接着","site_title":"接着"},{"textbook_title":"除此以外","site_title":"除此以外"},{"textbook_title":"把……叫作……","site_title":"把……叫作……"}],
+        "19":[{"textbook_title":"疑问代词活用表示任指","site_title":"疑问代词活用表示任指"},{"textbook_title":"上","site_title":"上"},{"textbook_title":"出来","site_title":"出来"},{"textbook_title":"总的来说","site_title":"总的来说"},{"textbook_title":"在于","site_title":"在于"}],
+        "20":[{"textbook_title":"动词+着+动词+着","site_title":"动词+着+动词+着"},{"textbook_title":"一……就……","site_title":"一……就……"},{"textbook_title":"究竟","site_title":"究竟"},{"textbook_title":"起来","site_title":"起来"},{"textbook_title":"动词+起","site_title":"动词+起"}]
+      }
+    }
+  },
+  "note": "教材正式语言点总基线：HSK1 45 + HSK2 44 + HSK3 47 + HSK4上 50 + HSK4下 50 = 236。语音、比一比、汉字、俗语和文化不计入236项。"
+}
