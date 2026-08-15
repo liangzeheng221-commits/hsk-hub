@@ -122,8 +122,13 @@ ok(/hsk1\/index\.html/.test(portal),'Portal: HSK1 link missing');
 ok(/hsk2\.html/.test(portal),'Portal: HSK2 link missing');
 ok(/hsk3\/index\.html/.test(portal),'Portal: HSK3 link missing');
 ok(/hsk4\/index\.html/.test(portal),'Portal: HSK4 Lower link missing');
-const siteKey='hsk_site_unlocked_v1';
-for(const file of ['index.html','hsk1/auth-patch.js','assets/app.js','hsk3/app-core.js','hsk4/runtime.js'])ok(read(file).includes(siteKey),`${file}: shared one-password key missing`);
+const sessionKey='hsk_portal_unlocked_v2';
+for(const file of ['assets/session-auth.js','hsk1/auth-patch.js','assets/app.js'])ok(read(file).includes(sessionKey),`${file}: session-only one-password key missing`);
+ok(portal.includes('assets/session-auth.js'),'index.html: shared session auth missing');
+ok(read('hsk3/runtime-loader.js').includes('../assets/session-auth.js'),'hsk3/runtime-loader.js: shared session auth missing');
+ok(read('hsk4up/app-practice.js').includes('../assets/session-auth.js'),'hsk4up/app-practice.js: shared session auth missing');
+ok(read('hsk4/practice.js').includes('../assets/session-auth.js'),'hsk4/practice.js: shared session auth missing');
+ok(!portal.includes("localStorage.setItem('hsk_site_unlocked_v1'"),'index.html: persistent password unlock must not be restored');
 
 // HSK1 keeps parity assets as direct tags.
 {
@@ -131,12 +136,13 @@ for(const file of ['index.html','hsk1/auth-patch.js','assets/app.js','hsk3/app-c
   ok(c.includes('hsk2-parity.js'),'hsk1/lesson.html: HSK2 parity layer missing');
   ok(c.includes('hanzi-curriculum.js'),'hsk1/lesson.html: textbook Hanzi curriculum missing');
   ok(c.includes('lesson-menu-parity.js'),'hsk1/lesson.html: HSK2-style lesson menu missing');
+  ok(c.includes('hanzi-visibility-fix.js'),'hsk1/lesson.html: Hanzi visible-layout fix missing');
 }
 // HSK3 now uses a validated dynamic bootstrap; check that chain rather than obsolete direct tags.
 for(const file of ['hsk3/index.html','hsk3/lesson.html'])ok(read(file).includes('runtime-loader.js'),`${file}: HSK3 runtime loader missing`);
 {
   const loader=read('hsk3/runtime-loader.js');
-  for(const asset of ['corrections.js','textbook-baseline.js','app-core.js','app-practice.js','hsk2-parity.js','lesson-menu-parity.js','hanzi-curriculum.js'])ok(loader.includes(asset),`hsk3/runtime-loader.js: ${asset} missing from bootstrap chain`);
+  for(const asset of ['corrections.js','textbook-baseline.js','app-core.js','app-practice.js','hsk2-parity.js','lesson-menu-parity.js','hanzi-curriculum.js','session-auth.js'])ok(loader.includes(asset),`hsk3/runtime-loader.js: ${asset} missing from bootstrap chain`);
 }
 // HSK4 Lower core files and data coverage.
 for(const file of ['hsk4/index.html','hsk4/lesson.html','hsk4/runtime.js','hsk4/modules.js','hsk4/practice.js','hsk4/data.js'])ok(exists(file),`${file}: missing`);
