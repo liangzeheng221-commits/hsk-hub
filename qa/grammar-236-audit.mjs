@@ -9,7 +9,7 @@ const run=(code,ctx,name)=>vm.runInNewContext(code,ctx,{filename:name,timeout:50
 const errors=[];const check=(fn)=>{try{fn()}catch(e){errors.push(e.stack||String(e))}};
 
 function loadH1(){const ctx={window:{},console};ctx.window.window=ctx.window;for(let i=1;i<=5;i++)run(read(`hsk1/data-${i}.js`),ctx,`hsk1/data-${i}.js`);run(read('hsk1/corrections.js'),ctx,'hsk1/corrections.js');return {data:ctx.window.HSK1_LESSONS,ctx}}
-function loadH2(){const ctx={window:{},console};ctx.window.window=ctx.window;for(let i=1;i<=8;i++)run(read(`data/v7-${i}.js`),ctx,`data/v7-${i}.js`);const b64=ctx.window.__HSK2_V7;assert(b64,'HSK2 packed chunks missing');ctx.window.HSK2_LESSONS=JSON.parse(zlib.gunzipSync(Buffer.from(b64,'base64')).toString('utf8'));run(read('assets/hsk2-content-audit.js'),ctx,'assets/hsk2-content-audit.js');return {data:ctx.window.HSK2_LESSONS,ctx}}
+function loadH2(){const ctx={window:{},console};ctx.window.window=ctx.window;for(let i=1;i<=8;i++)run(read(`data/v7-${i}.js`),ctx,`data/v7-${i}.js`);const b64=ctx.window.__HSK2_V7;assert(b64,'HSK2 packed chunks missing');ctx.window.HSK2_LESSONS=JSON.parse(zlib.gunzipSync(Buffer.from(b64,'base64')).toString('utf8'));run(read('assets/hsk2-content-audit.js'),ctx,'assets/hsk2-content-audit.js');run(read('assets/hsk2-grammar-canonical.js'),ctx,'assets/hsk2-grammar-canonical.js');return {data:ctx.window.HSK2_LESSONS,ctx}}
 function loadH3(){const src=read('hsk3/data.js'),m=src.match(/atob\(\s*['"]([A-Za-z0-9+/=]+)['"]\s*\)/);assert(m,'HSK3 packed payload missing');let data=JSON.parse(zlib.gunzipSync(Buffer.from(m[1],'base64')).toString('utf8'));if(!Array.isArray(data)&&Array.isArray(data?.lessons))data=data.lessons;if(!Array.isArray(data)&&Array.isArray(data?.HSK3_LESSONS))data=data.HSK3_LESSONS;if(!Array.isArray(data)&&data&&typeof data==='object')data=Object.values(data).sort((a,b)=>a.id-b.id);const ctx={window:{HSK3_LESSONS:data},console};ctx.window.window=ctx.window;for(const f of ['hsk3/corrections.js','hsk3/textbook-baseline.js','hsk3/textbook-audit.js'])run(read(f),ctx,f);return {data:ctx.window.HSK3_LESSONS,ctx}}
 function loadH4U(){const ctx={window:{HSK4_UPPER_LESSONS:[]},console};ctx.window.window=ctx.window;for(let i=1;i<=10;i++)run(read(`hsk4up/data/${String(i).padStart(2,'0')}.js`),ctx,`hsk4up/data/${String(i).padStart(2,'0')}.js`);run(read('hsk4up/grammar-canonical.js'),ctx,'hsk4up/grammar-canonical.js');return {data:ctx.window.HSK4_UPPER_LESSONS,ctx}}
 function loadH4L(){const ctx={window:{HSK4_LOWER_LESSONS:[]},console};ctx.window.window=ctx.window;run(read('hsk4/data.js'),ctx,'hsk4/data.js');for(let i=11;i<=20;i++)run(read(`hsk4/data/${i}.js`),ctx,`hsk4/data/${i}.js`);run(read('hsk4/grammar-canonical.js'),ctx,'hsk4/grammar-canonical.js');run(read('hsk4/content-audit.js'),ctx,'hsk4/content-audit.js');return {data:ctx.window.HSK4_LOWER_LESSONS,ctx}}
@@ -29,7 +29,7 @@ for(const book of Object.keys(loaders))check(()=>{
     let actual;
     if(book==='HSK1')actual=(L.grammar||[]).filter(g=>g.content_type==='grammar').map(g=>g.title);
     else actual=(L.grammar||[]).map(g=>g.title);
-    assert.deepEqual(actual,expected,`${book} L${id} grammar titles/order`);
+    assert.equal(JSON.stringify(Array.from(actual)),JSON.stringify(expected),`${book} L${id} grammar titles/order`);
     count+=actual.length;
   }
   assert.equal(count,base.expected,`${book}: expected formal grammar count`);total+=count;
@@ -41,6 +41,10 @@ check(()=>{
   for(const L of data){for(const g of L.grammar||[]){assert(['grammar','phonetics'].includes(g.content_type),`HSK1 L${L.id} ${g.title}: content_type`)}}
   const l5=data.find(x=>x.id===5),l7=data.find(x=>x.id===7),l15=data.find(x=>x.id===15);assert(l5.grammar.some(g=>g.title==='百以内的数字'));assert(l5.grammar.some(g=>g.title==='“了”表变化'));assert(l7.grammar.some(g=>g.title==='日期的表达（1）：月、日/号、星期'));assert(l15.grammar.some(g=>g.title==='日期的表达（2）：年、月、日/号、星期'));
   const l13=data.find(x=>x.id===13),phone=l13.grammar.find(g=>g.title==='电话号码的表达');assert.match(phone.desc,/yāo/);assert.match(l13.scenes[2].lines[0].py,/yāo/);assert.match(l13.scenes[2].lines[1].py,/yāo/);
+});
+
+check(()=>{
+  const {data,ctx}=loaded.HSK2;assert.equal(ctx.window.HSK2_GRAMMAR_CANONICAL?.total,44,'HSK2 canonical marker');assert.equal(data.reduce((n,L)=>n+L.grammar.length,0),44,'HSK2 formal grammar total');
 });
 
 check(()=>{
