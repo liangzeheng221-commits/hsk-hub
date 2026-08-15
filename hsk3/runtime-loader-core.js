@@ -1,11 +1,11 @@
 /* Robust HSK3 runtime bootstrap. */
 (()=>{
   'use strict';
-  const BUILD='20260815-reviewed-practice-1';
+  const BUILD='20260815-hsk3-locked-1';
   const isLesson=()=>!!document.getElementById('lessonTitle');
   const qs=s=>document.querySelector(s);
   const domReady=()=>document.readyState==='loading'?new Promise(r=>document.addEventListener('DOMContentLoaded',r,{once:true})):Promise.resolve();
-  const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
 
   function showFatal(err){
     console.error('[HSK3 bootstrap]',err);
@@ -85,20 +85,9 @@
     const lessons=window.HSK3_LESSONS||[];
     const L9=lessons.find(L=>L.id===9),zhongwen=L9?.vocab?.find(v=>v.zh==='中文');
     if(!zhongwen)throw new Error('HSK3 vocab contract: Bài 9 thiếu 中文');
-    zhongwen.properName=true;
-    zhongwen.kind='proper';
-    zhongwen.pos='danh từ riêng';
-    if(window.HSK3_AUDIT_META?.proper){
-      const p=window.HSK3_AUDIT_META.proper;
-      p[9]=Array.from(new Set([...(p[9]||[]),'中文']));
-    }
-    for(const L of lessons){
-      for(const v of L.vocab||[]){
-        if(v.properName)v.kind='proper';
-        else if(v.aboveLevel)v.kind='supplement';
-        else v.kind='core';
-      }
-    }
+    zhongwen.properName=true;zhongwen.kind='proper';zhongwen.pos='danh từ riêng';
+    if(window.HSK3_AUDIT_META?.proper){const p=window.HSK3_AUDIT_META.proper;p[9]=Array.from(new Set([...(p[9]||[]),'中文']))}
+    for(const L of lessons)for(const v of L.vocab||[]){if(v.properName)v.kind='proper';else if(v.aboveLevel)v.kind='supplement';else v.kind='core'}
     const words=lessons.reduce((n,L)=>n+L.vocab.length,0);
     const properCount=lessons.reduce((n,L)=>n+L.vocab.filter(v=>v.properName).length,0);
     const supplementCount=lessons.reduce((n,L)=>n+L.vocab.filter(v=>v.aboveLevel).length,0);
@@ -115,7 +104,7 @@
     const links=[...document.querySelectorAll('#lessonGrid a[href*="lesson.html?id="]')];
     if(links.length<120)throw new Error('thiếu liên kết vào các phần bài học');
     const word=qs('#wordStat');if(!word||!/^\d+$/.test(word.textContent.trim()))throw new Error('không tính được tổng số từ');
-    if(!qs('#hsk3TextbookNote')&&!qs('#hsk3SystemNote'))console.warn('[HSK3] 词汇摘要未渲染；课程主体仍可正常使用。');
+    if(!window.__HSK3_TEXTBOOK_LOCKED?.ok)throw new Error('locked textbook corpus chưa sẵn sàng');
   }
 
   function verifyLesson(){
@@ -124,9 +113,10 @@
     if(!qs('#vocabGrid')?.children.length)throw new Error('từ vựng chưa render');
     if(!qs('#grammarList')?.children.length)throw new Error('ngữ pháp chưa render');
     if(!qs('#basicPractice')?.children.length)throw new Error('luyện tập chưa render');
-    if(!qs('#auditVocabSummary'))throw new Error('词汇摘要未渲染');
-    if(!qs('#auditTextbookSource'))throw new Error('教材信息未渲染');
-    if(!qs('#auditGrammarNote'))throw new Error('语言点摘要未渲染');
+    if(!window.__HSK3_TEXTBOOK_LOCKED?.ok)throw new Error('locked textbook corpus chưa sẵn sàng');
+    if(!L?.textbookLocked||L.scenes?.length!==4)throw new Error('bài khoá chưa được thay bằng 4 đơn vị canonical');
+    if(L.scenes.some(s=>!s.locked||!s.lines?.length||s.lines.some(x=>!x.locked||!x.zh||!x.py||!x.vn)))throw new Error('bài khoá canonical thiếu trường bắt buộc');
+    if(qs('#auditTextbookSource')||qs('#auditVocabSummary')||qs('#auditGrammarNote'))throw new Error('metadata kiểm định không được hiển thị cho học viên');
     if(!qs('#practice .practice-note'))throw new Error('练习区未渲染');
   }
 
@@ -140,11 +130,16 @@
       await loadScript('textbook-audit.js');
       if(!window.__HSK3_CONTENT_AUDITED)throw new Error('textbook audit chưa khởi tạo');
       applyTextbookVocabContract();
+      await loadScript('textbook-locked-data.js');
+      await loadScript('textbook-locked.js');
+      await window.HSK3_TEXTBOOK_LOCKED_READY;
+      if(!window.__HSK3_TEXTBOOK_LOCKED?.ok)throw new Error('locked textbook corpus integrity failed');
       await loadScript('app-core.js');
       await loadScript('../assets/session-auth.js');
       if(isLesson())await loadScript('../assets/hsk2-parity.js');
       await loadScript('app-practice.js');
       await loadScript('textbook-audit-ui.js');
+      if(isLesson())await loadScript('textbook-locked-ui.js');
       if(typeof initGate!=='function')throw new Error('app-core chưa khởi tạo');
       initGate();
       if(isLesson()){
@@ -158,7 +153,7 @@
       }
       const words=window.HSK3_LESSONS.reduce((n,L)=>n+L.vocab.length,0);
       const coreWords=window.HSK3_LESSONS.reduce((n,L)=>n+L.vocab.filter(v=>!v.properName&&!v.aboveLevel).length,0);
-      window.__HSK3_DIAGNOSTICS={ok:true,build:BUILD,lessons:window.HSK3_LESSONS.length,words,coreWords,page:isLesson()?'lesson':'home',contentAudited:true,vocabContract:window.__HSK3_VOCAB_CONTRACT};
+      window.__HSK3_DIAGNOSTICS={ok:true,build:BUILD,lessons:window.HSK3_LESSONS.length,words,coreWords,page:isLesson()?'lesson':'home',contentAudited:true,textbookLocked:window.__HSK3_TEXTBOOK_LOCKED,vocabContract:window.__HSK3_VOCAB_CONTRACT};
       document.documentElement.dataset.hsk3Runtime='ok';window.__HSK3_RUNTIME_OK=true;
       console.info('[HSK3 bootstrap] OK',window.__HSK3_DIAGNOSTICS);
     }catch(err){showFatal(err)}
