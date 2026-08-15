@@ -67,7 +67,7 @@ function load(env){
   const env=makeDom('hsk4/lesson.html','https://example.test/hsk4/lesson.html?id=11&sec=vocab');load(env);
   const d=env.w.document;
   assert.equal(d.documentElement.dataset.hsk4ContentFinal,'20260814-5');
-  assert.equal(d.documentElement.dataset.hsk4UiFinal,'20260814-5');
+  assert.equal(d.documentElement.dataset.hsk4UiFinal,'20260814-6');
   assert.equal(d.documentElement.dataset.hsk4PracticeFinal,'20260814-5');
   const n=env.w.HSK4_LOWER_LESSONS.find(x=>x.id===11).vocab.length;
   assert.equal(d.querySelectorAll('#vocabGrid .vcard').length,n);
@@ -83,7 +83,7 @@ function load(env){
   assert.equal(d.querySelectorAll('#q-fill .fill-card').length,n-Math.min(12,n));
   assert.equal(d.querySelectorAll('#q-read .qcard').length,5);
   assert.equal(d.querySelectorAll('.textbook-task-group').length,3);
-  env.dom.window.close();console.log('FINAL LESSON 11 UI PASS: POS + page + tone + proper noun + 100% vocab coverage + tasks');
+  env.dom.window.close();console.log('FINAL LESSON 11 UI PASS: POS + page + tone + proper noun + vocab practice + tasks');
 }
 
 for(const [id,sceneIndex,needles] of [[14,2,['关灯一小时','统一规则']],[17,4,['海底的动物们一直在“说话”','各种颜色的亮光']],[20,3,['上海话','普通话']]]){
