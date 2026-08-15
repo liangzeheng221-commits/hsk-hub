@@ -2,6 +2,8 @@ name: HSK Site QA
 on:
   push:
     branches: [gh-pages]
+  pull_request:
+    branches: [gh-pages]
   workflow_dispatch:
 permissions:
   contents: read
@@ -30,6 +32,8 @@ jobs:
         run: node tools/site-qa.mjs
       - name: Run HSK1 and HSK2 content audit
         run: node tools/hsk12-content-audit.mjs
+      - name: Run 236-point textbook grammar audit
+        run: node qa/grammar-236-audit.mjs
       - name: Validate reviewed HSK3 and HSK4 practice banks
         run: node qa/reviewed-practice-smoke.mjs
       - name: Validate HSK4 vocabulary stroke-order panels
