@@ -64,9 +64,9 @@ function baseRuntime(env,lesson=false){
   assert.equal(env.w.document.querySelectorAll('#lessonGrid .lesson-card').length,20,'home: 20 lesson cards expected');
   assert(env.w.document.querySelectorAll('#lessonGrid a[href*="lesson.html?id="]').length>=120,'home: lesson links missing');
   assert.equal(env.w.document.querySelector('#wordStat').textContent.trim(),'325','home: audited textbook item count should be 325');
-  assert(env.w.document.querySelector('#hsk3SystemNote'),'home: HSK textbook-system note missing');
+  assert(env.w.document.querySelector('#hsk3TextbookNote'),'home: HSK textbook note missing');
   env.dom.window.close();
-  console.log('HOME PASS: 20 cards, 325 audited textbook items and system note rendered');
+  console.log('HOME PASS: 20 cards, 325 audited textbook items and textbook note rendered');
 }
 
 for(let id=1;id<=20;id++){
