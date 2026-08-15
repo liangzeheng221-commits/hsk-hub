@@ -36,6 +36,8 @@ jobs:
         run: node tools/hsk12-textbook-locked-audit.mjs
       - name: Validate locked HSK3 textbook corpus
         run: node tools/hsk3-textbook-locked-audit.mjs
+      - name: Validate locked HSK4 Upper textbook corpus
+        run: node tools/hsk4u-textbook-locked-audit.mjs
       - name: Run 236-point textbook grammar audit
         run: node qa/grammar-236-audit.mjs
       - name: Render HSK4 Upper detailed grammar UI
