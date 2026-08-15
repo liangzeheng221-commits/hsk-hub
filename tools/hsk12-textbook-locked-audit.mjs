@@ -45,18 +45,14 @@ if(h2l11?.vn!=='Bạn gì vậy? Có phải là bạn trai không?') fail('HSK2 
 const h2l13=h2base[12].scenes.flatMap(s=>s.lines).find(x=>x.zh.includes('就是我们班那个长着两个大眼睛'));
 if(!h2l13?.vn?.includes('trong lớp bọn mình')) fail('HSK2 L13 reviewed translation lost');
 
-const h1Index=read('hsk1/index.html'), h1Lesson=read('hsk1/lesson.html');
-for(const [name,html] of [['HSK1 index',h1Index],['HSK1 lesson',h1Lesson]]){
-  if(!html.includes('textbook-locked.js')) fail(`${name} does not load locked layer`);
-  if(html.indexOf('content-audit.js')>html.indexOf('textbook-locked.js')) fail(`${name} locked layer must load after content-audit`);
-}
-const h2Home=read('hsk2.html'), h2Lesson=read('lesson.html');
-for(const [name,html] of [['HSK2 home',h2Home],['HSK2 lesson',h2Lesson]]){
-  for(let i=1;i<=4;i++)if(!html.includes(`hsk2-textbook-locked-${i}.js`)) fail(`${name} does not load locked corpus chunk ${i}`);
-  if(!html.includes('hsk2-textbook-locked.js')) fail(`${name} does not load locked layer`);
-  if(html.indexOf('hsk2-textbook-locked.js')>html.indexOf("assets/app.js")) fail(`${name} locked layer must load before app`);
-}
-if(!h2Lesson.includes('hsk2-textbook-locked-ui.js')) fail('HSK2 lesson does not load locked renderer');
+const h1Auth=read('hsk1/auth-patch.js');
+if(!h1Auth.includes('textbook-locked.js')||!h1Auth.includes("window.addEventListener('load'")) fail('HSK1 locked corpus is not wired after page audits');
+
+const h2Loader=read('data/v8-load.js');
+for(let i=1;i<=4;i++)if(!h2Loader.includes(`hsk2-textbook-locked-${i}.js`)) fail(`HSK2 loader missing locked corpus chunk ${i}`);
+if(!h2Loader.includes('hsk2-textbook-locked.js')) fail('HSK2 loader missing locked canonical layer');
+const h2Nav=read('assets/hsk2-nav-fix.js');
+if(!h2Nav.includes('hsk2-textbook-locked-ui.js')) fail('HSK2 lesson does not load locked renderer');
 const ui=read('assets/hsk2-textbook-locked-ui.js');
 if(!ui.includes("x.py||''")||ui.includes('pinyinText(x.zh)')) fail('HSK2 locked UI is not using canonical pinyin');
 
