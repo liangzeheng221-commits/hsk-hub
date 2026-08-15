@@ -44,6 +44,6 @@ if(!document.querySelector('script[data-vocab-unified]')){
   const s=document.createElement('script');s.src='../assets/vocab-unified.js?v=20260815-4';s.dataset.vocabUnified='1';document.body.appendChild(s);
 }
 if(!document.querySelector('script[data-student-polish]')){
-  const p=document.createElement('script');p.src='../assets/student-polish.js?v=20260816-2';p.dataset.studentPolish='1';document.body.appendChild(p);
+  const p=document.createElement('script');p.src='../assets/student-polish.js?v=20260816-3';p.dataset.studentPolish='1';document.body.appendChild(p);
 }
 })();
