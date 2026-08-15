@@ -5,6 +5,7 @@ on:
     branches: [gh-pages]
     paths:
       - 'hsk3/**'
+      - 'practice/reviewed/hsk3-v1.1*'
       - 'assets/hsk2-parity.js'
       - 'assets/lesson-menu-parity.js'
       - 'assets/hanzi-curriculum.js'
@@ -58,7 +59,7 @@ jobs:
           BASE='https://nhiennhientran.github.io/hsk-hub/hsk3'
           OK=0
           for attempt in 1 2 3 4 5 6; do
-            "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=9000 --dump-dom "$BASE/index.html?liveqa=$GITHUB_SHA-$attempt" > /tmp/hsk3-home.html 2>/tmp/chrome-home.err || true
+            "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=12000 --dump-dom "$BASE/index.html?liveqa=$GITHUB_SHA-$attempt" > /tmp/hsk3-home.html 2>/tmp/chrome-home.err || true
             CARDS=$(grep -o 'lesson-card' /tmp/hsk3-home.html | wc -l | tr -d ' ')
             if [ "$CARDS" -ge "20" ] && grep -q 'data-hsk3-runtime="ok"' /tmp/hsk3-home.html && grep -q 'id="hsk3TextbookNote"' /tmp/hsk3-home.html; then OK=1; break; fi
             echo "Public page not ready yet (attempt $attempt, lesson-card tokens=$CARDS); waiting..."
@@ -72,23 +73,25 @@ jobs:
           for i in $(seq 1 20); do
             FILE="/tmp/hsk3-lesson-$i.html"
             ERR="/tmp/chrome-$i.err"
-            "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=9000 --dump-dom "$BASE/lesson.html?id=$i&sec=vocab&liveqa=$GITHUB_SHA" > "$FILE" 2>"$ERR" || true
+            "$BROWSER" --headless --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=12000 --dump-dom "$BASE/lesson.html?id=$i&sec=practice&liveqa=$GITHUB_SHA" > "$FILE" 2>"$ERR" || true
             runtime=$(grep -c 'data-hsk3-runtime="ok"' "$FILE" || true)
             title=$(grep -Ec 'id="lessonTitle"[^>]*>[^<]+' "$FILE" || true)
             vocab=$(grep -c 'class="vcard"' "$FILE" || true)
             scenes=$(grep -c 'scene-tab' "$FILE" || true)
             grammar=$(grep -c 'grammar-card' "$FILE" || true)
             hanzi=$(grep -c 'hanzi-chip' "$FILE" || true)
-            basic=$(grep -c 'id="q-mc"' "$FILE" || true)
-            advanced=$(grep -c 'advanced-card' "$FILE" || true)
+            totalPractice=$(grep -c 'class="qcard reviewed-card' "$FILE" || true)
+            advanced=$(grep -c 'class="qcard reviewed-card advanced-card' "$FILE" || true)
+            basic=$((totalPractice-advanced))
             menu=$(grep -c 'parity-lesson-menu-wrap' "$FILE" || true)
             textbookHanzi=$(grep -c 'id="textbookHanziFocus"' "$FILE" || true)
             auditVocab=$(grep -c 'id="auditVocabSummary"' "$FILE" || true)
             auditText=$(grep -c 'id="auditTextbookSource"' "$FILE" || true)
             auditGrammar=$(grep -c 'id="auditGrammarNote"' "$FILE" || true)
-            auditPractice=$(grep -c 'id="auditPracticeNote"' "$FILE" || true)
-            echo "LIVE LESSON $i CHECK: runtime=$runtime title=$title vocab=$vocab scenes=$scenes grammar=$grammar hanzi=$hanzi basic=$basic advanced=$advanced menu=$menu textbookHanzi=$textbookHanzi auditVocab=$auditVocab auditText=$auditText auditGrammar=$auditGrammar auditPractice=$auditPractice"
-            if [ "$runtime" -lt 1 ] || [ "$title" -lt 1 ] || [ "$vocab" -lt 1 ] || [ "$scenes" -lt 1 ] || [ "$grammar" -lt 1 ] || [ "$hanzi" -lt 1 ] || [ "$basic" -lt 1 ] || [ "$advanced" -lt 1 ] || [ "$menu" -lt 1 ] || [ "$textbookHanzi" -lt 1 ] || [ "$auditVocab" -lt 1 ] || [ "$auditText" -lt 1 ] || [ "$auditGrammar" -lt 1 ] || [ "$auditPractice" -lt 1 ]; then
+            practiceNote=$(grep -c 'class="practice-note"' "$FILE" || true)
+            leaked=$(grep -Ec '依据官方练习册|练习册第|改编为|source_mode|source_page|source_id|source_basis|怎么做网站|如何做网站' "$FILE" || true)
+            echo "LIVE LESSON $i CHECK: runtime=$runtime title=$title vocab=$vocab scenes=$scenes grammar=$grammar hanzi=$hanzi basic=$basic advanced=$advanced menu=$menu textbookHanzi=$textbookHanzi auditVocab=$auditVocab auditText=$auditText auditGrammar=$auditGrammar practiceNote=$practiceNote leaked=$leaked"
+            if [ "$runtime" -lt 1 ] || [ "$title" -lt 1 ] || [ "$vocab" -lt 1 ] || [ "$scenes" -lt 1 ] || [ "$grammar" -lt 1 ] || [ "$hanzi" -lt 1 ] || [ "$basic" -ne 18 ] || [ "$advanced" -ne 14 ] || [ "$menu" -lt 1 ] || [ "$textbookHanzi" -lt 1 ] || [ "$auditVocab" -lt 1 ] || [ "$auditText" -lt 1 ] || [ "$auditGrammar" -lt 1 ] || [ "$practiceNote" -lt 1 ] || [ "$leaked" -ne 0 ]; then
               echo "LIVE LESSON $i FAILURE"
               grep -o 'data-hsk3-runtime="[^"]*"' "$FILE" | head || true
               grep -o 'HSK 3 tải dữ liệu thất bại[^<]*' "$FILE" | head || true
@@ -97,4 +100,4 @@ jobs:
             fi
             echo "LIVE LESSON $i PASS"
           done
-          echo 'HSK3 LIVE BROWSER TEST PASS: public home + all 20 lesson pages + all five modules + audited content markers'
+          echo 'HSK3 LIVE BROWSER TEST PASS: public home + all 20 lesson pages + 18 basic + 14 advanced reviewed questions per lesson'
