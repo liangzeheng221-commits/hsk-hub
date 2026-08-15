@@ -81,6 +81,34 @@
     return data;
   }
 
+  function applyTextbookVocabContract(){
+    const lessons=window.HSK3_LESSONS||[];
+    const L9=lessons.find(L=>L.id===9),zhongwen=L9?.vocab?.find(v=>v.zh==='中文');
+    if(!zhongwen)throw new Error('HSK3 vocab contract: Bài 9 thiếu 中文');
+    zhongwen.properName=true;
+    zhongwen.kind='proper';
+    zhongwen.pos='danh từ riêng';
+    if(window.HSK3_AUDIT_META?.proper){
+      const p=window.HSK3_AUDIT_META.proper;
+      p[9]=Array.from(new Set([...(p[9]||[]),'中文']));
+    }
+    for(const L of lessons){
+      for(const v of L.vocab||[]){
+        if(v.properName)v.kind='proper';
+        else if(v.aboveLevel)v.kind='supplement';
+        else v.kind='core';
+      }
+    }
+    const words=lessons.reduce((n,L)=>n+L.vocab.length,0);
+    const properCount=lessons.reduce((n,L)=>n+L.vocab.filter(v=>v.properName).length,0);
+    const supplementCount=lessons.reduce((n,L)=>n+L.vocab.filter(v=>v.aboveLevel).length,0);
+    const coreCount=lessons.reduce((n,L)=>n+L.vocab.filter(v=>!v.properName&&!v.aboveLevel).length,0);
+    const ok=words===325&&properCount===13&&supplementCount===13&&coreCount===299;
+    window.__HSK3_VOCAB_CONTRACT={version:'2026-08-15-vocab-1',ok,words,coreCount,supplementCount,properCount};
+    document.documentElement.dataset.hsk3VocabContract=ok?'ok':'error';
+    if(!ok)throw new Error(`HSK3 vocab contract failed: total=${words}, core=${coreCount}, supplement=${supplementCount}, proper=${properCount}`);
+  }
+
   function verifyHome(){
     const cards=[...document.querySelectorAll('#lessonGrid .lesson-card')];
     if(cards.length!==20)throw new Error('trang chủ chỉ dựng được '+cards.length+'/20 thẻ bài học');
@@ -111,6 +139,7 @@
       await loadScript('textbook-baseline.js');
       await loadScript('textbook-audit.js');
       if(!window.__HSK3_CONTENT_AUDITED)throw new Error('textbook audit chưa khởi tạo');
+      applyTextbookVocabContract();
       await loadScript('app-core.js');
       await loadScript('../assets/session-auth.js');
       if(isLesson())await loadScript('../assets/hsk2-parity.js');
@@ -129,7 +158,7 @@
       }
       const words=window.HSK3_LESSONS.reduce((n,L)=>n+L.vocab.length,0);
       const coreWords=window.HSK3_LESSONS.reduce((n,L)=>n+L.vocab.filter(v=>!v.properName&&!v.aboveLevel).length,0);
-      window.__HSK3_DIAGNOSTICS={ok:true,build:BUILD,lessons:window.HSK3_LESSONS.length,words,coreWords,page:isLesson()?'lesson':'home',contentAudited:true};
+      window.__HSK3_DIAGNOSTICS={ok:true,build:BUILD,lessons:window.HSK3_LESSONS.length,words,coreWords,page:isLesson()?'lesson':'home',contentAudited:true,vocabContract:window.__HSK3_VOCAB_CONTRACT};
       document.documentElement.dataset.hsk3Runtime='ok';window.__HSK3_RUNTIME_OK=true;
       console.info('[HSK3 bootstrap] OK',window.__HSK3_DIAGNOSTICS);
     }catch(err){showFatal(err)}
