@@ -29,7 +29,7 @@ const checks={
   2:['教材辨析 · So sánh chi tiết','差一点发生但最终没发生'],
   3:['首先 + V','A还是B','A不A'],
   4:['đính chính','danh từ, động từ hoặc mệnh đề'],
-  5:['尤其是 + N/名词性成分','特别的 + N'],
+  5:['尤其(是) + N/名词性成分','特别的 + N'],
   7:['要是 A（的话），就 B','“的话”'],
   8:['chỉ cần A','không biến nhãn này thành thuật ngữ logic hình thức']
 };
