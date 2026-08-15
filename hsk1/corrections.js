@@ -87,11 +87,11 @@
     window.__HSK1_VOCAB_CONTRACT={version:'2026-08-15-vocab-1',ok,supplement:VOCAB_SUPPLEMENT,proper:VOCAB_PROPER,suppCount,properCount,missing};
     if(typeof document!=='undefined')document.documentElement.dataset.hsk1VocabContract=ok?'ok':'error';
     if(!ok)console.error('[HSK1 vocab contract]',window.__HSK1_VOCAB_CONTRACT);
-    if(typeof L!=='undefined'&&L&&typeof renderVocab==='function'){
+    if(typeof document!=='undefined'&&typeof L!=='undefined'&&L&&typeof renderVocab==='function'){
       try{renderVocab(document.getElementById('vSearch')?.value||'')}catch(e){console.error('[HSK1 vocab redraw]',e)}
     }
   }
-  if(typeof window!=='undefined'){
+  if(typeof window!=='undefined'&&typeof document!=='undefined'){
     if(document.readyState==='complete')applyVocabContract();
     else window.addEventListener('load',applyVocabContract,{once:true});
   }
