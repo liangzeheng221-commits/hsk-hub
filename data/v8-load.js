@@ -24,7 +24,6 @@ window.HSK2_READY=(async()=>{const b64=window.__HSK2_V7;if(!b64)throw new Error(
         }
       }
       L.coreVocabCount=(L.vocab||[]).filter(v=>v.kind==='core').length;
-      /* 自动补题只服务核心词；删除错误分类阶段可能生成的补充词题。 */
       if(Array.isArray(L.mc)){
         const nonCore=new Set((L.vocab||[]).filter(v=>v.kind!=='core').map(v=>v.zh));
         L.mc=L.mc.filter(q=>!q?.audit_generated||![...nonCore].some(zh=>String(q.q||'').includes(`“${zh}”`)));
@@ -35,12 +34,16 @@ window.HSK2_READY=(async()=>{const b64=window.__HSK2_V7;if(!b64)throw new Error(
     const properCount=lessons.reduce((n,L)=>n+(L.vocab||[]).filter(v=>v.kind==='proper').length,0);
     const phantomPowder=lessons.some(L=>(L.vocab||[]).some(v=>v.zh==='粉'));
     const ok=!missing.length&&suppCount===15&&properCount===2&&!phantomPowder;
-    window.__HSK2_VOCAB_CONTRACT={version:'2026-08-15-vocab-1',ok,supplement:SUPPLEMENT,proper:PROPER,suppCount,properCount,missing,phantomPowder};
+    window.__HSK2_VOCAB_CONTRACT={version:'2026-08-15-vocab-2',ok,supplement:SUPPLEMENT,proper:PROPER,suppCount,properCount,missing,phantomPowder};
     if(typeof document!=='undefined')document.documentElement.dataset.hsk2VocabContract=ok?'ok':'error';
     if(!ok)console.error('[HSK2 vocab contract]',window.__HSK2_VOCAB_CONTRACT);
     if(typeof L!=='undefined'&&L&&typeof renderVocab==='function'){
       try{renderVocab(document.getElementById('vSearch')?.value||'')}catch(e){console.error('[HSK2 vocab redraw]',e)}
     }
   }
-  if(typeof window!=='undefined')window.addEventListener('load',()=>{Promise.resolve(window.HSK2_READY).then(apply).catch(e=>console.error('[HSK2 vocab contract]',e))},{once:true});
+  function run(){Promise.resolve(window.HSK2_READY).then(()=>{apply();setTimeout(apply,50);setTimeout(apply,500)}).catch(e=>console.error('[HSK2 vocab contract]',e))}
+  if(typeof window!=='undefined'){
+    if(document.readyState==='loading')window.addEventListener('load',run,{once:true});else run();
+    setTimeout(run,0);
+  }
 })();
