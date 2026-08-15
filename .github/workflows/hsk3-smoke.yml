@@ -49,24 +49,6 @@ jobs:
           node --check qa/hsk3-content-audit.mjs
       - name: Verify HSK3 textbook content audit
         run: node qa/hsk3-content-audit.mjs
-      - name: Assemble verified HSK3 practice payload for smoke test
-        shell: bash
-        run: |
-          set -euo pipefail
-          cat \
-            practice/reviewed/hsk3-v1.1.part06-01.b64 \
-            practice/reviewed/hsk3-v1.1.part06-02.b64 \
-            practice/reviewed/hsk3-v1.1.part06-03a.b64 \
-            practice/reviewed/hsk3-v1.1.part06-03b.b64 \
-            practice/reviewed/hsk3-v1.1.part06-03c.b64 \
-            practice/reviewed/hsk3-v1.1.part06-03d.b64 \
-            practice/reviewed/hsk3-v1.1.part06-04.b64 \
-            practice/reviewed/hsk3-v1.1.part06-05.b64 \
-            practice/reviewed/hsk3-v1.1.part06-06.b64 \
-            practice/reviewed/hsk3-v1.1.part06-07.b64 \
-            practice/reviewed/hsk3-v1.1.part06-08.b64 \
-            practice/reviewed/hsk3-v1.1.part06-09.b64 \
-            > practice/reviewed/hsk3-v1.1.part06.b64
       - name: Decode current data and render all HSK3 lessons
         run: node qa/hsk3-smoke.mjs
       - name: Live browser check against public GitHub Pages
