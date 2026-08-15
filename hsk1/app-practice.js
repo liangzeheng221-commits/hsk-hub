@@ -1,21 +1,160 @@
-let basicMC=[],mcSelected={},advancedSelected={},matchState={};
-function genVocabMC(){const lesson=L.vocab,global=allVocab(),out=[];for(let i=0;i<5;i++){const w=lesson[i%lesson.length],mode=i<3?'meaning':'pinyin';if(mode==='meaning'){let ds=shuffle(global.filter(x=>x.zh!==w.zh).map(x=>x.vn).filter((x,j,a)=>a.indexOf(x)===j)).slice(0,3);out.push({q:`“${w.zh}” (${w.py}) nghĩa là gì?`,opts:shuffle([w.vn,...ds]),ans:w.vn,why:`${w.zh} · ${w.py} = ${w.vn}.`})}else{let ds=shuffle(global.filter(x=>x.py!==w.py).map(x=>x.py).filter((x,j,a)=>a.indexOf(x)===j)).slice(0,3);out.push({q:`Pinyin đúng của “${w.zh}” là gì?`,opts:shuffle([w.py,...ds]),ans:w.py,why:`“${w.zh}” đọc là ${w.py}.`})}}return out}
-function renderPractice(){basicMC=[...genVocabMC(),...L.grammar_mc];$('#basicPractice').innerHTML=`<div class="quiz-tabs"><button class="quiz-tab active" data-q="mc">📝 Trắc nghiệm</button><button class="quiz-tab" data-q="fill">✏️ Điền từ</button><button class="quiz-tab" data-q="fix">🔧 Sửa câu</button><button class="quiz-tab" data-q="match">🔗 Nối cột</button><button class="quiz-tab" data-q="sort">🔀 Sắp xếp</button></div><div class="quiz-pane active" id="q-mc"></div><div class="quiz-pane" id="q-fill"></div><div class="quiz-pane" id="q-fix"></div><div class="quiz-pane" id="q-match"></div><div class="quiz-pane" id="q-sort"></div><div class="scorebar" id="scoreText">Làm bài và nộp để xem đáp án + giải thích.</div>`;$$('.quiz-tab',$('#basicPractice')).forEach(b=>b.onclick=()=>{$$('.quiz-tab',$('#basicPractice')).forEach(x=>x.classList.toggle('active',x===b));$$('.quiz-pane',$('#basicPractice')).forEach(x=>x.classList.toggle('active',x.id==='q-'+b.dataset.q))});renderMC();renderFill();renderFix();renderMatch();renderSort();renderAdvanced();$$('.practice-level-btn').forEach(b=>b.onclick=()=>switchPracticeLevel(b.dataset.level));switchPracticeLevel('basic')}
-function switchPracticeLevel(level){const adv=level==='advanced';$('#basicPractice').classList.toggle('hidden-level',adv);$('#advancedPractice').classList.toggle('active',adv);$$('.practice-level-btn').forEach(b=>b.classList.toggle('active',b.dataset.level===level))}
-function setScore(s){$('#scoreText').textContent=s}
-function explain(why){return `<div class="answer-explain"><b>解析 · Giải thích</b><div>${esc(why)}</div></div>`}
-function renderMC(){mcSelected={};$('#q-mc').innerHTML=basicMC.map((q,i)=>`<div class="qcard" data-i="${i}"><div class="qmeta"><span class="qindex">Câu ${i+1}/${basicMC.length}</span></div><div class="qtitle">${esc(q.q)}</div><div class="opts">${q.opts.map(o=>`<button class="opt" data-val="${esc(o)}">${esc(o)}</button>`).join('')}</div><div class="feedback"></div></div>`).join('')+`<div class="quiz-actions"><button class="primary-btn" onclick="checkMC()">✓ Nộp bài</button><button class="ghost-btn" onclick="renderMC()">↺ Làm lại</button></div>`;$$('.qcard',$('#q-mc')).forEach((c,i)=>$$('.opt',c).forEach(b=>b.onclick=()=>{if(c.dataset.checked)return;$$('.opt',c).forEach(x=>x.classList.remove('sel'));b.classList.add('sel');mcSelected[i]=b.dataset.val}))}
-function checkMC(){let ok=0;$$('.qcard',$('#q-mc')).forEach((c,i)=>{const q=basicMC[i],chosen=mcSelected[i],good=chosen===q.ans;c.dataset.checked='1';$$('.opt',c).forEach(b=>{b.disabled=true;if(b.dataset.val===q.ans)b.classList.add('correct');if(b.classList.contains('sel')&&!good)b.classList.add('wrong')});if(good)ok++;const f=$('.feedback',c);f.innerHTML=`<div>${good?'✅ Đúng':chosen?'❌ Chưa đúng':'⚠️ Chưa chọn'} · Đáp án: <b>${esc(q.ans)}</b></div>${explain(q.why)}`;f.className='feedback '+(good?'good':'bad')});setScore(`Trắc nghiệm: ${ok}/${basicMC.length} · ${Math.round(ok/basicMC.length*100)}%`)}
-function renderFill(){$('#q-fill').innerHTML=L.fills.map((q,i)=>`<div class="fill-card">${i+1}. ${esc(q.q).replace('______',`<input class="fill-input" data-i="${i}" autocomplete="off">`)}<div class="feedback" id="fillfb-${i}"></div></div>`).join('')+`<div class="quiz-actions"><button class="primary-btn" onclick="checkFill()">✓ Kiểm tra</button><button class="ghost-btn" onclick="renderFill()">↺ Làm lại</button></div>`}
-function checkFill(){let ok=0;$$('.fill-input',$('#q-fill')).forEach(inp=>{const q=L.fills[+inp.dataset.i],good=norm(inp.value)===norm(q.ans);inp.classList.toggle('good',good);inp.classList.toggle('bad',!good);if(good)ok++;const f=$('#fillfb-'+inp.dataset.i);f.innerHTML=`<div>${good?'✅ Đúng':'❌ Chưa đúng'} · Đáp án: <b>${esc(q.ans)}</b></div>${explain(q.why)}`;f.className='feedback '+(good?'good':'bad')});setScore(`Điền từ: ${ok}/${L.fills.length} · ${Math.round(ok/L.fills.length*100)}%`)}
-function renderFix(){$('#q-fix').innerHTML=L.fixes.map((q,i)=>`<div class="fix-card"><div><b>${i+1}. Câu cần sửa:</b> ${esc(q.wrong)}</div><input class="fix-input" data-i="${i}" placeholder="Nhập câu đúng" style="width:min(100%,540px);margin-top:8px"><div class="feedback" id="fixfb-${i}"></div></div>`).join('')+`<div class="quiz-actions"><button class="primary-btn" onclick="checkFix()">✓ Kiểm tra</button><button class="ghost-btn" onclick="renderFix()">↺ Làm lại</button></div>`}
-function checkFix(){let ok=0;$$('.fix-input',$('#q-fix')).forEach(inp=>{const q=L.fixes[+inp.dataset.i],good=norm(inp.value)===norm(q.correct);inp.classList.toggle('good',good);inp.classList.toggle('bad',!good);if(good)ok++;const f=$('#fixfb-'+inp.dataset.i);f.innerHTML=`<div>${good?'✅ Đúng':'❌ Chưa đúng'} · Câu đúng: <b>${esc(q.correct)}</b></div>${explain(q.why)}`;f.className='feedback '+(good?'good':'bad')});setScore(`Sửa câu: ${ok}/${L.fixes.length} · ${Math.round(ok/L.fixes.length*100)}%`)}
-function renderMatch(){matchState={};const words=L.vocab.slice(0,Math.min(6,L.vocab.length)).map((w,i)=>({...w,key:'k'+i}));const cols={zh:shuffle(words),py:shuffle(words),vn:shuffle(words)};$('#q-match').innerHTML=`<div class="practice-note">Chọn lần lượt một mục ở mỗi cột: Hán tự → pinyin → nghĩa Việt. Ba mục đúng sẽ tự khóa.</div><div class="match-grid"><div class="match-col" id="m-zh">${cols.zh.map(w=>`<button class="match-item" data-col="zh" data-key="${w.key}">${esc(w.zh)}</button>`).join('')}</div><div class="match-col" id="m-py">${cols.py.map(w=>`<button class="match-item" data-col="py" data-key="${w.key}">${esc(w.py)}</button>`).join('')}</div><div class="match-col" id="m-vn">${cols.vn.map(w=>`<button class="match-item" data-col="vn" data-key="${w.key}">${esc(w.vn)}</button>`).join('')}</div></div><div class="feedback" id="matchFeedback"></div>`;$$('.match-item',$('#q-match')).forEach(b=>b.onclick=()=>selectMatch(b,words))}
-function selectMatch(el,words){if(el.classList.contains('matched'))return;const col=el.dataset.col;$$(`#m-${col} .match-item`).forEach(x=>x.classList.remove('sel'));el.classList.add('sel');matchState[col]=el.dataset.key;if(matchState.zh&&matchState.py&&matchState.vn){const good=matchState.zh===matchState.py&&matchState.py===matchState.vn,f=$('#matchFeedback');if(good){['zh','py','vn'].forEach(k=>{const e=$(`#m-${k} .match-item.sel`);e.classList.remove('sel');e.classList.add('matched')});const w=words.find(x=>x.key===matchState.zh);f.innerHTML=`✅ Chính xác${explain(`${w.zh} · ${w.py} = ${w.vn}.`)}`;f.className='feedback good'}else{f.textContent='❌ Chưa đúng, hãy thử lại.';f.className='feedback bad';$$('.match-item.sel').forEach(x=>x.classList.remove('sel'))}matchState={};const done=$$('.match-item.matched',$('#q-match')).length/3;if(done===words.length)setScore(`Nối cột: ${words.length}/${words.length} · 100%`)}}
-let sortState=[];
-function renderSort(){sortState=L.sorts.map(()=>[]);$('#q-sort').innerHTML=L.sorts.map((q,i)=>`<div class="sort-card" data-i="${i}"><b>${i+1}. Sắp xếp thành câu đúng:</b><div class="sort-bank" id="bank-${i}">${shuffle(q.words).map((w,j)=>`<button class="token" data-w="${esc(w)}">${esc(w)}</button>`).join('')}</div><div class="sort-answer" id="answer-${i}"></div><div class="feedback" id="sortfb-${i}"></div></div>`).join('')+`<div class="quiz-actions"><button class="primary-btn" onclick="checkSort()">✓ Kiểm tra</button><button class="ghost-btn" onclick="renderSort()">↺ Làm lại</button></div>`;$$('.sort-card',$('#q-sort')).forEach((c,i)=>{const bank=$('#bank-'+i),ans=$('#answer-'+i);bank.onclick=e=>{const t=e.target.closest('.token');if(!t)return;sortState[i].push(t.dataset.w);ans.appendChild(t)};ans.onclick=e=>{const t=e.target.closest('.token');if(!t)return;const idx=sortState[i].lastIndexOf(t.dataset.w);if(idx>=0)sortState[i].splice(idx,1);bank.appendChild(t)}})}
-function checkSort(){let ok=0;L.sorts.forEach((q,i)=>{const got=sortState[i].join(''),good=norm(got)===norm(q.answer);if(good)ok++;const f=$('#sortfb-'+i);f.innerHTML=`<div>${good?'✅ Đúng':'❌ Chưa đúng'} · Đáp án: <b>${esc(q.answer)}</b></div>${explain(q.why)}`;f.className='feedback '+(good?'good':'bad')});setScore(`Sắp xếp: ${ok}/${L.sorts.length} · ${Math.round(ok/L.sorts.length*100)}%`)}
-function renderAdvanced(){advancedSelected={};$('#advancedPractice').innerHTML=`<div class="advanced-intro"><div><span class="advanced-badge">进阶测试 · NÂNG CAO</span><h3>Vận dụng HSK 1</h3><p>Khó hơn phần cơ bản nhờ ngữ cảnh, lựa chọn gần nghĩa và trật tự câu — không vượt quá kiến thức HSK 1 của bài.</p></div><div class="advanced-count">${L.advanced.length} câu</div></div><div class="advanced-score" id="advancedScore">Làm đủ câu rồi bấm “Nộp bài nâng cao”.</div>${L.advanced.map((q,i)=>`<div class="qcard advanced-card" data-i="${i}"><div class="qmeta"><span class="qindex">Nâng cao ${i+1}/${L.advanced.length}</span><span class="difficulty-chip">★★</span></div><div class="qtitle">${esc(q.q)}</div><div class="opts">${q.opts.map(o=>`<button class="opt" data-val="${esc(o)}">${esc(o)}</button>`).join('')}</div><div class="feedback"></div></div>`).join('')}<div class="quiz-actions"><button class="primary-btn" onclick="checkAdvanced()">✓ Nộp bài nâng cao</button><button class="ghost-btn" onclick="renderAdvanced()">↺ Làm lại</button></div>`;$$('.advanced-card',$('#advancedPractice')).forEach((c,i)=>$$('.opt',c).forEach(b=>b.onclick=()=>{if(c.dataset.checked)return;$$('.opt',c).forEach(x=>x.classList.remove('sel'));b.classList.add('sel');advancedSelected[i]=b.dataset.val}))}
-function checkAdvanced(){let ok=0;$$('.advanced-card',$('#advancedPractice')).forEach((c,i)=>{const q=L.advanced[i],chosen=advancedSelected[i],good=chosen===q.ans;c.dataset.checked='1';$$('.opt',c).forEach(b=>{b.disabled=true;if(b.dataset.val===q.ans)b.classList.add('correct');if(b.classList.contains('sel')&&!good)b.classList.add('wrong')});if(good)ok++;const f=$('.feedback',c);f.innerHTML=`<div>${good?'✅ Đúng':chosen?'❌ Chưa đúng':'⚠️ Chưa chọn'} · Đáp án: <b>${esc(q.ans)}</b></div>${explain(q.why)}`;f.className='feedback '+(good?'good':'bad')});$('#advancedScore').innerHTML=`Kết quả nâng cao: <b>${ok}/${L.advanced.length}</b> · ${Math.round(ok/L.advanced.length*100)}%`}
+let reviewedSelected={basic:{},advanced:{}};
+let reviewedBankPromise=null;
 
-window.addEventListener('DOMContentLoaded',()=>{initGate();if($('#lessonGrid'))renderHome();if($('#lessonTitle'))initLesson()});
+async function ensureReviewedBank(){
+  if(window.HSK1_PRACTICE_V5) return window.HSK1_PRACTICE_V5;
+  if(reviewedBankPromise) return reviewedBankPromise;
+  reviewedBankPromise=(async()=>{
+    const files=[
+      '../practice/reviewed/hsk1-v5.0.part01.b64',
+      '../practice/reviewed/hsk1-v5.0.part02.b64',
+      '../practice/reviewed/hsk1-v5.0.part03.b64',
+      '../practice/reviewed/hsk1-v5.0.part04.b64'
+    ];
+    const parts=await Promise.all(files.map(async path=>{
+      const res=await fetch(path,{cache:'no-store'});
+      if(!res.ok) throw new Error('practice data '+res.status);
+      return (await res.text()).trim();
+    }));
+    const bytes=Uint8Array.from(atob(parts.join('')),c=>c.charCodeAt(0));
+    const bank=JSON.parse(pako.ungzip(bytes,{to:'string'}));
+    if(bank.version!=='HSK1-V5.0-2026-08-15'||bank.course!=='HSK1'||!Array.isArray(bank.lessons)||bank.lessons.length!==15||bank.qa?.total_questions!==360){
+      throw new Error('invalid HSK1 practice bank');
+    }
+    window.HSK1_PRACTICE_V5=bank;
+    return bank;
+  })();
+  return reviewedBankPromise;
+}
+function getReviewedPracticeLesson(){
+  const bank=window.HSK1_PRACTICE_V5;
+  if(!bank||!Array.isArray(bank.lessons)) return null;
+  return bank.lessons.find(x=>Number(x.lesson_id)===Number(id))||null;
+}
+function practiceHtml(s){
+  return esc(s??'').replace(/\n/g,'<br>');
+}
+function practiceExplanation(text){
+  return `<div class="answer-explain"><b>解析 · Giải thích</b><div>${practiceHtml(text)}</div></div>`;
+}
+function renderPractice(){
+  const lessonPractice=getReviewedPracticeLesson();
+  const basicBox=$('#basicPractice');
+  const advancedBox=$('#advancedPractice');
+  const practiceSection=$('#practice');
+  if(!basicBox||!advancedBox) return;
+  const note=practiceSection?.querySelector('.practice-note');
+  if(note) note.textContent='Mỗi bài gồm 14 câu cơ bản và 10 câu nâng cao. Sau khi nộp, xem đáp án và giải thích cho từng câu.';
+  const chip=practiceSection?.querySelector('.section-head .chip');
+  if(chip) chip.textContent='24 câu · Cơ bản + Nâng cao';
+  const levelBtns=$$('.practice-level-btn',practiceSection||document);
+  if(levelBtns[0]) levelBtns[0].innerHTML='基础测试 · Cơ bản<small>14 câu · đúng mức HSK 1</small>';
+  if(levelBtns[1]) levelBtns[1].innerHTML='进阶测试 · Nâng cao<small>10 câu · ngữ cảnh và vận dụng</small>';
+  if(!lessonPractice){
+    basicBox.innerHTML='<div class="feedback bad">Không tải được bộ bài tập của bài này.</div>';
+    advancedBox.innerHTML='';
+    return;
+  }
+  reviewedSelected={basic:{},advanced:{}};
+  basicBox.innerHTML=renderReviewedTier(lessonPractice.basic,'basic','基础测试 · Cơ bản');
+  advancedBox.innerHTML=renderReviewedTier(lessonPractice.advanced,'advanced','进阶测试 · Nâng cao');
+  bindReviewedTier('basic');
+  bindReviewedTier('advanced');
+  $$('.practice-level-btn').forEach(b=>b.onclick=()=>switchPracticeLevel(b.dataset.level));
+  switchPracticeLevel('basic');
+}
+function renderReviewedTier(questions,level,title){
+  const total=questions.length;
+  return `<div class="advanced-intro">
+    <div><span class="advanced-badge">${title}</span><h3>${total} câu</h3></div>
+    <div class="advanced-count">${total} câu</div>
+  </div>
+  <div class="advanced-score" id="${level}Score">Làm bài rồi bấm “Nộp bài” để xem đáp án và giải thích.</div>
+  ${questions.map((q,i)=>renderReviewedQuestion(q,i,level,total)).join('')}
+  <div class="quiz-actions">
+    <button class="primary-btn reviewed-submit" data-level="${level}">✓ Nộp bài</button>
+    <button class="ghost-btn reviewed-reset" data-level="${level}">↺ Làm lại</button>
+  </div>`;
+}
+function renderReviewedQuestion(q,i,level,total){
+  const prompt=q.prompt_vi?`<div class="practice-prompt" style="margin-bottom:8px;color:var(--muted,#64748b);font-weight:600">${practiceHtml(q.prompt_vi)}</div>`:'';
+  const stem=q.stem?`<div class="qtitle">${practiceHtml(q.stem)}</div>`:'';
+  const letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  return `<div class="qcard reviewed-card ${level==='advanced'?'advanced-card':''}" data-level="${level}" data-i="${i}">
+    <div class="qmeta">
+      <span class="qindex">Câu ${i+1}/${total}</span>
+      <span class="difficulty-chip">${practiceHtml(q.type)}</span>
+    </div>
+    ${prompt}${stem}
+    <div class="opts">
+      ${q.options.map((o,j)=>`<button class="opt reviewed-opt" data-opt="${j}"><b>${letters[j]||''}.</b> ${practiceHtml(o)}</button>`).join('')}
+    </div>
+    <div class="feedback"></div>
+  </div>`;
+}
+function bindReviewedTier(level){
+  const root=level==='basic'?$('#basicPractice'):$('#advancedPractice');
+  if(!root) return;
+  $$('.reviewed-card',root).forEach(card=>{
+    const qi=Number(card.dataset.i);
+    $$('.reviewed-opt',card).forEach(btn=>{
+      btn.onclick=()=>{
+        if(card.dataset.checked) return;
+        $$('.reviewed-opt',card).forEach(x=>x.classList.remove('sel'));
+        btn.classList.add('sel');
+        reviewedSelected[level][qi]=Number(btn.dataset.opt);
+      };
+    });
+  });
+  $('.reviewed-submit',root)?.addEventListener('click',()=>checkReviewedTier(level));
+  $('.reviewed-reset',root)?.addEventListener('click',()=>resetReviewedTier(level));
+}
+function checkReviewedTier(level){
+  const lp=getReviewedPracticeLesson();
+  if(!lp) return;
+  const questions=lp[level]||[];
+  const root=level==='basic'?$('#basicPractice'):$('#advancedPractice');
+  let ok=0;
+  $$('.reviewed-card',root).forEach((card,i)=>{
+    const q=questions[i];
+    const chosenIndex=reviewedSelected[level][i];
+    const chosen=Number.isInteger(chosenIndex)?q.options[chosenIndex]:null;
+    const good=chosen===q.answer;
+    if(good) ok++;
+    card.dataset.checked='1';
+    $$('.reviewed-opt',card).forEach((btn,j)=>{
+      btn.disabled=true;
+      const value=q.options[j];
+      if(value===q.answer) btn.classList.add('correct');
+      if(j===chosenIndex&&!good) btn.classList.add('wrong');
+    });
+    const f=$('.feedback',card);
+    f.innerHTML=`<div>${good?'✅ Đúng':chosen!==null?'❌ Chưa đúng':'⚠️ Chưa chọn'} · Đáp án / 正确答案: <b>${practiceHtml(q.answer)}</b></div>${practiceExplanation(q.explanation_vi)}`;
+    f.className='feedback '+(good?'good':'bad');
+  });
+  const score=$('#'+level+'Score');
+  if(score) score.innerHTML=`Kết quả: <b>${ok}/${questions.length}</b> · ${questions.length?Math.round(ok/questions.length*100):0}%`;
+}
+function resetReviewedTier(level){
+  const lp=getReviewedPracticeLesson();
+  if(!lp) return;
+  reviewedSelected[level]={};
+  const root=level==='basic'?$('#basicPractice'):$('#advancedPractice');
+  root.innerHTML=renderReviewedTier(lp[level]||[],level,level==='basic'?'基础测试 · Cơ bản':'进阶测试 · Nâng cao');
+  bindReviewedTier(level);
+}
+function switchPracticeLevel(level){
+  const adv=level==='advanced';
+  $('#basicPractice')?.classList.toggle('hidden-level',adv);
+  $('#advancedPractice')?.classList.toggle('active',adv);
+  $$('.practice-level-btn').forEach(b=>b.classList.toggle('active',b.dataset.level===level));
+}
+
+window.addEventListener('DOMContentLoaded',async()=>{
+  initGate();
+  if($('#lessonGrid')) renderHome();
+  if($('#lessonTitle')){
+    try{await ensureReviewedBank()}catch(err){console.error('HSK1 practice load failed',err)}
+    initLesson();
+  }
+});
