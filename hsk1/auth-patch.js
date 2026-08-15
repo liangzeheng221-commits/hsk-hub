@@ -19,5 +19,12 @@
     clearLegacy();const overlay=document.getElementById('pwOverlay');if(!overlay)return;
     if(isUnlocked()){markUnlocked();overlay.style.display='none';document.body.style.overflow=''}else{sessionStorage.removeItem('hsk_portal_unlocked');sessionStorage.removeItem(SESSION_KEY_H1);overlay.style.display='';document.body.style.overflow='hidden';const input=document.getElementById('pwInput');if(input&&!input.dataset.unifiedGate){input.dataset.unifiedGate='1';input.addEventListener('keydown',e=>{if(e.key==='Enter')window.checkPassword()})}}
   };
-  window.__HSK1_SESSION_AUTH={version:'20260815-2',sessionOnly:true};
+  /* content-audit.js is parsed later on both HSK1 pages. Load the canonical corpus on window.load so the locked textbook lines are the final authority and then redraw the text section. */
+  const loadLockedTextbook=()=>{
+    if(window.__HSK1_TEXTBOOK_LOCKED?.ok)return Promise.resolve(window.__HSK1_TEXTBOOK_LOCKED);
+    return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='textbook-locked.js?v=20260815-1';s.onload=()=>resolve(window.__HSK1_TEXTBOOK_LOCKED);s.onerror=()=>reject(new Error('Không tải được HSK1 locked textbook corpus'));document.head.appendChild(s)});
+  };
+  const startLocked=()=>loadLockedTextbook().then(c=>{if(!c?.ok)throw new Error('HSK1 locked textbook integrity failed')}).catch(e=>console.error('[HSK1 locked textbook]',e));
+  if(document.readyState==='complete')startLocked();else window.addEventListener('load',startLocked,{once:true});
+  window.__HSK1_SESSION_AUTH={version:'20260815-3',sessionOnly:true,textbookLocked:true};
 })();
