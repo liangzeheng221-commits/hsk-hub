@@ -32,6 +32,8 @@ jobs:
         run: node tools/site-qa.mjs
       - name: Run HSK1 and HSK2 content audit
         run: node tools/hsk12-content-audit.mjs
+      - name: Validate locked HSK1 and HSK2 textbook corpora
+        run: node tools/hsk12-textbook-locked-audit.mjs
       - name: Run 236-point textbook grammar audit
         run: node qa/grammar-236-audit.mjs
       - name: Render HSK4 Upper detailed grammar UI
