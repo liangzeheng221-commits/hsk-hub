@@ -10,6 +10,7 @@
   const baseShowSection=window.showSection;
   let deferred=false;
   let renderTicket=0;
+  const nextFrame=cb=>typeof window.requestAnimationFrame==='function'?window.requestAnimationFrame(cb):setTimeout(cb,0);
 
   function hanziSectionVisible(){
     const section=document.getElementById('hanzi');
@@ -21,24 +22,23 @@
 
   function renderWhenVisible(){
     const ticket=++renderTicket;
-    const run=()=>{
+    nextFrame(()=>{
       if(ticket!==renderTicket)return;
       if(!hanziSectionVisible()){deferred=true;return}
       deferred=false;
-      // Wait one paint after display/class changes so the 176×176 canvas has final geometry.
-      requestAnimationFrame(()=>{
+      // A second frame guarantees layout after display/class changes before HanziWriter measures the canvas.
+      nextFrame(()=>{
         if(ticket!==renderTicket||!hanziSectionVisible())return;
         baseRenderHanzi();
-        window.__HSK1_HANZI_VISIBILITY_FIX={version:'20260815-1',renderedVisible:true};
+        window.__HSK1_HANZI_VISIBILITY_FIX={version:'20260815-2',renderedVisible:true};
       });
-    };
-    if(typeof requestAnimationFrame==='function')requestAnimationFrame(run);else setTimeout(run,0);
+    });
   }
 
   window.renderHanzi=function(){
     if(!hanziSectionVisible()){
       deferred=true;
-      window.__HSK1_HANZI_VISIBILITY_FIX={version:'20260815-1',renderedVisible:false,deferred:true};
+      window.__HSK1_HANZI_VISIBILITY_FIX={version:'20260815-2',renderedVisible:false,deferred:true};
       return;
     }
     renderWhenVisible();
@@ -50,15 +50,11 @@
     return result;
   };
 
-  // Also recover if another script makes the section visible without using showSection().
+  // Recover if another script makes the section visible without using showSection().
   const section=document.getElementById('hanzi');
   if(section&&window.MutationObserver){
     new MutationObserver(()=>{
       if((deferred||!document.querySelector('#hanziMaster .hanzi-detail'))&&hanziSectionVisible())renderWhenVisible();
     }).observe(section,{attributes:true,attributeFilter:['class','style']});
   }
-
-  window.addEventListener('resize',()=>{
-    if(hanziSectionVisible())renderWhenVisible();
-  },{passive:true});
 })();
