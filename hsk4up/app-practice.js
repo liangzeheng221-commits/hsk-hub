@@ -7,3 +7,4 @@ function scorePractice(root,questions,scoreId){let total=0,answered=0;const card
 
 window.checkPassword=checkPassword;window.resetCourse=resetCourse;window.toggleComplete=toggleComplete;window.flipAll=flipAll;window.speakAllVocab=speakAllVocab;
 document.addEventListener('DOMContentLoaded',()=>{initGate();try{validateData();if($('#lessonGrid'))renderHome();if($('.lesson-container'))initLesson();document.documentElement.dataset.hsk4Upper='ready'}catch(e){document.documentElement.dataset.hsk4Upper='error';showFatal(e)}});
+document.write('<script src="../assets/session-auth.js?v=20260815-1"><\/script>');
