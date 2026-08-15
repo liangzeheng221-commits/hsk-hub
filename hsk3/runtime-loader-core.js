@@ -1,7 +1,7 @@
 /* Robust HSK3 runtime bootstrap. */
 (()=>{
   'use strict';
-  const BUILD='20260815-hsk3-locked-2';
+  const BUILD='20260815-hsk3-locked-3';
   const isLesson=()=>!!document.getElementById('lessonTitle');
   const qs=s=>document.querySelector(s);
   const domReady=()=>document.readyState==='loading'?new Promise(r=>document.addEventListener('DOMContentLoaded',r,{once:true})):Promise.resolve();
@@ -133,7 +133,10 @@
       await loadScript('textbook-locked-data.js');
       await loadScript('textbook-locked-data-2.js');
       await loadScript('textbook-locked-data-3.js');
-      await loadScript('textbook-locked-data-4.js');
+      await loadScript('textbook-locked-data-4a.js');
+      await loadScript('textbook-locked-data-4b.js');
+      await loadScript('textbook-locked-data-4c.js');
+      await loadScript('textbook-locked-data-4d.js');
       await loadScript('textbook-locked.js');
       await window.HSK3_TEXTBOOK_LOCKED_READY;
       if(!window.__HSK3_TEXTBOOK_LOCKED?.ok)throw new Error('locked textbook corpus integrity failed');
