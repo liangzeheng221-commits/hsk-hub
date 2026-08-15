@@ -27,6 +27,11 @@ async function ensureReviewedBank(){
   return reviewedBankPromise;
 }
 function getReviewedPracticeLesson(){
+  const external=window.getReviewedPracticeLesson;
+  if(typeof external==='function'&&external!==getReviewedPracticeLesson){
+    const overridden=external();
+    if(overridden) return overridden;
+  }
   const bank=window.HSK1_PRACTICE_V5;
   if(!bank||!Array.isArray(bank.lessons)) return null;
   return bank.lessons.find(x=>Number(x.lesson_id)===Number(id))||null;
