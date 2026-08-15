@@ -2,16 +2,23 @@
 (()=>{
   'use strict';
   function loadUnifiedVocab(){
-    if(document.querySelector('script[data-vocab-unified]'))return;
-    const l=document.createElement('link');
-    l.rel='stylesheet';
-    l.href='../assets/vocab-unified.css?v=20260815-3';
-    l.dataset.vocabUnified='1';
-    document.head.appendChild(l);
-    const u=document.createElement('script');
-    u.src='../assets/vocab-unified.js?v=20260815-4';
-    u.dataset.vocabUnified='1';
-    document.body.appendChild(u);
+    if(!document.querySelector('script[data-vocab-unified]')){
+      const l=document.createElement('link');
+      l.rel='stylesheet';
+      l.href='../assets/vocab-unified.css?v=20260816-1';
+      l.dataset.vocabUnified='1';
+      document.head.appendChild(l);
+      const u=document.createElement('script');
+      u.src='../assets/vocab-unified.js?v=20260815-4';
+      u.dataset.vocabUnified='1';
+      document.body.appendChild(u);
+    }
+    if(!document.querySelector('script[data-student-polish]')){
+      const p=document.createElement('script');
+      p.src='../assets/student-polish.js?v=20260816-1';
+      p.dataset.studentPolish='1';
+      document.body.appendChild(p);
+    }
   }
 
   const s=document.createElement('script');
