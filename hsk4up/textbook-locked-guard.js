@@ -18,4 +18,10 @@
     document.documentElement.dataset.hsk4UpperTextbookLocked='ok';
     return A;
   };
+
+  /* Shared vocabulary presentation: Hanzi → pinyin → bilingual POS. */
+  if(!document.querySelector('script[data-vocab-unified]')){
+    const l=document.createElement('link');l.rel='stylesheet';l.href='../assets/vocab-unified.css?v=20260815-2';l.dataset.vocabUnified='1';document.head.appendChild(l);
+    const s=document.createElement('script');s.src='../assets/vocab-unified.js?v=20260815-1';s.dataset.vocabUnified='1';document.body.appendChild(s);
+  }
 })();
