@@ -1,13 +1,13 @@
 window.HSK2_READY=(async()=>{const b64=window.__HSK2_V7;if(!b64)throw new Error('HSK2 data chunks missing');const bytes=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));let text;if('DecompressionStream' in window){const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));text=await new Response(stream).text()}else if(window.pako){text=window.pako.ungzip(bytes,{to:'string'})}else{throw new Error('This browser cannot decompress course data')};window.HSK2_LESSONS=JSON.parse(text);delete window.__HSK2_V7;return window.HSK2_LESSONS})();
 
-/* 教材末表词汇合同：在 hsk2-content-audit 执行后做最终分类校正与自检。 */
+/* 教材末表词汇合同：等 hsk2-content-audit 完成后再做最终分类校正与自检。 */
 (()=>{
   const SUPPLEMENT={2:['米'],3:['粉色'],4:['接'],5:['以后'],6:['公斤','经常','自行车'],7:['过'],9:['欢迎'],12:['度'],13:['班','拿','一直','长'],15:['更']};
   const PROPER={1:['花花'],13:['杨笑笑']};
   const entries=o=>Object.entries(o).flatMap(([lesson,words])=>words.map(zh=>({lesson:Number(lesson),zh})));
   function apply(){
     const lessons=window.HSK2_LESSONS||[];
-    if(!Array.isArray(lessons)||lessons.length!==15)return;
+    if(!Array.isArray(lessons)||lessons.length!==15)return false;
     const supp=new Set(entries(SUPPLEMENT).map(x=>`${x.lesson}:${x.zh}`));
     const proper=new Set(entries(PROPER).map(x=>`${x.lesson}:${x.zh}`));
     for(const L of lessons){
@@ -34,16 +34,25 @@ window.HSK2_READY=(async()=>{const b64=window.__HSK2_V7;if(!b64)throw new Error(
     const properCount=lessons.reduce((n,L)=>n+(L.vocab||[]).filter(v=>v.kind==='proper').length,0);
     const phantomPowder=lessons.some(L=>(L.vocab||[]).some(v=>v.zh==='粉'));
     const ok=!missing.length&&suppCount===15&&properCount===2&&!phantomPowder;
-    window.__HSK2_VOCAB_CONTRACT={version:'2026-08-15-vocab-2',ok,supplement:SUPPLEMENT,proper:PROPER,suppCount,properCount,missing,phantomPowder};
+    window.__HSK2_VOCAB_CONTRACT={version:'2026-08-15-vocab-3',ok,supplement:SUPPLEMENT,proper:PROPER,suppCount,properCount,missing,phantomPowder};
     if(typeof document!=='undefined')document.documentElement.dataset.hsk2VocabContract=ok?'ok':'error';
     if(!ok)console.error('[HSK2 vocab contract]',window.__HSK2_VOCAB_CONTRACT);
     if(typeof L!=='undefined'&&L&&typeof renderVocab==='function'){
       try{renderVocab(document.getElementById('vSearch')?.value||'')}catch(e){console.error('[HSK2 vocab redraw]',e)}
     }
+    return ok;
   }
-  function run(){Promise.resolve(window.HSK2_READY).then(()=>{apply();setTimeout(apply,50);setTimeout(apply,500)}).catch(e=>console.error('[HSK2 vocab contract]',e))}
-  if(typeof window!=='undefined'){
-    if(document.readyState==='loading')window.addEventListener('load',run,{once:true});else run();
-    setTimeout(run,0);
+  window.applyHSK2VocabContract=apply;
+  function auditReady(){const lessons=window.HSK2_LESSONS||[];return lessons.length===15&&lessons.every(L=>Array.isArray(L.phonetics)&&L.phonetics.length===1)}
+  function waitForAudit(){
+    let tries=0;const timer=setInterval(()=>{
+      tries++;
+      if(auditReady()){
+        clearInterval(timer);apply();setTimeout(apply,0);
+      }else if(tries>=200){
+        clearInterval(timer);console.error('[HSK2 vocab contract] textbook audit did not finish within 20s');
+      }
+    },100);
   }
+  if(typeof window!=='undefined')Promise.resolve(window.HSK2_READY).then(waitForAudit).catch(e=>console.error('[HSK2 vocab contract]',e));
 })();
