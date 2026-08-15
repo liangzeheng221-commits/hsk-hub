@@ -28,11 +28,16 @@
     '100以内的数字':'百以内的数字','“了”表示变化':'“了”表变化','日期的表达（1）':'日期的表达（1）：月、日/号、星期','日期的表达（2）':'日期的表达（2）：年、月、日/号、星期'
   };
   for(const L of lessons){
-    const expected=formal[L.id]||[],expectedNorm=new Map(expected.map(x=>[norm(x),x]));
-    for(const g of L.grammar||[]){
-      if(aliases[g.title])g.title=aliases[g.title];
-      const canonical=expectedNorm.get(norm(g.title));
-      if(canonical){g.title=canonical;g.textbook_title=canonical;g.content_type='grammar'}else g.content_type='phonetics';
+    const expected=formal[L.id]||[];
+    if(expected.length&&Array.isArray(L.grammar)&&L.grammar.length===expected.length){
+      L.grammar.forEach((g,i)=>{g.title=expected[i];g.textbook_title=expected[i];g.content_type='grammar'});
+    }else{
+      const expectedNorm=new Map(expected.map(x=>[norm(x),x]));
+      for(const g of L.grammar||[]){
+        if(aliases[g.title])g.title=aliases[g.title];
+        const canonical=expectedNorm.get(norm(g.title));
+        if(canonical){g.title=canonical;g.textbook_title=canonical;g.content_type='grammar'}else g.content_type='phonetics';
+      }
     }
     L.phonetics=(L.grammar||[]).filter(g=>g.content_type==='phonetics').map(g=>({...g}));
     L.formalGrammarCount=(L.grammar||[]).filter(g=>g.content_type==='grammar').length;
