@@ -3,6 +3,8 @@
 #vocabGrid .vcard .vfront,#vocabGrid .vocab-card .vocab-front{display:flex;flex-direction:column;align-items:center;justify-content:center}
 #vocabGrid .vcard .vzh,#vocabGrid .vocab-card .vocab-zh{margin-bottom:0!important}
 #vocabGrid .vcard .vfront>.vpy,#vocabGrid .vocab-card .vocab-front>.vocab-py{display:block!important;visibility:visible!important;opacity:1!important;position:static!important;height:auto!important;max-height:none!important;margin:6px 0 0!important;font-size:12px!important;line-height:1.35!important;font-weight:500!important;letter-spacing:.01em}
+#vocabGrid .vicon{display:none!important}
+#vocabGrid .pos-badge:not(.unified-pos){display:none!important}
 #vocabGrid .pos-badge.unified-pos{position:absolute!important;top:9px!important;right:9px!important;left:auto!important;bottom:auto!important;z-index:3;display:inline-flex!important;align-items:center;max-width:calc(100% - 50px);padding:4px 8px!important;border:1px solid #d7e7dd;border-radius:999px;background:#f3faf6;color:#17623c;font-size:10px!important;line-height:1.15!important;font-weight:700!important;white-space:normal;text-align:center;box-shadow:none}
 .hsk4-upper #vocabGrid .pos-badge.unified-pos,.hsk4-lower #vocabGrid .pos-badge.unified-pos{border-color:#edcfd0;background:#fff6f5;color:#982d32}
 #vocabGrid .unified-old-pos{display:none!important}
