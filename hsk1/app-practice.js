@@ -27,14 +27,17 @@ async function ensureReviewedBank(){
   return reviewedBankPromise;
 }
 function getReviewedPracticeLesson(){
-  const external=window.getReviewedPracticeLesson;
-  if(typeof external==='function'&&external!==getReviewedPracticeLesson){
-    const overridden=external();
-    if(overridden) return overridden;
-  }
   const bank=window.HSK1_PRACTICE_V5;
   if(!bank||!Array.isArray(bank.lessons)) return null;
   return bank.lessons.find(x=>Number(x.lesson_id)===Number(id))||null;
+}
+function resolveReviewedPracticeLesson(){
+  const external=window.getReviewedPracticeLesson;
+  if(typeof external==='function'){
+    const lessonPractice=external();
+    if(lessonPractice) return lessonPractice;
+  }
+  return getReviewedPracticeLesson();
 }
 function practiceHtml(s){
   return esc(s??'').replace(/\n/g,'<br>');
@@ -43,7 +46,7 @@ function practiceExplanation(text){
   return `<div class="answer-explain"><b>解析 · Giải thích</b><div>${practiceHtml(text)}</div></div>`;
 }
 function renderPractice(){
-  const lessonPractice=getReviewedPracticeLesson();
+  const lessonPractice=resolveReviewedPracticeLesson();
   const basicBox=$('#basicPractice');
   const advancedBox=$('#advancedPractice');
   const practiceSection=$('#practice');
@@ -115,7 +118,7 @@ function bindReviewedTier(level){
   $('.reviewed-reset',root)?.addEventListener('click',()=>resetReviewedTier(level));
 }
 function checkReviewedTier(level){
-  const lp=getReviewedPracticeLesson();
+  const lp=resolveReviewedPracticeLesson();
   if(!lp) return;
   const questions=lp[level]||[];
   const root=level==='basic'?$('#basicPractice'):$('#advancedPractice');
@@ -141,7 +144,7 @@ function checkReviewedTier(level){
   if(score) score.innerHTML=`Kết quả: <b>${ok}/${questions.length}</b> · ${questions.length?Math.round(ok/questions.length*100):0}%`;
 }
 function resetReviewedTier(level){
-  const lp=getReviewedPracticeLesson();
+  const lp=resolveReviewedPracticeLesson();
   if(!lp) return;
   reviewedSelected[level]={};
   const root=level==='basic'?$('#basicPractice'):$('#advancedPractice');
@@ -154,12 +157,32 @@ function switchPracticeLevel(level){
   $('#advancedPractice')?.classList.toggle('active',adv);
   $$('.practice-level-btn').forEach(b=>b.classList.toggle('active',b.dataset.level===level));
 }
+function verifyLesson12Practice(){
+  const lessonId=Number(new URL(location.href).searchParams.get('id')||1);
+  if(lessonId!==1&&lessonId!==2) return true;
+  const lp=resolveReviewedPracticeLesson();
+  const basicCount=$$('.reviewed-card',$('#basicPractice')).length;
+  const advancedCount=$$('.reviewed-card',$('#advancedPractice')).length;
+  const dataOk=!!lp&&Array.isArray(lp.basic)&&lp.basic.length===14&&Array.isArray(lp.advanced)&&lp.advanced.length===10&&[...lp.basic,...lp.advanced].every(q=>Array.isArray(q.options)&&q.options.includes(q.answer)&&String(q.explanation_vi||'').trim());
+  const domOk=basicCount===14&&advancedCount===10;
+  window.__HSK1_L12_RENDER_CHECK={ok:dataOk&&domOk,lesson_id:lessonId,basic:basicCount,advanced:advancedCount,data_ok:dataOk};
+  if(dataOk&&!domOk){renderPractice();const b=$$('.reviewed-card',$('#basicPractice')).length,a=$$('.reviewed-card',$('#advancedPractice')).length;window.__HSK1_L12_RENDER_CHECK={ok:b===14&&a===10,lesson_id:lessonId,basic:b,advanced:a,data_ok:true,recovered:true}}
+  return window.__HSK1_L12_RENDER_CHECK.ok;
+}
 
 window.addEventListener('DOMContentLoaded',async()=>{
   initGate();
   if($('#lessonGrid')) renderHome();
   if($('#lessonTitle')){
-    try{await ensureReviewedBank()}catch(err){console.error('HSK1 practice load failed',err)}
-    initLesson();
+    const lessonId=Number(new URL(location.href).searchParams.get('id')||1);
+    const hasLocalL12=(lessonId===1||lessonId===2)&&window.__HSK1_L12_PRACTICE_OVERRIDE?.ok;
+    if(!hasLocalL12){
+      try{await ensureReviewedBank()}catch(err){console.error('HSK1 practice load failed',err)}
+    }
+    try{initLesson()}finally{
+      if(lessonId===1||lessonId===2){
+        setTimeout(()=>{try{verifyLesson12Practice()}catch(err){console.error('HSK1 L1-2 practice verification failed',err)}},0);
+      }
+    }
   }
 });
