@@ -127,7 +127,7 @@
         renderHome();verifyHome();
       }
       const words=window.HSK3_LESSONS.reduce((n,L)=>n+L.vocab.length,0);
-      const coreWords=window.HSK3_LESSONS.reduce((n,L)=>n+x.vocab.filter(v=>!v.properName&&!v.aboveLevel).length,0);
+      const coreWords=window.HSK3_LESSONS.reduce((n,L)=>n+L.vocab.filter(v=>!v.properName&&!v.aboveLevel).length,0);
       window.__HSK3_DIAGNOSTICS={ok:true,build:BUILD,lessons:window.HSK3_LESSONS.length,words,coreWords,page:isLesson()?'lesson':'home',contentAudited:true};
       document.documentElement.dataset.hsk3Runtime='ok';window.__HSK3_RUNTIME_OK=true;
       console.info('[HSK3 bootstrap] OK',window.__HSK3_DIAGNOSTICS);
