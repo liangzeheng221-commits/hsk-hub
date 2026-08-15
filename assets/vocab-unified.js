@@ -104,33 +104,61 @@ function decorateCard(card,lesson){
 }
 function decorateAll(){const lesson=currentLesson();document.querySelectorAll('#vocabGrid .vcard,#vocabGrid .vocab-card').forEach(c=>decorateCard(c,lesson))}
 
+function setTextIfChanged(el,value){if(el&&el.textContent!==value)el.textContent=value}
 function cleanStudentMeta(){
   document.querySelectorAll('#hsk4EraNote,.source-boundary,.textbook-page-meta').forEach(x=>x.remove());
   document.querySelectorAll('.audit-textbook-card').forEach(x=>{
     const t=x.textContent||'';
     if(/课文起始页|Trang bắt đầu|第\s*\d+\s*页|printed page|pdf page/i.test(t)){
       if(/文化/.test(t)&&!/课文起始页|Trang bắt đầu/.test(t)){
-        const strong=x.querySelector('strong');if(strong)strong.textContent=strong.textContent.replace(/（?第\s*\d+\s*页）?/g,'').trim();
+        const strong=x.querySelector('strong');
+        if(strong){const next=strong.textContent.replace(/（?第\s*\d+\s*页）?/g,'').trim();setTextIfChanged(strong,next)}
       }else x.remove();
     }
   });
   const sourceBox=document.querySelector('#auditTextbookSource');
   if(sourceBox){const grid=sourceBox.querySelector('.audit-textbook-grid');if(grid&&grid.children.length){const b=sourceBox.querySelector(':scope>b');if(b)b.remove()}else sourceBox.remove()}
   const tag=document.querySelector('#lessonTag');
-  if(tag){tag.textContent=tag.textContent.replace(/\s*[·・]\s*(教材|书内)?第\s*\d+\s*页(?:起)?/g,'').replace(/\s*[·・]\s*第\s*\d+\s*页(?:起)?/g,'').trim()}
+  if(tag){const next=tag.textContent.replace(/\s*[·・]\s*(教材|书内)?第\s*\d+\s*页(?:起)?/g,'').replace(/\s*[·・]\s*第\s*\d+\s*页(?:起)?/g,'').trim();setTextIfChanged(tag,next)}
   const chip=document.querySelector('.lesson-hero .open-access-chip');
   if(chip&&/教材第|书内第/.test(chip.textContent||'')){
     const isLower=document.body.classList.contains('hsk4-lower'),isUpper=document.body.classList.contains('hsk4-upper');
-    if(isLower)chip.textContent='✓ Chuyển tự do giữa Bài 11–20 và mọi nội dung';
-    if(isUpper)chip.textContent='✓ Chuyển tự do giữa Bài 1–10 và mọi nội dung';
+    if(isLower)setTextIfChanged(chip,'✓ Chuyển tự do giữa Bài 11–20 và mọi nội dung');
+    if(isUpper)setTextIfChanged(chip,'✓ Chuyển tự do giữa Bài 1–10 và mọi nội dung');
   }
-  document.querySelectorAll('.text-no').forEach(x=>{if(/教材第|第\s*\d+\s*页/.test(x.textContent||'')){const m=(x.textContent||'').match(/课文\s*\d+/);if(m)x.textContent=m[0]}});
+  document.querySelectorAll('.text-no').forEach(x=>{
+    if(/教材第|第\s*\d+\s*页/.test(x.textContent||'')){
+      const m=(x.textContent||'').match(/课文\s*\d+/);if(m)setTextIfChanged(x,m[0]);
+    }
+  });
   document.querySelectorAll('[class*="source"],[id*="Source"],[id*="source"]').forEach(x=>{
     const t=(x.textContent||'').trim();
     if(/教材版本|来源[:：]|来源页|PDF\s*页|课文页|拼音页|printed page|source page/i.test(t)&&x.children.length<6)x.remove();
   });
 }
 function run(){decorateAll();cleanStudentMeta()}
-function install(){run();const root=document.querySelector('#vocabGrid');if(root&&!root.dataset.unifiedObserver){root.dataset.unifiedObserver='1';new MutationObserver(()=>queueMicrotask(decorateAll)).observe(root,{childList:true,subtree:true})}new MutationObserver(()=>queueMicrotask(cleanStudentMeta)).observe(document.body,{childList:true,subtree:true});setTimeout(run,80);setTimeout(run,400)}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
+let metaCleanScheduled=false;
+function scheduleMetaClean(){
+  if(metaCleanScheduled)return;
+  metaCleanScheduled=true;
+  setTimeout(()=>{metaCleanScheduled=false;cleanStudentMeta()},0);
+}
+function relevantMutation(m){
+  const el=m.target?.nodeType===1?m.target:m.target?.parentElement;
+  return !!el?.closest?.('#text,#grammar,#vocab,.lesson-hero');
+}
+function install(){
+  run();
+  const root=document.querySelector('#vocabGrid');
+  if(root&&!root.dataset.unifiedObserver){
+    root.dataset.unifiedObserver='1';
+    new MutationObserver(()=>queueMicrotask(decorateAll)).observe(root,{childList:true,subtree:true});
+  }
+  if(document.body&&!document.body.dataset.unifiedMetaObserver){
+    document.body.dataset.unifiedMetaObserver='1';
+    new MutationObserver(ms=>{if(ms.some(relevantMutation))scheduleMetaClean()}).observe(document.body,{childList:true,subtree:true});
+  }
+  setTimeout(run,80);setTimeout(run,400);setTimeout(run,1200);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();
