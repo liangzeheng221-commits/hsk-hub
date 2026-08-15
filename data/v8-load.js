@@ -1,4 +1,9 @@
-window.HSK2_READY=(async()=>{const b64=window.__HSK2_V7;if(!b64)throw new Error('HSK2 data chunks missing');const bytes=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));let text;if('DecompressionStream' in window){const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));text=await new Response(stream).text()}else if(window.pako){text=window.pako.ungzip(bytes,{to:'string'})}else{throw new Error('This browser cannot decompress course data')};window.HSK2_LESSONS=JSON.parse(text);delete window.__HSK2_V7;return window.HSK2_LESSONS})();
+window.HSK2_READY=(async()=>{const b64=window.__HSK2_V7;if(!b64)throw new Error('HSK2 data chunks missing');const bytes=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));let text;if('DecompressionStream' in window){const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));text=await new Response(stream).text()}else if(window.pako){text=window.pako.ungzip(bytes,{to:'string'})}else{throw new Error('This browser cannot decompress course data')};window.HSK2_LESSONS=JSON.parse(text);delete window.__HSK2_V7;
+  const load=src=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=()=>reject(new Error('Không tải được '+src));document.head.appendChild(s)});
+  for(let i=1;i<=4;i++)await load(`assets/hsk2-textbook-locked-${i}.js?v=20260815-1`);
+  await load('assets/hsk2-textbook-locked.js?v=20260815-1');
+  if(!window.__HSK2_TEXTBOOK_LOCKED?.ok)throw new Error('HSK2 locked textbook integrity failed');
+  return window.HSK2_LESSONS})();
 
 /* 教材末表词汇合同：等 hsk2-content-audit 完成后再做最终分类校正与自检。 */
 (()=>{
