@@ -22,6 +22,8 @@ jobs:
           done < <(find . -type f -name '*.js' -not -path './.git/*' -print0)
       - name: Run hotfix runtime regression checks
         run: node qa/hotfix-runtime.mjs
+      - name: Run session auth and HSK1 Hanzi regression checks
+        run: node qa/session-hanzi-hotfix.mjs
       - name: Run course and link QA
         run: node tools/site-qa.mjs
       - name: Run HSK1 and HSK2 content audit
