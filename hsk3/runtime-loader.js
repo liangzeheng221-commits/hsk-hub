@@ -1,7 +1,7 @@
 /* Robust HSK3 runtime bootstrap. */
 (()=>{
   'use strict';
-  const BUILD='20260815-hsk3-practice-v11-2';
+  const BUILD='20260815-hsk3-practice-v11-3';
   const isLesson=()=>!!document.getElementById('lessonTitle');
   const qs=s=>document.querySelector(s);
   const domReady=()=>document.readyState==='loading'?new Promise(r=>document.addEventListener('DOMContentLoaded',r,{once:true})):Promise.resolve();
@@ -99,7 +99,7 @@
     if(!qs('#auditVocabSummary'))throw new Error('词汇摘要未渲染');
     if(!qs('#auditTextbookSource'))throw new Error('教材信息未渲染');
     if(!qs('#auditGrammarNote'))throw new Error('语言点摘要未渲染');
-    if(!qs('#auditPracticeNote'))throw new Error('练习提示未渲染');
+    if(!qs('#practice .practice-note'))throw new Error('练习区未渲染');
   }
 
   async function boot(){
