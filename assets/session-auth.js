@@ -135,8 +135,10 @@
 
 /* Shared UX/a11y shell for portal + HSK4 pages. */
 (()=>{
-  if(window.__HSK_SITE_SHELL_LOADED||document.querySelector('script[data-hsk-site-shell]'))return;
-  const current=[...document.scripts].find(s=>/assets\/session-auth\.js(?:\?|$)/.test(s.src||''));
+  if(!document?.head||typeof document.createElement!=='function')return;
+  if(window.__HSK_SITE_SHELL_LOADED||document.querySelector?.('script[data-hsk-site-shell]'))return;
+  const scripts=document.scripts?[...document.scripts]:[];
+  const current=scripts.find(s=>/assets\/session-auth\.js(?:\?|$)/.test(s.src||''));
   const s=document.createElement('script');s.dataset.hskSiteShell='1';
   try{s.src=new URL('site-shell.js?v=2026-08-16-1',current?.src||location.href).href}catch(_e){s.src='assets/site-shell.js?v=2026-08-16-1'}
   s.defer=true;document.head.appendChild(s);
