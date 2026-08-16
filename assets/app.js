@@ -33,3 +33,9 @@ function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;',
   };
   start();
 })();
+
+/* Shared UX/a11y shell. */
+(()=>{
+  if(window.__HSK_SITE_SHELL_LOADED||document.querySelector('script[data-hsk-site-shell]'))return;
+  const s=document.createElement('script');s.src='assets/site-shell.js?v=2026-08-16-1';s.dataset.hskSiteShell='1';s.defer=true;document.head.appendChild(s);
+})();

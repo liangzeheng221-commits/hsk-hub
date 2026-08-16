@@ -28,6 +28,10 @@ jobs:
         run: node qa/hotfix-runtime.mjs
       - name: Run session auth and HSK1 Hanzi regression checks
         run: node qa/session-hanzi-hotfix.mjs
+      - name: Run shared shell accessibility and progress smoke tests
+        run: node qa/site-shell-smoke.mjs
+      - name: Run source-level canonical grammar checks
+        run: node qa/source-canonical-audit.mjs
       - name: Run course and link QA
         run: node tools/site-qa.mjs
       - name: Run HSK1 and HSK2 content audit

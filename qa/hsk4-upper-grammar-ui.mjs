@@ -26,14 +26,14 @@ function make(id){
 }
 const checks={
   1:['主语 + 即使','“即使” có thể đứng trước chủ ngữ'],
-  2:['教材辨析 · So sánh chi tiết','差一点发生但最终没发生'],
+  2:['辨析 · So sánh chi tiết','差一点发生但最终没发生'],
   3:['首先 + V','A还是B','A不A'],
   4:['đính chính','danh từ, động từ hoặc mệnh đề'],
   5:['尤其(是) + N/名词性成分','特别的 + N'],
   7:['要是 A（的话），就 B','“的话”'],
-  8:['chỉ cần A','không biến nhãn này thành thuật ngữ logic hình thức']
+  8:['chỉ cần A','tránh hiểu sai thành điều kiện cần theo logic hình thức']
 };
 for(const [id,needles] of Object.entries(checks)){
-  const env=make(Number(id));const d=env.w.document;assert.equal(d.querySelectorAll('#grammarList .grammar-card').length,5,`L${id} grammar cards`);assert.equal(d.documentElement.dataset.hsk4UpperTextbookDetail,'20260815-1',`L${id} detail marker`);const txt=d.querySelector('#grammar')?.textContent||'';for(const n of needles)assert(txt.includes(n),`L${id} missing UI detail: ${n}`);assert.equal(env.errors.length,0,`L${id} jsdom errors: ${env.errors.map(e=>e.message).join('; ')}`);env.dom.window.close();console.log(`HSK4上 L${id} grammar detail UI PASS`);
+  const env=make(Number(id));const d=env.w.document;assert.equal(d.querySelectorAll('#grammarList .grammar-card').length,5,`L${id} grammar cards`);assert.equal(d.documentElement.dataset.hsk4UpperTextbookDetail,'20260815-2',`L${id} detail marker`);const txt=d.querySelector('#grammar')?.textContent||'';for(const n of needles)assert(txt.includes(n),`L${id} missing UI detail: ${n}`);assert.equal(env.errors.length,0,`L${id} jsdom errors: ${env.errors.map(e=>e.message).join('; ')}`);env.dom.window.close();console.log(`HSK4上 L${id} grammar detail UI PASS`);
 }
 console.log('HSK4 UPPER GRAMMAR DETAIL UI PASS');

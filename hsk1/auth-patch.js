@@ -30,3 +30,9 @@
   }
   window.__HSK1_SESSION_AUTH={version:'20260815-4',sessionOnly:true,textbookLocked:true};
 })();
+
+/* Shared UX/a11y shell. */
+(()=>{
+  if(window.__HSK_SITE_SHELL_LOADED||document.querySelector('script[data-hsk-site-shell]'))return;
+  const s=document.createElement('script');s.src='../assets/site-shell.js?v=2026-08-16-1';s.dataset.hskSiteShell='1';s.defer=true;document.head.appendChild(s);
+})();

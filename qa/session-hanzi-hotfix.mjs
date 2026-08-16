@@ -7,13 +7,13 @@ const NEW_HASH='5b363ff1986142a6f34d3e259948aa38ec4773ad293a0cc03f2357877433a0c5
 
 // Static wiring: every level must consume the session-only gate or its updated equivalent.
 {
-  assert(read('index.html').includes('assets/session-auth.js?v=20260815-1'),'portal does not load session auth');
+  assert(/assets\/session-auth\.js(?:\?[^"']*)?/.test(read('index.html')),'portal does not load session auth');
   assert(read('hsk1/auth-patch.js').includes(NEW_HASH),'HSK1 password hash is stale');
   assert(read('assets/app.js').includes(NEW_HASH),'HSK2 password hash is stale');
   assert(read('hsk3/runtime-loader-core.js').includes("loadScript('../assets/session-auth.js')"),'HSK3 does not load shared session auth');
-  assert(read('hsk4up/app-practice.js').includes('../assets/session-auth.js?v=20260815-1'),'HSK4 upper does not load shared session auth');
-  assert(read('hsk4/practice.js').includes('../assets/session-auth.js?v=20260815-1'),'HSK4 lower does not load shared session auth');
-  assert(read('hsk1/lesson.html').includes('hanzi-visibility-fix.js?v=20260815-2'),'HSK1 lesson does not load Hanzi visibility fix');
+  assert(/\.\.\/assets\/session-auth\.js(?:\?[^"']*)?/.test(read('hsk4up/app-practice.js')),'HSK4 upper does not load shared session auth');
+  assert(/\.\.\/assets\/session-auth\.js(?:\?[^"']*)?/.test(read('hsk4/practice.js')),'HSK4 lower does not load shared session auth');
+  assert(/hanzi-visibility-fix\.js(?:\?[^"']*)?/.test(read('hsk1/lesson.html')),'HSK1 lesson does not load Hanzi visibility fix');
   console.log('AUTH/HANZI WIRING PASS');
 }
 
@@ -28,27 +28,40 @@ const NEW_HASH='5b363ff1986142a6f34d3e259948aa38ec4773ad293a0cc03f2357877433a0c5
   const localStorage=new Store({hsk_site_unlocked_v1:'1'});
   const sessionStorage=new Store();
   const classes=new Set();
-  const overlay={style:{display:'none'}};
+  const overlay={style:{display:'none'},querySelector(){return null}};
   const input={disabled:false,value:'',focus(){},select(){}};
   const button={disabled:false};
   const error={classList:{add:x=>classes.add(x),remove:x=>classes.delete(x)}};
   const note={innerHTML:''};
   const document={
-    body:{style:{}},readyState:'complete',
+    body:{style:{},classList:{contains(){return false}}},readyState:'complete',scripts:[],head:null,
     getElementById(id){return ({pwOverlay:overlay,pwInput:input,pwBtn:button,pwError:error})[id]||null},
     querySelector(sel){return sel==='.portal-note'?note:null},
-    addEventListener(){}
+    addEventListener(){},
+    write(){}
   };
+  const location={pathname:'/hsk-hub/'};
   const window={};
-  const ctx={window,document,localStorage,sessionStorage,setTimeout:fn=>fn(),TextEncoder,crypto:globalThis.crypto,console};
+  const ctx={window,document,location,localStorage,sessionStorage,setTimeout:fn=>fn(),TextEncoder,crypto:globalThis.crypto,console,URL};
   vm.runInNewContext(read('assets/session-auth.js'),ctx,{filename:'assets/session-auth.js'});
   assert.equal(localStorage.getItem('hsk_site_unlocked_v1'),null,'legacy persistent unlock was not cleared');
   assert.notEqual(overlay.style.display,'none','fresh session must remain locked');
+
+  // Stage 1: portal password unlocks HSK1/2/3 compatibility keys, but must NOT bypass HSK4's second gate.
   sessionStorage.setItem('hsk_portal_unlocked_v2','1');
   window.__HSK_SESSION_AUTH_API.syncGate();
-  assert.equal(overlay.style.display,'none','current session should unlock all pages');
-  assert.equal(sessionStorage.getItem('hsk4_lower_ranteacher_unlocked'),'1','compat session keys not propagated');
-  console.log('SESSION AUTH PASS: persistent unlock cleared; current-tab session propagates');
+  assert.equal(overlay.style.display,'none','current portal session should unlock the general site');
+  assert.equal(sessionStorage.getItem('hsk1_ranteacher_unlocked'),'1','general compatibility keys not propagated');
+  assert.equal(sessionStorage.getItem('hsk2_ranteacher_unlocked'),'1','HSK2 compatibility key not propagated');
+  assert.equal(sessionStorage.getItem('hsk3_ranteacher_unlocked'),'1','HSK3 compatibility key not propagated');
+  assert.equal(sessionStorage.getItem('hsk4_lower_ranteacher_unlocked'),null,'portal password must not bypass the separate HSK4 gate');
+
+  // Stage 2: once the HSK4 session key is present, both HSK4 compatibility keys propagate.
+  sessionStorage.setItem('hsk4_extra_unlocked_v1','1');
+  window.__HSK_SESSION_AUTH_API.syncGate();
+  assert.equal(sessionStorage.getItem('hsk4_upper_ranteacher_unlocked'),'1','HSK4 upper compatibility key not propagated after second-stage unlock');
+  assert.equal(sessionStorage.getItem('hsk4_lower_ranteacher_unlocked'),'1','HSK4 lower compatibility key not propagated after second-stage unlock');
+  console.log('SESSION AUTH PASS: legacy persistence cleared; two-stage session gates propagate correctly');
 }
 
 // Execute the HSK1 visibility patch: initial hidden render must be deferred until the Hanzi section is active.
@@ -58,11 +71,13 @@ const NEW_HASH='5b363ff1986142a6f34d3e259948aa38ec4773ad293a0cc03f2357877433a0c5
     classList:{active:false,contains(c){return c==='active'&&this.active}},
     style:{}
   };
-  const body={classList:{contains:c=>c==='hsk1'}};
+  const body={classList:{contains:c=>c==='hsk1'},appendChild(){}};
+  const head={appendChild(){}};
   const document={
-    body,
+    body,head,
     getElementById(id){return id==='hanzi'?section:null},
-    querySelector(){return null}
+    querySelector(){return null},
+    createElement(tag){return {tagName:String(tag).toUpperCase(),dataset:{},style:{}}}
   };
   const window={
     renderHanzi(){renders++},

@@ -1,0 +1,88 @@
+/* Shared HSK Hub usability layer · 2026-08-16
+   Keeps the existing visual identity while improving reading size, mobile density,
+   focus visibility, sticky lesson navigation and progress/continue-learning UI. */
+:root{
+  --hsk-focus:#0b6bcb;
+  --hsk-shell-border:#d9e7df;
+  --hsk-shell-bg:#ffffff;
+  --hsk-shell-muted:#607268;
+}
+
+/* Readability: the previous 9–12px secondary type was too small for sustained study. */
+.level-kicker,.level-stat span{font-size:11px!important}
+.level-desc,.portal-note,.home-note,.free-banner,.course-source-box{font-size:13px!important}
+.enter-row,.portal-footer{font-size:12px!important}
+.lesson-vn,.grammar-desc,.line-vn,.vocab-vn{line-height:1.72}
+
+/* Make repeated-entry pages more tool-like and less landing-page-heavy. */
+.portal-hero{min-height:330px!important}
+.portal-inner{padding-top:50px!important;padding-bottom:50px!important}
+.home-hero{min-height:0!important}
+.home-hero .hero-inner{padding-top:38px!important;padding-bottom:38px!important}
+.lesson-hero .lesson-hero-inner{padding-top:28px!important;padding-bottom:28px!important}
+
+/* Strong keyboard focus without changing mouse/touch appearance. */
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{
+  outline:3px solid var(--hsk-focus)!important;
+  outline-offset:3px!important;
+  box-shadow:none!important;
+}
+
+/* Reusable screen-reader-only label. */
+.hsk-sr-only{
+  position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;
+  overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important
+}
+
+/* Course continuation card injected from the user's last visited lesson. */
+.hsk-continue-card{
+  display:flex;align-items:center;justify-content:space-between;gap:18px;
+  margin:0 0 20px;padding:16px 18px;border:1px solid var(--hsk-shell-border);
+  border-radius:16px;background:var(--hsk-shell-bg);box-shadow:0 8px 24px rgba(22,71,49,.06)
+}
+.hsk-continue-copy{min-width:0}
+.hsk-continue-eyebrow{font-size:11px;font-weight:800;letter-spacing:.04em;color:#788a80;text-transform:uppercase}
+.hsk-continue-title{margin-top:4px;font-size:15px;font-weight:800;color:#174f35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hsk-continue-sub{margin-top:3px;font-size:12px;color:var(--hsk-shell-muted)}
+.hsk-continue-link{flex:none;text-decoration:none;font-weight:800;font-size:13px;color:#fff;background:#1b5a3b;padding:9px 12px;border-radius:10px}
+
+/* Accurate module progress rendered by site-shell.js. */
+.mini-progress{position:relative}
+.mini-progress[data-hsk-modules]::after{
+  content:attr(data-hsk-modules);position:absolute;right:0;top:7px;font-size:10px;color:#718178;font-weight:700
+}
+
+/* Destructive progress reset should read as a secondary control. */
+button[onclick*="resetCourse"]{opacity:.76}
+button[onclick*="resetCourse"]:hover,button[onclick*="resetCourse"]:focus-visible{opacity:1}
+
+/* Sticky learning navigation on long lesson pages. */
+.lesson-topbar{position:sticky!important;top:0;z-index:120}
+.mobile-section-tabs{position:sticky!important;top:var(--hsk-mobile-top,52px);z-index:105;background:rgba(255,255,255,.96);backdrop-filter:blur(8px)}
+.section-tabs,.top-section-tabs{scrollbar-width:thin}
+
+/* Password gate gets a visible label through JS while preserving current aesthetics. */
+.pw-box .hsk-field-label{display:block;text-align:left;margin:10px 0 6px;font-size:12px;font-weight:700;color:#50665a}
+.pw-error[role="alert"]{min-height:1.3em}
+
+@media(max-width:720px){
+  .portal-hero{min-height:235px!important}
+  .portal-inner{padding-top:34px!important;padding-bottom:34px!important}
+  .portal-hero h1{font-size:34px!important}
+  .home-hero .hero-inner{padding-top:28px!important;padding-bottom:28px!important}
+  .lesson-hero .lesson-hero-inner{padding-top:20px!important;padding-bottom:20px!important}
+  .level-area{padding-top:28px!important}
+  .level-grid{gap:12px!important}
+  .level-content{padding:20px!important}
+  .level-desc{font-size:14px!important;line-height:1.65!important}
+  .level-stat span{font-size:11px!important}
+  .section-tabs,.top-section-tabs{display:flex!important;overflow-x:auto!important;overscroll-behavior-inline:contain;scroll-snap-type:x proximity}
+  .section-tab{flex:0 0 auto;scroll-snap-align:start;min-height:42px}
+  .hsk-continue-card{align-items:flex-start;padding:14px;gap:12px}
+  .hsk-continue-title{font-size:14px}
+  .hsk-continue-link{padding:8px 10px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;transition-duration:.001ms!important;animation-duration:.001ms!important;animation-iteration-count:1!important}
+}
