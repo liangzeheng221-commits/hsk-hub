@@ -34,6 +34,6 @@ const checks={
   8:['chỉ cần A','không biến nhãn này thành thuật ngữ logic hình thức']
 };
 for(const [id,needles] of Object.entries(checks)){
-  const env=make(Number(id));const d=env.w.document;assert.equal(d.querySelectorAll('#grammarList .grammar-card').length,5,`L${id} grammar cards`);assert.equal(d.documentElement.dataset.hsk4UpperTextbookDetail,'20260815-1',`L${id} detail marker`);const txt=d.querySelector('#grammar')?.textContent||'';for(const n of needles)assert(txt.includes(n),`L${id} missing UI detail: ${n}`);assert.equal(env.errors.length,0,`L${id} jsdom errors: ${env.errors.map(e=>e.message).join('; ')}`);env.dom.window.close();console.log(`HSK4上 L${id} grammar detail UI PASS`);
+  const env=make(Number(id));const d=env.w.document;assert.equal(d.querySelectorAll('#grammarList .grammar-card').length,5,`L${id} grammar cards`);assert.equal(d.documentElement.dataset.hsk4UpperTextbookDetail,'20260815-2',`L${id} detail marker`);const txt=d.querySelector('#grammar')?.textContent||'';for(const n of needles)assert(txt.includes(n),`L${id} missing UI detail: ${n}`);assert.equal(env.errors.length,0,`L${id} jsdom errors: ${env.errors.map(e=>e.message).join('; ')}`);env.dom.window.close();console.log(`HSK4上 L${id} grammar detail UI PASS`);
 }
 console.log('HSK4 UPPER GRAMMAR DETAIL UI PASS');
