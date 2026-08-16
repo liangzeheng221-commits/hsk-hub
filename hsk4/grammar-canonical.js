@@ -1,4 +1,6 @@
-/* HSK4 下 · 将236项审计中已确认的语言点细则固化为教材规范层（2026-08-15） */
+/* HSK4 下 · canonical grammar validator (2026-08-16)
+   Semantic corrections now live in data/11.js … data/20.js.
+   This layer validates source data and only attaches neutral metadata. */
 (()=>{
 'use strict';
 const lessons=window.HSK4_LOWER_LESSONS;
@@ -6,26 +8,26 @@ if(!Array.isArray(lessons)||lessons.length!==10)throw new Error('HSK4下 grammar
 const TITLES={
 11:['连','否则','无论','然而','同时'],12:['并且','再……也……','对于','名量词重叠','相反'],13:['大概','偶尔','由','进行','随着'],14:['够','以','既然','于是','什么的'],15:['想起来','弄','千万','来','左右'],16:['可','恐怕','到底','拿……来说','敢'],17:['倒','干','趟','为了……而……','仍然'],18:['是否','受不了','接着','除此以外','把……叫作……'],19:['疑问代词活用表示任指','上','出来','总的来说','在于'],20:['动词+着+动词+着','一……就……','究竟','起来','动词+起']};
 const L=id=>lessons.find(x=>x.id===id);
-for(const lesson of lessons){const titles=TITLES[lesson.id];if(!titles||lesson.grammar?.length!==5)throw new Error(`HSK4下 L${lesson.id}: grammar count mismatch`);lesson.grammar.forEach((g,i)=>{g.title=titles[i];g.textbook_title=titles[i];g.content_type='grammar'});lesson.grammarManifestVersion='2026-08-15'}
-const patch=(id,title,p)=>{const x=L(id).grammar.find(g=>g.title===title);if(!x)throw new Error(`HSK4下 canonical missing ${id}/${title}`);Object.assign(x,p,{canonicalized:'2026-08-15'})};
-const cmp=(id,p)=>{if(!L(id).compare)throw new Error(`HSK4下 compare missing ${id}`);Object.assign(L(id).compare,p,{content_type:'compare',canonicalized:'2026-08-15'})};
-patch(11,'连',{vn_title:'Giới từ “连”',structure:'连 + danh từ/đại từ + 都/也 + …',desc:'Giới từ dùng để đưa ra một trường hợp cực đoan nhằm nhấn mạnh; thường phối hợp với 都/也. Thành phần sau 连 có thể là chủ ngữ hoặc tân ngữ được đưa lên trước.'});
-patch(11,'无论',{structure:'无论 + từ nghi vấn / 是A还是B / A还是不A，(都/也) + …',desc:'Biểu thị dù điều kiện hoặc lựa chọn nào xảy ra thì kết quả ở mệnh đề sau vẫn không thay đổi; mệnh đề sau thường có 都/也.'});
-patch(11,'同时',{vn_title:'Liên từ / danh từ “同时”',structure:'A，同时(又/也/还)B / 在……（的）同时',desc:'Là liên từ khi bổ sung một sự việc hoặc phương diện xảy ra/cùng tồn tại với điều trước; thường đi với 又/也/还. Đồng thời còn là danh từ trong cấu trúc “在……（的）同时”.'});
-cmp(11,{title:'无论 — 不管',vn:'Cả hai đều có nghĩa “bất kể/dù” và mệnh đề sau thường có 都/也. “无论” thiên về văn viết, dùng được với các hình thức trang trọng như 如何、是否; “不管” khẩu ngữ hơn. Với dạng khẳng định–phủ định, “不管热不热” dùng trực tiếp được, còn “无论” thường cần 还是/跟/与 như “无论热还是不热”.'});
-patch(12,'对于',{structure:'对于 + đối tượng，… / Chủ ngữ + 对于 + đối tượng + …',desc:'Giới từ đưa ra đối tượng/đích mà một tình huống, thái độ hay nhận xét hướng tới. Cụm 对于 có thể đứng trước hoặc sau chủ ngữ.'});
-patch(12,'名量词重叠',{vn_title:'Lặp danh từ / lượng từ',structure:'AA（如：人人、天天、件件）',desc:'Danh từ hoặc lượng từ được lặp theo dạng AA để biểu thị ý “mỗi/từng”. Sau khi lặp, chúng có thể làm chủ ngữ, định ngữ của chủ ngữ hoặc trạng ngữ; không dùng làm tân ngữ hay định ngữ của tân ngữ theo cách dùng được dạy trong bài.',examples:['人人都应该有自己的学习方法。','件件小事都应该认真做好。','他天天都坚持阅读半个小时。']});
-patch(12,'相反',{vn_title:'Liên từ / tính từ “相反”',structure:'…，相反，… / A 和 B 相反 / 相反的 + N',desc:'Là liên từ khi đứng ở đầu hoặc giữa vế sau để nêu ý trái ngược hay tăng tiến theo hướng ngược lại. “相反” còn là tính từ, chỉ hai mặt đối lập nhau; khi làm định ngữ phải dùng “相反的 + danh từ”.',examples:['方法不对不但不能省力，相反会浪费更多时间。','调查结果和我们原来的想法完全相反。','两个人选择了相反的方向。']});
-cmp(12,{title:'对于 — 关于',vn:'“对于” nêu đối tượng chịu tác động/được đánh giá; “关于” nêu chủ đề hoặc phạm vi bàn luận. Cụm 对于 có thể đứng trước hoặc sau chủ ngữ, còn 关于 thường đứng trước chủ ngữ. “关于” có thể dùng trong tên sách/bài viết; “对于” không dùng theo cách đó.'});
-patch(13,'大概',{vn_title:'“大概” biểu thị phỏng đoán/ước lượng',structure:'大概 + mệnh đề / 大概 + số lượng / 大概的 + danh từ',desc:'Làm phó từ để phỏng đoán hoặc ước lượng số lượng/thời gian; ngoài ra có thể làm tính từ/định ngữ với nghĩa “khái quát, đại thể, không chi tiết”.'});
-cmp(13,{title:'大概 — 也许',vn:'Cả hai đều có thể biểu thị phỏng đoán. “大概” thường cho cảm giác chắc chắn cao hơn, còn có thể ước lượng số lượng/thời gian và làm định ngữ với nghĩa “khái quát”; “也许” không có các cách dùng đó. Khi nói kế hoạch tương lai của chính người nói còn chưa chắc, thường dùng “也许”, không dùng “大概”.'});
-patch(14,'够',{vn_title:'Động từ / phó từ “够”',structure:'V + 够 + số lượng / 够 + Adj (+ 的)',desc:'Làm động từ khi nói số lượng đạt mức đủ; làm phó từ khi mức độ đạt một tiêu chuẩn nhất định. Trong câu khẳng định “够 + tính từ”, sau tính từ thường có 的.'});
-patch(14,'以',{vn_title:'Giới từ / liên từ “以”',structure:'以 + phương thức/tiêu chuẩn + V / 以A为B / …，以 + V',desc:'Là giới từ với nghĩa “dùng/lấy/dựa vào”, thường gặp trong “以……V”; “以A为B” nghĩa là lấy/coi A làm B. “以” còn có thể là liên từ chỉ mục đích, tương đương “để/nhằm”, thường mở đầu vế sau và hai vế cùng chủ ngữ.'});
-cmp(14,{title:'于是 — 因此',vn:'Cả hai đều nối nguyên nhân với kết quả. “于是” thường nhấn mạnh trình tự diễn biến: sự việc trước xảy ra rồi dẫn đến hành động/kết quả tiếp theo; “因此” nhấn mạnh quan hệ nhân quả logic và thiên về văn viết hơn.'});
-patch(15,'来',{vn_title:'Động từ “来” đứng trước động từ khác',structure:'来 + V',desc:'Trong khẩu ngữ, “来” đứng trước một động từ khác để biểu thị “sẽ/để ai đó làm việc ấy”. Nếu bỏ “来”, ý chính của câu thường không thay đổi.',examples:['这个沙发太重了，我来帮你一起抬。','这次活动让李老师来负责吧。','记者需要到处调查，来了解真实情况。']});
-patch(15,'左右',{vn_title:'Danh từ “左右”',structure:'số lượng + 左右',desc:'Chỉ dùng sau cụm số lượng để biểu thị con số thực tế hơi nhiều hơn hoặc ít hơn con số được nêu, tương đương “khoảng/xấp xỉ”.',examples:['那本书三天左右就能到。','前方五百米左右有一个停车场。','七岁左右的儿童普遍比较好动。']});
-cmp(15,{title:'千万 — 一定',vn:'Cả hai có thể dùng để nhấn mạnh lời yêu cầu/dặn dò. “千万” thường đi với 别/不要/不能 và mang sắc thái tha thiết nhắc nhở; “一定” thường gặp trong yêu cầu khẳng định và mạnh hơn. “一定” còn có thể diễn đạt quyết tâm của ngôi thứ nhất, sự chắc chắn/tất yếu, hoặc trong “不一定” = chưa chắc; “千万” không có các cách dùng này.'});
-patch(16,'恐怕',{vn_title:'Động từ / phó từ “恐怕”',structure:'恐怕 + V / (Chủ ngữ) + 恐怕 + mệnh đề',desc:'Có thể là động từ “lo rằng/e rằng”; cũng có thể là phó từ phỏng đoán, đôi khi kèm sắc thái lo lắng. Khi chỉ phỏng đoán, nghĩa gần 大概/也许.'});
-cmp(16,{title:'恐怕 — 怕',vn:'Hai từ đều có thể liên quan đến “lo/sợ” và phỏng đoán có sắc thái lo lắng. Khi là động từ, “恐怕” chủ yếu đứng trước động từ/mệnh đề, còn “怕” có thể mang tân ngữ trực tiếp. Khi phỏng đoán, “恐怕” có thể đứng trước hoặc sau chủ ngữ và còn dùng như 大概/也许; “怕” bị hạn chế hơn và không dùng để phỏng đoán thuần túy theo cách đó.'});
-window.HSK4_LOWER_GRAMMAR_CANONICAL={version:'2026-08-15',total:50,corrected:true};
+const must=(ok,msg)=>{if(!ok)throw new Error(`HSK4下 canonical source mismatch: ${msg}`)};
+const has=(id,title,field,needle)=>{const g=L(id)?.grammar?.find(x=>x.title===title);must(g,`L${id}/${title} missing`);must(String(g[field]||'').includes(needle),`L${id}/${title}/${field} missing ${needle}`)};
+for(const lesson of lessons){
+  const titles=TITLES[lesson.id];must(titles&&lesson.grammar?.length===5,`L${lesson.id} grammar count`);
+  must(lesson.grammar.every((g,i)=>g.title===titles[i]),`L${lesson.id} grammar title/order`);
+  lesson.grammar.forEach((g,i)=>{g.textbook_title=titles[i];g.content_type='grammar'});
+  lesson.grammarManifestVersion='2026-08-16-source';
+}
+/* Hard checks for every rule family that previously depended on runtime correction. */
+has(11,'连','vn_title','Giới từ');has(11,'无论','structure','是A还是B');has(11,'同时','structure','在……（的）同时');
+has(12,'对于','structure','Chủ ngữ + 对于');has(12,'名量词重叠','desc','không dùng làm tân ngữ');has(12,'相反','structure','相反的 + N');
+has(13,'大概','structure','大概的 + danh từ');
+has(14,'够','structure','够 + Adj');has(14,'以','structure','以A为B');
+has(15,'来','desc','Nếu bỏ “来”');has(15,'左右','desc','Chỉ dùng sau cụm số lượng');
+has(16,'恐怕','structure','Chủ ngữ');has(16,'到底','desc','không đi với câu hỏi có 吗');
+has(17,'倒','structure','倒(dào)');has(17,'干','vn_title','gàn');
+has(18,'接着','desc','ngay sau A');
+has(19,'上','structure','V + 得上');
+has(20,'动词+着+动词+着','structure','V着V着');has(20,'一……就……','desc','hễ… thì…');has(20,'究竟','desc','từ nghi vấn làm chủ ngữ');has(20,'动词+起','structure','说/谈/讲/问/提/聊/回忆');
+const compareChecks=[[11,'无论 — 不管','不管热不热'],[12,'对于 — 关于','tên sách/bài viết'],[13,'大概 — 也许','kế hoạch tương lai'],[14,'于是 — 因此','nhân quả logic'],[15,'千万 — 一定','不一定'],[16,'恐怕 — 怕','phỏng đoán thuần túy'],[17,'趟 — 次','lượt xe/tàu'],[18,'接着 — 然后','chủ ngữ hai việc'],[19,'出来 — 起来','想出来'],[20,'究竟 — 到底','看到底']];
+for(const [id,title,needle] of compareChecks){const c=L(id)?.compare;must(c?.title===title,`L${id} compare title`);must(String(c.vn||'').includes(needle),`L${id} compare detail ${needle}`);c.content_type='compare'}
+window.HSK4_LOWER_GRAMMAR_CANONICAL={version:'2026-08-16-source',total:50,sourceValidated:true,correctedAtRuntime:false};
 })();
