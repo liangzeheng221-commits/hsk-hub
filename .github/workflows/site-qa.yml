@@ -24,6 +24,8 @@ jobs:
           while IFS= read -r -d '' f; do
             node --check "$f"
           done < <(find . -type f -name '*.js' -not -path './.git/*' -print0)
+      - name: Verify vocabulary pinyin is hidden until flip/detail
+        run: node qa/vocab-front-pinyin-smoke.mjs
       - name: Run hotfix runtime regression checks
         run: node qa/hotfix-runtime.mjs
       - name: Run session auth and HSK1 Hanzi regression checks
