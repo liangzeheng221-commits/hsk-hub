@@ -120,3 +120,29 @@ const mo=new MutationObserver(()=>{clearTimeout(window.__hskShellMutationTimer);
 if(document.documentElement)mo.observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});
 window.__HSK_SITE_SHELL={version:VERSION,markModule,enhance};
 })();
+
+/* Large Hanzi Writer is loaded only when the Hanzi module is actually opened. */
+(()=>{
+'use strict';
+if(window.__HSK_HANZI_LAZY_BOUND)return;window.__HSK_HANZI_LAZY_BOUND=true;
+let loading=null;
+function isHanziSection(){
+  const s=new URL(location.href).searchParams.get('sec');
+  return s==='hanzi'||document.querySelector('.section-tab.active[data-sec="hanzi"]')!==null||document.querySelector('#hanzi.content-section.active')!==null;
+}
+function ensureHanziWriter(){
+  if(window.HanziWriter)return Promise.resolve(window.HanziWriter);
+  if(loading)return loading;
+  loading=new Promise((resolve,reject)=>{
+    const old=[...document.scripts].find(s=>/hanzi-writer(?:\.min)?\.js/i.test(s.src||''));
+    if(old){old.addEventListener('load',()=>resolve(window.HanziWriter),{once:true});old.addEventListener('error',reject,{once:true});return}
+    const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js';s.async=true;s.dataset.hskLazyHanzi='1';
+    s.onload=()=>resolve(window.HanziWriter);s.onerror=()=>reject(new Error('Không tải được Hanzi Writer'));document.head.appendChild(s);
+  }).then(lib=>{setTimeout(()=>{try{if(typeof window.drawHanzi==='function'){const c=document.querySelector('.hanzi-char-btn.active')?.dataset.char;if(c)window.drawHanzi(c)}else if(typeof window.ensureWriter==='function')window.ensureWriter(false)}catch(e){console.error('[lazy hanzi redraw]',e)}},0);return lib}).catch(e=>{loading=null;console.error('[lazy hanzi]',e);throw e});
+  return loading;
+}
+function maybe(){if(isHanziSection())ensureHanziWriter().catch(()=>{})}
+document.addEventListener('click',()=>setTimeout(maybe,0),true);
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',maybe,{once:true});else maybe();
+window.__HSK_HANZI_LAZY={ensure:ensureHanziWriter,version:'2026-08-16-1'};
+})();
