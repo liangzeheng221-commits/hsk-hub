@@ -1,0 +1,6 @@
+/* Vocabulary cards: keep pinyin hidden on the front; reveal it only after flip/detail. */
+.vocab-front .vocab-py,
+.vfront .vpy,
+.vface:not(.vback) .vpy {
+  display: none !important;
+}
