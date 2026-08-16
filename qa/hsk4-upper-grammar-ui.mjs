@@ -26,7 +26,7 @@ function make(id){
 }
 const checks={
   1:['主语 + 即使','“即使” có thể đứng trước chủ ngữ'],
-  2:['教材辨析 · So sánh chi tiết','差一点发生但最终没发生'],
+  2:['辨析 · So sánh chi tiết','差一点发生但最终没发生'],
   3:['首先 + V','A还是B','A不A'],
   4:['đính chính','danh từ, động từ hoặc mệnh đề'],
   5:['尤其(是) + N/名词性成分','特别的 + N'],
