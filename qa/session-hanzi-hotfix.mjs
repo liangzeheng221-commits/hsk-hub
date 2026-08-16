@@ -71,11 +71,13 @@ const NEW_HASH='5b363ff1986142a6f34d3e259948aa38ec4773ad293a0cc03f2357877433a0c5
     classList:{active:false,contains(c){return c==='active'&&this.active}},
     style:{}
   };
-  const body={classList:{contains:c=>c==='hsk1'}};
+  const body={classList:{contains:c=>c==='hsk1'},appendChild(){}};
+  const head={appendChild(){}};
   const document={
-    body,
+    body,head,
     getElementById(id){return id==='hanzi'?section:null},
-    querySelector(){return null}
+    querySelector(){return null},
+    createElement(tag){return {tagName:String(tag).toUpperCase(),dataset:{},style:{}}}
   };
   const window={
     renderHanzi(){renders++},
