@@ -46,11 +46,22 @@ const NEW_HASH='5b363ff1986142a6f34d3e259948aa38ec4773ad293a0cc03f2357877433a0c5
   vm.runInNewContext(read('assets/session-auth.js'),ctx,{filename:'assets/session-auth.js'});
   assert.equal(localStorage.getItem('hsk_site_unlocked_v1'),null,'legacy persistent unlock was not cleared');
   assert.notEqual(overlay.style.display,'none','fresh session must remain locked');
+
+  // Stage 1: portal password unlocks HSK1/2/3 compatibility keys, but must NOT bypass HSK4's second gate.
   sessionStorage.setItem('hsk_portal_unlocked_v2','1');
   window.__HSK_SESSION_AUTH_API.syncGate();
-  assert.equal(overlay.style.display,'none','current session should unlock all pages');
-  assert.equal(sessionStorage.getItem('hsk4_lower_ranteacher_unlocked'),'1','compat session keys not propagated');
-  console.log('SESSION AUTH PASS: persistent unlock cleared; current-tab session propagates');
+  assert.equal(overlay.style.display,'none','current portal session should unlock the general site');
+  assert.equal(sessionStorage.getItem('hsk1_ranteacher_unlocked'),'1','general compatibility keys not propagated');
+  assert.equal(sessionStorage.getItem('hsk2_ranteacher_unlocked'),'1','HSK2 compatibility key not propagated');
+  assert.equal(sessionStorage.getItem('hsk3_ranteacher_unlocked'),'1','HSK3 compatibility key not propagated');
+  assert.equal(sessionStorage.getItem('hsk4_lower_ranteacher_unlocked'),null,'portal password must not bypass the separate HSK4 gate');
+
+  // Stage 2: once the HSK4 session key is present, both HSK4 compatibility keys propagate.
+  sessionStorage.setItem('hsk4_extra_unlocked_v1','1');
+  window.__HSK_SESSION_AUTH_API.syncGate();
+  assert.equal(sessionStorage.getItem('hsk4_upper_ranteacher_unlocked'),'1','HSK4 upper compatibility key not propagated after second-stage unlock');
+  assert.equal(sessionStorage.getItem('hsk4_lower_ranteacher_unlocked'),'1','HSK4 lower compatibility key not propagated after second-stage unlock');
+  console.log('SESSION AUTH PASS: legacy persistence cleared; two-stage session gates propagate correctly');
 }
 
 // Execute the HSK1 visibility patch: initial hidden render must be deferred until the Hanzi section is active.
