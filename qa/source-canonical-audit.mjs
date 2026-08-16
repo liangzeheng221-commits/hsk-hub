@@ -18,31 +18,16 @@ function loadLowerRaw(){
   return ctx.window.HSK4_LOWER_LESSONS;
 }
 
-check('HSK4U raw lesson 1 即使',()=>{
-  const L=loadUpperRaw([1])[0],g=L.grammar.find(x=>x.title==='即使……也……');
-  assert(g,'即使 missing');
-  assert.match(g.desc,/chủ ngữ/);
-  assert(Array.isArray(g.structures)&&g.structures.some(x=>x.startsWith('主语 + 即使')));
-  assert(g.rule_atoms?.some(x=>x.id==='subject-position'));
-});
-
-check('HSK4U raw lesson 3 首先/不管',()=>{
-  const L=loadUpperRaw([3])[0];
-  const first=L.grammar.find(x=>x.title==='首先……其次……');
-  assert.match(first.desc,/sớm nhất/);
-  assert(first.structures?.some(x=>x.includes('首先 + V')));
-  const noMatter=L.grammar.find(x=>x.title==='不管');
-  for(const token of ['疑问代词','还是','A不A','都/也'])assert(noMatter.structure.includes(token),`不管 missing ${token}`);
-  assert.equal(noMatter.rule_atoms?.length,4);
-});
-
-check('HSK4U raw lesson 8 只要',()=>{
-  const L=loadUpperRaw([8])[0],g=L.grammar.find(x=>x.title==='只要');
-  assert(g,'只要 missing');
-  assert.match(g.desc,/chỉ cần/i);
-  assert(!/điều kiện cần[;,.\s]/i.test(g.desc),'Vietnamese explanation still states necessary-condition logic');
-  assert.match(g.logic_note,/logic hình thức/i);
-  assert(g.rule_atoms?.some(x=>x.id==='condition-result'));
+check('HSK4U raw source corrections',()=>{
+  const lessons=loadUpperRaw([1,2,3,4,5,7,8]),L=id=>lessons.find(x=>x.id===id),G=(id,title)=>L(id).grammar.find(x=>x.title===title);
+  const ji=G(1,'即使……也……');assert.match(ji.desc,/chủ ngữ/);assert(ji.structures?.some(x=>x.startsWith('主语 + 即使')));assert(ji.rule_atoms?.some(x=>x.id==='subject-position'));
+  const almost=G(2,'差不多');assert.match(almost.structure,/A 跟 B 差不多/);assert(almost.rule_atoms?.some(x=>x.id==='predicate-similarity'));assert.equal(L(2).compare?.differences?.length,3);
+  const first=G(3,'首先……其次……');assert.match(first.desc,/sớm nhất/);assert(first.structures?.some(x=>x.includes('首先 + V')));
+  const noMatter=G(3,'不管');for(const token of ['疑问代词','还是','A不A','都/也'])assert(noMatter.structure.includes(token),`不管 missing ${token}`);assert.equal(noMatter.rule_atoms?.length,4);
+  assert.match(G(4,'并').desc,/đính chính/);assert.match(G(4,'甚至').structure,/X、Y，甚至 Z/);
+  assert.match(G(5,'尤其').structure,/尤其\(是\)/);assert.equal(L(5).compare?.differences?.length,3);
+  assert.match(G(7,'要是').structure,/（的话）/);assert(G(7,'要是').rule_atoms?.some(x=>x.id==='dehua-optional'));
+  const only=G(8,'只要');assert.match(only.desc,/chỉ cần/i);assert(!/điều kiện cần[;,.\s]/i.test(only.desc),'Vietnamese explanation still states necessary-condition logic');assert.match(only.logic_note,/logic hình thức/i);assert(only.rule_atoms?.some(x=>x.id==='condition-result'));
 });
 
 check('HSK4L raw 50-point titles and rule details',()=>{
@@ -74,7 +59,7 @@ check('HSK4L raw comparison details',()=>{
   for(const [id,needle] of Object.entries(needles))assert(String(C(Number(id))?.vn||'').includes(needle),`L${id} compare missing ${needle}`);
 });
 
-const report={passed:errors.length===0,checks:5,errors};
+const report={passed:errors.length===0,checks:3,errors};
 fs.writeFileSync('qa/source-canonical-audit.json',JSON.stringify(report,null,2));
 console.log(JSON.stringify(report,null,2));
 if(errors.length)process.exit(1);
