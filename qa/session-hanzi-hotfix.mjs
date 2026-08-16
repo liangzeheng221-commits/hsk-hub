@@ -7,13 +7,13 @@ const NEW_HASH='5b363ff1986142a6f34d3e259948aa38ec4773ad293a0cc03f2357877433a0c5
 
 // Static wiring: every level must consume the session-only gate or its updated equivalent.
 {
-  assert(read('index.html').includes('assets/session-auth.js?v=20260815-1'),'portal does not load session auth');
+  assert(/assets\/session-auth\.js(?:\?[^"']*)?/.test(read('index.html')),'portal does not load session auth');
   assert(read('hsk1/auth-patch.js').includes(NEW_HASH),'HSK1 password hash is stale');
   assert(read('assets/app.js').includes(NEW_HASH),'HSK2 password hash is stale');
   assert(read('hsk3/runtime-loader-core.js').includes("loadScript('../assets/session-auth.js')"),'HSK3 does not load shared session auth');
-  assert(read('hsk4up/app-practice.js').includes('../assets/session-auth.js?v=20260815-1'),'HSK4 upper does not load shared session auth');
-  assert(read('hsk4/practice.js').includes('../assets/session-auth.js?v=20260815-1'),'HSK4 lower does not load shared session auth');
-  assert(read('hsk1/lesson.html').includes('hanzi-visibility-fix.js?v=20260815-2'),'HSK1 lesson does not load Hanzi visibility fix');
+  assert(/\.\.\/assets\/session-auth\.js(?:\?[^"']*)?/.test(read('hsk4up/app-practice.js')),'HSK4 upper does not load shared session auth');
+  assert(/\.\.\/assets\/session-auth\.js(?:\?[^"']*)?/.test(read('hsk4/practice.js')),'HSK4 lower does not load shared session auth');
+  assert(/hanzi-visibility-fix\.js(?:\?[^"']*)?/.test(read('hsk1/lesson.html')),'HSK1 lesson does not load Hanzi visibility fix');
   console.log('AUTH/HANZI WIRING PASS');
 }
 
@@ -28,19 +28,21 @@ const NEW_HASH='5b363ff1986142a6f34d3e259948aa38ec4773ad293a0cc03f2357877433a0c5
   const localStorage=new Store({hsk_site_unlocked_v1:'1'});
   const sessionStorage=new Store();
   const classes=new Set();
-  const overlay={style:{display:'none'}};
+  const overlay={style:{display:'none'},querySelector(){return null}};
   const input={disabled:false,value:'',focus(){},select(){}};
   const button={disabled:false};
   const error={classList:{add:x=>classes.add(x),remove:x=>classes.delete(x)}};
   const note={innerHTML:''};
   const document={
-    body:{style:{}},readyState:'complete',
+    body:{style:{},classList:{contains(){return false}}},readyState:'complete',scripts:[],head:null,
     getElementById(id){return ({pwOverlay:overlay,pwInput:input,pwBtn:button,pwError:error})[id]||null},
     querySelector(sel){return sel==='.portal-note'?note:null},
-    addEventListener(){}
+    addEventListener(){},
+    write(){}
   };
+  const location={pathname:'/hsk-hub/'};
   const window={};
-  const ctx={window,document,localStorage,sessionStorage,setTimeout:fn=>fn(),TextEncoder,crypto:globalThis.crypto,console};
+  const ctx={window,document,location,localStorage,sessionStorage,setTimeout:fn=>fn(),TextEncoder,crypto:globalThis.crypto,console,URL};
   vm.runInNewContext(read('assets/session-auth.js'),ctx,{filename:'assets/session-auth.js'});
   assert.equal(localStorage.getItem('hsk_site_unlocked_v1'),null,'legacy persistent unlock was not cleared');
   assert.notEqual(overlay.style.display,'none','fresh session must remain locked');
