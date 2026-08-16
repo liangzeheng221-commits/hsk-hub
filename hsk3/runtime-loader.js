@@ -19,6 +19,13 @@
       p.dataset.studentPolish='1';
       document.body.appendChild(p);
     }
+    if(!window.__HSK_SITE_SHELL_LOADED&&!document.querySelector('script[data-hsk-site-shell]')){
+      const shell=document.createElement('script');
+      shell.src='../assets/site-shell.js?v=2026-08-16-1';
+      shell.dataset.hskSiteShell='1';
+      shell.defer=true;
+      document.head.appendChild(shell);
+    }
   }
 
   const s=document.createElement('script');
