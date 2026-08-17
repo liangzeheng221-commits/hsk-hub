@@ -1,0 +1,19 @@
+/* Final vocabulary-front rule: never expose pinyin before the learner flips/opens a word.
+   This intentionally outranks assets/vocab-unified.css, which can inject a front-side
+   .vpy/.vocab-py node and otherwise forces it visible with !important. Back/detail pinyin
+   is left untouched. */
+html body #vocabGrid .vcard .vinner > .vface:not(.vback) > .vpy,
+html body #vocabGrid .vcard .vinner > .vfront > .vpy,
+html body #vocabGrid .vocab-card .vocab-card-inner > .vocab-front > .vocab-py,
+html body #vocabGrid .vocab-card .vocab-front > .vocab-py {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
