@@ -42,6 +42,9 @@
   align-items:center!important;
   justify-content:center!important;
   padding:45px 12px 39px!important;
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
 }
 #vocabGrid .vcard .vback,#vocabGrid .vocab-card .vocab-back{
   transform:rotateY(180deg)!important;
@@ -51,10 +54,23 @@
   align-items:center!important;
   justify-content:center!important;
   padding:43px 12px 34px!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
 }
 #vocabGrid .vcard.flipped .vinner,#vocabGrid .vocab-card.flipped .vocab-card-inner{
   transform:rotateY(180deg)!important;
   -webkit-transform:rotateY(180deg)!important;
+}
+#vocabGrid .vcard.flipped .vface:not(.vback),#vocabGrid .vocab-card.flipped .vocab-front{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+#vocabGrid .vcard.flipped .vback,#vocabGrid .vocab-card.flipped .vocab-back{
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
 }
 
 /* Main word occupies the protected middle zone; front-side pinyin stays hidden. */

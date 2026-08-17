@@ -6,7 +6,7 @@
   const signature=text=>[...text].map(c=>c.codePointAt(0).toString(16)).join('.');
   const clearLegacy=()=>{try{localStorage.removeItem(LEGACY_LOCAL_KEY)}catch(_e){}};
   const markUnlocked=()=>{sessionStorage.setItem(SESSION_SITE_KEY,'1');sessionStorage.setItem(SESSION_KEY_H1,'1');sessionStorage.setItem('hsk_portal_unlocked','1');sessionStorage.setItem('hsk2_ranteacher_unlocked','1');sessionStorage.setItem('hsk3_ranteacher_unlocked','1');sessionStorage.setItem('hsk4_upper_ranteacher_unlocked','1');sessionStorage.setItem('hsk4_lower_ranteacher_unlocked','1')};
-  const isUnlocked=()=>location.hostname==='terminal.local'||sessionStorage.getItem(SESSION_SITE_KEY)==='1';
+  const isUnlocked=()=>sessionStorage.getItem(SESSION_SITE_KEY)==='1';
   clearLegacy();
   if(isUnlocked())markUnlocked();else{sessionStorage.removeItem('hsk_portal_unlocked');sessionStorage.removeItem(SESSION_KEY_H1)}
   window.checkPassword=async function(){
@@ -19,11 +19,20 @@
     clearLegacy();const overlay=document.getElementById('pwOverlay');if(!overlay)return;
     if(isUnlocked()){markUnlocked();overlay.style.display='none';document.body.style.overflow=''}else{sessionStorage.removeItem('hsk_portal_unlocked');sessionStorage.removeItem(SESSION_KEY_H1);overlay.style.display='';document.body.style.overflow='hidden';const input=document.getElementById('pwInput');if(input&&!input.dataset.unifiedGate){input.dataset.unifiedGate='1';input.addEventListener('keydown',e=>{if(e.key==='Enter')window.checkPassword()})}}
   };
-  window.__HSK1_SESSION_AUTH={version:'20260816-new-hsk1',sessionOnly:true,textbookLocked:false};
+  /* content-audit.js is parsed later on both HSK1 pages. Load the canonical corpus on window.load so the locked textbook lines are the final authority and then redraw the text section. */
+  if(typeof document!=='undefined'){
+    const loadLockedTextbook=()=>{
+      if(window.__HSK1_TEXTBOOK_LOCKED?.ok)return Promise.resolve(window.__HSK1_TEXTBOOK_LOCKED);
+      return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='textbook-locked.js?v=20260815-1';s.onload=()=>resolve(window.__HSK1_TEXTBOOK_LOCKED);s.onerror=()=>reject(new Error('Không tải được HSK1 locked textbook corpus'));document.head.appendChild(s)});
+    };
+    const startLocked=()=>loadLockedTextbook().then(c=>{if(!c?.ok)throw new Error('HSK1 locked textbook integrity failed')}).catch(e=>console.error('[HSK1 locked textbook]',e));
+    if(document.readyState==='complete')startLocked();else window.addEventListener('load',startLocked,{once:true});
+  }
+  window.__HSK1_SESSION_AUTH={version:'20260815-4',sessionOnly:true,textbookLocked:true};
 })();
 
 /* Shared UX/a11y shell. */
 (()=>{
   if(window.__HSK_SITE_SHELL_LOADED||document.querySelector('script[data-hsk-site-shell]'))return;
-  const s=document.createElement('script');s.src='../assets/site-shell.js?v=2026-08-16-2';s.dataset.hskSiteShell='1';s.defer=true;document.head.appendChild(s);
+  const s=document.createElement('script');s.src='../assets/site-shell.js?v=2026-08-16-1';s.dataset.hskSiteShell='1';s.defer=true;document.head.appendChild(s);
 })();

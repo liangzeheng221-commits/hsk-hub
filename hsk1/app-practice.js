@@ -1,123 +1,188 @@
-/* 450 reviewed exercises aligned to 《新HSK教程1》3.0. */
-let practiceState={basic:{},advanced:{}};
-let practiceBankPromise=null;
+let reviewedSelected={basic:{},advanced:{}};
+let reviewedBankPromise=null;
 
-function loadPracticeBank(){
-  if(!practiceBankPromise){
-    practiceBankPromise=(async()=>{
-      let bank;
-      if(window.HSK1_PRACTICE_PACKED&&window.pako){
-        const bytes=Uint8Array.from(atob(window.HSK1_PRACTICE_PACKED),char=>char.charCodeAt(0));
-        bank=JSON.parse(window.pako.ungzip(bytes,{to:'string'}));
-      }else{
-        const response=await fetch('new-practice-bank.json?v=20260817-1',{cache:'force-cache'});
-        if(!response.ok)throw new Error(`HTTP ${response.status}`);
-        bank=await response.json();
-      }
-      if(!Array.isArray(bank.lessons)||bank.lessons.length!==15)throw new Error('Invalid practice bank');
-      return bank;
-    })();
+async function ensureReviewedBank(){
+  if(window.HSK1_PRACTICE_V5) return window.HSK1_PRACTICE_V5;
+  if(reviewedBankPromise) return reviewedBankPromise;
+  reviewedBankPromise=(async()=>{
+    const files=[
+      '../practice/reviewed/hsk1-v5.0.part01.b64',
+      '../practice/reviewed/hsk1-v5.0.part02.b64',
+      '../practice/reviewed/hsk1-v5.0.part03.b64',
+      '../practice/reviewed/hsk1-v5.0.part04.b64'
+    ];
+    const parts=await Promise.all(files.map(async path=>{
+      const res=await fetch(path,{cache:'no-store'});
+      if(!res.ok) throw new Error('practice data '+res.status);
+      return (await res.text()).trim();
+    }));
+    const bytes=Uint8Array.from(atob(parts.join('')),c=>c.charCodeAt(0));
+    const bank=JSON.parse(pako.ungzip(bytes,{to:'string'}));
+    if(bank.version!=='HSK1-V5.0-2026-08-15'||bank.course!=='HSK1'||!Array.isArray(bank.lessons)||bank.lessons.length!==15||bank.qa?.total_questions!==360){
+      throw new Error('invalid HSK1 practice bank');
+    }
+    window.HSK1_PRACTICE_V5=bank;
+    return bank;
+  })();
+  return reviewedBankPromise;
+}
+function getReviewedPracticeLesson(){
+  const bank=window.HSK1_PRACTICE_V5;
+  if(!bank||!Array.isArray(bank.lessons)) return null;
+  return bank.lessons.find(x=>Number(x.lesson_id)===Number(id))||null;
+}
+function resolveReviewedPracticeLesson(){
+  const external=window.getReviewedPracticeLesson;
+  if(typeof external==='function'){
+    const lessonPractice=external();
+    if(lessonPractice) return lessonPractice;
   }
-  return practiceBankPromise;
+  return getReviewedPracticeLesson();
 }
-
-function questionHtml(q,i,total,level){
-  const typeLabel=[q.type_vi,q.type].filter(Boolean).join(' · ');
-  const pinyin=q.pinyin?`<div class="practice-pinyin">${esc(q.pinyin)}</div>`:'';
-  const stem=q.stem_zh?`<div class="qtitle practice-zh">${esc(q.stem_zh).replace(/\n/g,'<br>')}</div>`:'';
-  return `<article class="qcard reviewed-card ${level==='advanced'?'advanced-card':''}" data-level="${level}" data-i="${i}" data-qid="${esc(q.id)}"><div class="qmeta"><span class="qindex">Câu ${i+1}/${total}</span><span class="difficulty-chip">${esc(typeLabel)}</span></div><div class="practice-prompt">${esc(q.prompt_vi)}</div>${pinyin}${stem}<div class="opts">${q.options.map((option,j)=>`<button type="button" class="opt reviewed-opt" data-opt="${j}"><b>${String.fromCharCode(65+j)}.</b> ${esc(option)}</button>`).join('')}</div><div class="feedback" aria-live="polite"></div></article>`;
+function practiceHtml(s){
+  return esc(s??'').replace(/\n/g,'<br>');
 }
-
-function tierHtml(items,level,title,subtitle){
-  return `<div class="advanced-intro"><div><span class="advanced-badge">${title}</span><h3>${items.length} câu · ${subtitle}</h3><p>Mỗi câu chỉ có một đáp án đúng. Nộp bài để xem đáp án và giải thích bằng tiếng Việt.</p></div><div class="advanced-count">${items.length} câu</div></div><div class="advanced-score" id="${level}Score" aria-live="polite">Chọn đáp án rồi bấm “Nộp bài”.</div>${items.map((q,i)=>questionHtml(q,i,items.length,level)).join('')}<div class="quiz-actions"><button type="button" class="primary-btn reviewed-submit" data-level="${level}">✓ Nộp bài</button><button type="button" class="ghost-btn reviewed-reset" data-level="${level}">↺ Làm lại</button></div>`;
+function practiceExplanation(text){
+  return `<div class="answer-explain"><b>解析 · Giải thích</b><div>${practiceHtml(text)}</div></div>`;
 }
-
-async function renderPractice(){
-  const basicRoot=$('#basicPractice'),advancedRoot=$('#advancedPractice');
-  if(!basicRoot||!advancedRoot)return;
-  practiceState={basic:{},advanced:{}};
-  basicRoot.innerHTML='<div class="practice-loading">Đang tải 30 câu luyện tập của bài…</div>';
-  advancedRoot.innerHTML='';
-  try{
-    const bank=await loadPracticeBank();
-    const lesson=bank.lessons.find(item=>Number(item.lesson_id)===Number(id));
-    if(!lesson||!Array.isArray(lesson.questions))throw new Error('Lesson not found');
-    const basic=lesson.questions.filter(q=>q.tier==='基础');
-    const advanced=lesson.questions.filter(q=>q.tier==='进阶');
-    if(basic.length!==18||advanced.length!==12)throw new Error('Unexpected lesson question count');
-    basicRoot.innerHTML=tierHtml(basic,'basic','基础巩固 · Củng cố cơ bản','từ vựng, pinyin, Hán tự và mẫu câu cơ bản');
-    advancedRoot.innerHTML=tierHtml(advanced,'advanced','进阶运用 · Vận dụng nâng cao','đọc hiểu, ngữ pháp và giao tiếp theo ngữ cảnh');
-    const note=$('#practice .practice-note');
-    if(note)note.textContent='30 câu được biên soạn riêng cho bài này theo 《新HSK教程1》3.0: 18 câu cơ bản và 12 câu nâng cao. Nội dung không vượt quá phạm vi đã học.';
-    const chip=$('#practice .section-head .chip');
-    if(chip)chip.textContent='30 câu · 18 cơ bản + 12 nâng cao';
-    $$('.practice-level-btn').forEach(button=>{
-      button.onclick=()=>switchPracticeLevel(button.dataset.level);
-      button.innerHTML=button.dataset.level==='basic'?'基础巩固 · Cơ bản<small>18 câu · củng cố kiến thức trọng tâm</small>':'进阶运用 · Nâng cao<small>12 câu · hiểu và vận dụng trong ngữ cảnh</small>';
-    });
-    bindTier('basic',basic);
-    bindTier('advanced',advanced);
-    switchPracticeLevel('basic');
-  }catch(error){
-    console.error('Practice bank error',error);
-    basicRoot.innerHTML='<div class="boot-error">Không tải được bài luyện tập. Vui lòng tải lại trang.</div>';
+function renderPractice(){
+  const lessonPractice=resolveReviewedPracticeLesson();
+  const basicBox=$('#basicPractice');
+  const advancedBox=$('#advancedPractice');
+  const practiceSection=$('#practice');
+  if(!basicBox||!advancedBox) return;
+  const note=practiceSection?.querySelector('.practice-note');
+  if(note) note.textContent='Mỗi bài gồm 14 câu cơ bản và 10 câu nâng cao. Sau khi nộp, xem đáp án và giải thích cho từng câu.';
+  const chip=practiceSection?.querySelector('.section-head .chip');
+  if(chip) chip.textContent='24 câu · Cơ bản + Nâng cao';
+  const levelBtns=$$('.practice-level-btn',practiceSection||document);
+  if(levelBtns[0]) levelBtns[0].innerHTML='基础测试 · Cơ bản<small>14 câu · đúng mức HSK 1</small>';
+  if(levelBtns[1]) levelBtns[1].innerHTML='进阶测试 · Nâng cao<small>10 câu · ngữ cảnh và vận dụng</small>';
+  if(!lessonPractice){
+    basicBox.innerHTML='<div class="feedback bad">Không tải được bộ bài tập của bài này.</div>';
+    advancedBox.innerHTML='';
+    return;
   }
+  reviewedSelected={basic:{},advanced:{}};
+  basicBox.innerHTML=renderReviewedTier(lessonPractice.basic,'basic','基础测试 · Cơ bản');
+  advancedBox.innerHTML=renderReviewedTier(lessonPractice.advanced,'advanced','进阶测试 · Nâng cao');
+  bindReviewedTier('basic');
+  bindReviewedTier('advanced');
+  $$('.practice-level-btn').forEach(b=>b.onclick=()=>switchPracticeLevel(b.dataset.level));
+  switchPracticeLevel('basic');
 }
-
-function bindTier(level,items){
+function renderReviewedTier(questions,level,title){
+  const total=questions.length;
+  return `<div class="advanced-intro">
+    <div><span class="advanced-badge">${title}</span><h3>${total} câu</h3></div>
+    <div class="advanced-count">${total} câu</div>
+  </div>
+  <div class="advanced-score" id="${level}Score">Làm bài rồi bấm “Nộp bài” để xem đáp án và giải thích.</div>
+  ${questions.map((q,i)=>renderReviewedQuestion(q,i,level,total)).join('')}
+  <div class="quiz-actions">
+    <button class="primary-btn reviewed-submit" data-level="${level}">✓ Nộp bài</button>
+    <button class="ghost-btn reviewed-reset" data-level="${level}">↺ Làm lại</button>
+  </div>`;
+}
+function renderReviewedQuestion(q,i,level,total){
+  const prompt=q.prompt_vi?`<div class="practice-prompt" style="margin-bottom:8px;color:var(--muted,#64748b);font-weight:600">${practiceHtml(q.prompt_vi)}</div>`:'';
+  const stem=q.stem?`<div class="qtitle">${practiceHtml(q.stem)}</div>`:'';
+  const letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  return `<div class="qcard reviewed-card ${level==='advanced'?'advanced-card':''}" data-level="${level}" data-i="${i}">
+    <div class="qmeta">
+      <span class="qindex">Câu ${i+1}/${total}</span>
+      <span class="difficulty-chip">${practiceHtml(q.type)}</span>
+    </div>
+    ${prompt}${stem}
+    <div class="opts">
+      ${q.options.map((o,j)=>`<button class="opt reviewed-opt" data-opt="${j}"><b>${letters[j]||''}.</b> ${practiceHtml(o)}</button>`).join('')}
+    </div>
+    <div class="feedback"></div>
+  </div>`;
+}
+function bindReviewedTier(level){
   const root=level==='basic'?$('#basicPractice'):$('#advancedPractice');
-  $$('.reviewed-card',root).forEach(card=>$$('.reviewed-opt',card).forEach(button=>button.onclick=()=>{
-    if(card.dataset.checked)return;
-    $$('.reviewed-opt',card).forEach(option=>option.classList.remove('sel'));
-    button.classList.add('sel');
-    practiceState[level][Number(card.dataset.i)]=Number(button.dataset.opt);
-  }));
-  $('.reviewed-submit',root)?.addEventListener('click',()=>checkTier(level,items));
-  $('.reviewed-reset',root)?.addEventListener('click',()=>{
-    practiceState[level]={};
-    root.innerHTML=tierHtml(items,level,level==='basic'?'基础巩固 · Củng cố cơ bản':'进阶运用 · Vận dụng nâng cao',level==='basic'?'từ vựng, pinyin, Hán tự và mẫu câu cơ bản':'đọc hiểu, ngữ pháp và giao tiếp theo ngữ cảnh');
-    bindTier(level,items);
+  if(!root) return;
+  $$('.reviewed-card',root).forEach(card=>{
+    const qi=Number(card.dataset.i);
+    $$('.reviewed-opt',card).forEach(btn=>{
+      btn.onclick=()=>{
+        if(card.dataset.checked) return;
+        $$('.reviewed-opt',card).forEach(x=>x.classList.remove('sel'));
+        btn.classList.add('sel');
+        reviewedSelected[level][qi]=Number(btn.dataset.opt);
+      };
+    });
   });
+  $('.reviewed-submit',root)?.addEventListener('click',()=>checkReviewedTier(level));
+  $('.reviewed-reset',root)?.addEventListener('click',()=>resetReviewedTier(level));
 }
-
-function checkTier(level,items){
+function checkReviewedTier(level){
+  const lp=resolveReviewedPracticeLesson();
+  if(!lp) return;
+  const questions=lp[level]||[];
   const root=level==='basic'?$('#basicPractice'):$('#advancedPractice');
-  let correct=0,answered=0;
+  let ok=0;
   $$('.reviewed-card',root).forEach((card,i)=>{
-    const q=items[i],selectedIndex=practiceState[level][i];
-    const picked=Number.isInteger(selectedIndex)?q.options[selectedIndex]:null;
-    const isCorrect=picked===q.answer;
-    if(picked!==null)answered++;
-    if(isCorrect)correct++;
+    const q=questions[i];
+    const chosenIndex=reviewedSelected[level][i];
+    const chosen=Number.isInteger(chosenIndex)?q.options[chosenIndex]:null;
+    const good=chosen===q.answer;
+    if(good) ok++;
     card.dataset.checked='1';
-    $$('.reviewed-opt',card).forEach((button,k)=>{
-      button.disabled=true;
-      if(q.options[k]===q.answer)button.classList.add('correct');
-      if(k===selectedIndex&&!isCorrect)button.classList.add('wrong');
+    $$('.reviewed-opt',card).forEach((btn,j)=>{
+      btn.disabled=true;
+      const value=q.options[j];
+      if(value===q.answer) btn.classList.add('correct');
+      if(j===chosenIndex&&!good) btn.classList.add('wrong');
     });
-    const feedback=$('.feedback',card);
-    feedback.className='feedback '+(isCorrect?'good':'bad');
-    feedback.innerHTML=`<div>${isCorrect?'✅ Đúng':picked===null?'⚠️ Chưa chọn':'❌ Chưa đúng'} · Đáp án: <b>${esc(q.answer_label)}. ${esc(q.answer)}</b></div><div class="answer-explain"><b>Giải thích bằng tiếng Việt</b><div>${esc(q.explanation_vi)}</div>${q.chinese_note?`<div class="answer-note-zh"><b>中文提示：</b>${esc(q.chinese_note)}</div>`:''}</div>`;
+    const f=$('.feedback',card);
+    f.innerHTML=`<div>${good?'✅ Đúng':chosen!==null?'❌ Chưa đúng':'⚠️ Chưa chọn'} · Đáp án / 正确答案: <b>${practiceHtml(q.answer)}</b></div>${practiceExplanation(q.explanation_vi)}`;
+    f.className='feedback '+(good?'good':'bad');
   });
   const score=$('#'+level+'Score');
-  const percent=items.length?Math.round(correct/items.length*100):0;
-  score.className='advanced-score '+(percent>=80?'great':percent>=60?'ok':'need');
-  score.innerHTML=`Kết quả: <b>${correct}/${items.length}</b> · ${percent}% · Đã làm ${answered}/${items.length} câu`;
+  if(score) score.innerHTML=`Kết quả: <b>${ok}/${questions.length}</b> · ${questions.length?Math.round(ok/questions.length*100):0}%`;
 }
-
+function resetReviewedTier(level){
+  const lp=resolveReviewedPracticeLesson();
+  if(!lp) return;
+  reviewedSelected[level]={};
+  const root=level==='basic'?$('#basicPractice'):$('#advancedPractice');
+  root.innerHTML=renderReviewedTier(lp[level]||[],level,level==='basic'?'基础测试 · Cơ bản':'进阶测试 · Nâng cao');
+  bindReviewedTier(level);
+}
 function switchPracticeLevel(level){
-  const advanced=level==='advanced';
-  $('#basicPractice')?.classList.toggle('hidden-level',advanced);
-  $('#advancedPractice')?.classList.toggle('active',advanced);
-  $$('.practice-level-btn').forEach(button=>button.classList.toggle('active',button.dataset.level===level));
+  const adv=level==='advanced';
+  $('#basicPractice')?.classList.toggle('hidden-level',adv);
+  $('#advancedPractice')?.classList.toggle('active',adv);
+  $$('.practice-level-btn').forEach(b=>b.classList.toggle('active',b.dataset.level===level));
+}
+function verifyLesson12Practice(){
+  const lessonId=Number(new URL(location.href).searchParams.get('id')||1);
+  if(lessonId!==1&&lessonId!==2) return true;
+  const lp=resolveReviewedPracticeLesson();
+  const basicCount=$$('.reviewed-card',$('#basicPractice')).length;
+  const advancedCount=$$('.reviewed-card',$('#advancedPractice')).length;
+  const dataOk=!!lp&&Array.isArray(lp.basic)&&lp.basic.length===14&&Array.isArray(lp.advanced)&&lp.advanced.length===10&&[...lp.basic,...lp.advanced].every(q=>Array.isArray(q.options)&&q.options.includes(q.answer)&&String(q.explanation_vi||'').trim());
+  const domOk=basicCount===14&&advancedCount===10;
+  window.__HSK1_L12_RENDER_CHECK={ok:dataOk&&domOk,lesson_id:lessonId,basic:basicCount,advanced:advancedCount,data_ok:dataOk};
+  if(dataOk&&!domOk){renderPractice();const b=$$('.reviewed-card',$('#basicPractice')).length,a=$$('.reviewed-card',$('#advancedPractice')).length;window.__HSK1_L12_RENDER_CHECK={ok:b===14&&a===10,lesson_id:lessonId,basic:b,advanced:a,data_ok:true,recovered:true}}
+  return window.__HSK1_L12_RENDER_CHECK.ok;
 }
 
-window.addEventListener('DOMContentLoaded',()=>{
+window.addEventListener('DOMContentLoaded',async()=>{
   initGate();
-  if($('#lessonGrid'))renderHome();
+  if($('#lessonGrid')) renderHome();
   if($('#lessonTitle')){
-    initLesson();
-    const current=$('.parity-current-lesson');
-    if(current)current.textContent=id;
+    const lessonId=Number(new URL(location.href).searchParams.get('id')||1);
+    const hasLocalL12=(lessonId===1||lessonId===2)&&window.__HSK1_L12_PRACTICE_OVERRIDE?.ok;
+    if(!hasLocalL12){
+      try{await ensureReviewedBank()}catch(err){console.error('HSK1 practice load failed',err)}
+    }
+    try{initLesson()}finally{
+      if(lessonId===1||lessonId===2){
+        setTimeout(()=>{try{verifyLesson12Practice()}catch(err){console.error('HSK1 L1-2 practice verification failed',err)}},0);
+      }
+    }
   }
 });

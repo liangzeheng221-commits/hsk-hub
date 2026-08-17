@@ -100,9 +100,11 @@
     grid.innerHTML='';grid.className='vocab-grid hsk2-vocab-grid';
     L.vocab.forEach((v,i)=>{
       const py=pinyinOf(v);if(f&&!`${v.zh} ${py} ${v.vn||''}`.toLowerCase().includes(f))return;
-      const key=`${id}-${v.zh}`,known=!!mastered[key],card=document.createElement('div');card.className='vcard';
-      card.innerHTML=`<div class="vinner"><div class="vface"><div class="vzh">${htmlEscape(v.zh)}</div><div class="vactions"><button class="tiny speak-word" title="Phát âm" aria-label="Phát âm ${htmlEscape(v.zh)}">🔊</button><button class="tiny known" title="Đã nhớ" aria-label="Đánh dấu đã nhớ">${known?'★':'☆'}</button></div><button class="tiny detail-tiny" title="Xem chi tiết" aria-label="Xem chi tiết">ⓘ</button></div><div class="vface vback"><div class="vpy">${htmlEscape(py)}</div><div class="vvn">${htmlEscape(v.vn||'')}</div><small>chạm để lật lại</small></div></div>`;
-      card.onclick=e=>{if(e.target.closest('button'))return;card.classList.toggle('flipped')};
+      const key=`${id}-${v.zh}`,known=!!mastered[key],card=document.createElement('div');card.className='vcard';card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label',`${v.zh}. Chạm để lật`);card.setAttribute('aria-pressed','false');
+      const pos=v.posLabel?`<div class="pos-badge unified-pos">${htmlEscape(v.posLabel)}</div>`:'';
+      card.innerHTML=`<div class="vinner"><div class="vface">${pos}<div class="vzh">${htmlEscape(v.zh)}</div><div class="vactions"><button type="button" class="tiny speak-word" title="Phát âm" aria-label="Phát âm ${htmlEscape(v.zh)}">🔊</button><button type="button" class="tiny known" title="Đã nhớ" aria-label="Đánh dấu đã nhớ">${known?'★':'☆'}</button></div><button type="button" class="tiny detail-tiny" title="Xem chi tiết" aria-label="Xem chi tiết">ⓘ</button></div><div class="vface vback">${pos}<div class="vpy">${htmlEscape(py)}</div><div class="vvn">${htmlEscape(v.vn||'')}</div><small>chạm để lật lại</small></div></div>`;
+      card.onclick=e=>{if(e.target.closest('button'))return;const flipped=!card.classList.contains('flipped');card.classList.toggle('flipped',flipped);card.setAttribute('aria-pressed',String(flipped))};
+      card.onkeydown=e=>{if(!['Enter',' '].includes(e.key))return;e.preventDefault();card.click()};
       card.ondblclick=()=>showUnifiedWord(i);
       q('.speak-word',card).onclick=e=>{e.stopPropagation();speak(v.zh)};
       q('.detail-tiny',card).onclick=e=>{e.stopPropagation();showUnifiedWord(i)};
