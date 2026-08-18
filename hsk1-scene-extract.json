@@ -1,0 +1,3601 @@
+{
+  "lessons": [
+    {
+      "id": 1,
+      "vocab": [
+        {
+          "zh": "不客气",
+          "py": "bú kèqi",
+          "vn": "không có gì; đừng khách sáo",
+          "kind": "core"
+        },
+        {
+          "zh": "大家",
+          "py": "dà jiā",
+          "vn": "mọi người",
+          "kind": "core"
+        },
+        {
+          "zh": "好",
+          "py": "hǎo",
+          "vn": "tốt; khỏe; được",
+          "kind": "core"
+        },
+        {
+          "zh": "老师",
+          "py": "lǎo shī",
+          "vn": "giáo viên",
+          "kind": "core"
+        },
+        {
+          "zh": "们",
+          "py": "men",
+          "vn": "hậu tố số nhiều cho người",
+          "kind": "core"
+        },
+        {
+          "zh": "你好",
+          "py": "nǐ hǎo",
+          "vn": "xin chào",
+          "kind": "core"
+        },
+        {
+          "zh": "你们",
+          "py": "nǐ men",
+          "vn": "các bạn; các anh/chị",
+          "kind": "core"
+        },
+        {
+          "zh": "您",
+          "py": "nín",
+          "vn": "ngài; ông/bà (cách nói kính trọng)",
+          "kind": "core"
+        },
+        {
+          "zh": "同学",
+          "py": "tóng xué",
+          "vn": "bạn học",
+          "kind": "core"
+        },
+        {
+          "zh": "谢谢",
+          "py": "xiè xiè",
+          "vn": "cảm ơn",
+          "kind": "core"
+        },
+        {
+          "zh": "学生",
+          "py": "xué shēng",
+          "vn": "học sinh; sinh viên",
+          "kind": "core"
+        },
+        {
+          "zh": "再见",
+          "py": "zài jiàn",
+          "vn": "tạm biệt; hẹn gặp lại",
+          "kind": "core"
+        },
+        {
+          "zh": "王老师",
+          "py": "Wáng lǎoshī",
+          "vn": "cô Vương",
+          "kind": "proper"
+        }
+      ],
+      "scenes": [
+        {
+          "scene": 1,
+          "place": "在办公室",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "王一飞",
+              "zh": "AI小语，你好！",
+              "py": "A I xiǎo yǔ， nǐ hǎo！"
+            },
+            {
+              "line": 2,
+              "speaker": "小语",
+              "zh": "王老师，你好！",
+              "py": "wáng lǎo shī， nǐ hǎo！"
+            }
+          ]
+        },
+        {
+          "scene": 2,
+          "place": "在教室里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "王一飞",
+              "zh": "大家好！",
+              "py": "dà jiā hǎo！"
+            },
+            {
+              "line": 2,
+              "speaker": "学生们",
+              "zh": "老师，您好！",
+              "py": "lǎo shī， nín hǎo！"
+            },
+            {
+              "line": 3,
+              "speaker": "小语",
+              "zh": "你们好！",
+              "py": "nǐ men hǎo！"
+            },
+            {
+              "line": 4,
+              "speaker": "学生们",
+              "zh": "你好，小语！",
+              "py": "nǐ hǎo， xiǎo yǔ！"
+            }
+          ]
+        },
+        {
+          "scene": 3,
+          "place": "下课时",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "学生们",
+              "zh": "谢谢！",
+              "py": "xiè xiè！"
+            },
+            {
+              "line": 2,
+              "speaker": "小语",
+              "zh": "不客气！",
+              "py": "bú kè qì！"
+            },
+            {
+              "line": 3,
+              "speaker": "王一飞",
+              "zh": "同学们，再见！",
+              "py": "tóng xué men， zài jiàn！"
+            },
+            {
+              "line": 4,
+              "speaker": "学生们",
+              "zh": "老师，再见！",
+              "py": "lǎo shī， zài jiàn！"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "vocab": [
+        {
+          "zh": "不",
+          "py": "bù",
+          "vn": "không",
+          "kind": "core"
+        },
+        {
+          "zh": "对不起",
+          "py": "duì bù qǐ",
+          "vn": "xin lỗi",
+          "kind": "core"
+        },
+        {
+          "zh": "高兴",
+          "py": "gāo xìng",
+          "vn": "vui; vui mừng",
+          "kind": "core"
+        },
+        {
+          "zh": "很",
+          "py": "hěn",
+          "vn": "rất",
+          "kind": "core"
+        },
+        {
+          "zh": "叫",
+          "py": "jiào",
+          "vn": "tên là; gọi",
+          "kind": "core"
+        },
+        {
+          "zh": "没关系",
+          "py": "méi guānxi",
+          "vn": "không sao",
+          "kind": "core"
+        },
+        {
+          "zh": "没事",
+          "py": "méi shì",
+          "vn": "không sao; không có chuyện gì",
+          "kind": "core"
+        },
+        {
+          "zh": "名字",
+          "py": "míng zì",
+          "vn": "tên",
+          "kind": "core"
+        },
+        {
+          "zh": "你",
+          "py": "nǐ",
+          "vn": "bạn; anh; chị",
+          "kind": "core"
+        },
+        {
+          "zh": "请问",
+          "py": "qǐng wèn",
+          "vn": "xin hỏi",
+          "kind": "core"
+        },
+        {
+          "zh": "认识",
+          "py": "rènshi",
+          "vn": "quen; biết; làm quen",
+          "kind": "core"
+        },
+        {
+          "zh": "什么",
+          "py": "shén me",
+          "vn": "gì; cái gì",
+          "kind": "core"
+        },
+        {
+          "zh": "是",
+          "py": "shì",
+          "vn": "là",
+          "kind": "core"
+        },
+        {
+          "zh": "我",
+          "py": "wǒ",
+          "vn": "tôi",
+          "kind": "core"
+        },
+        {
+          "zh": "也",
+          "py": "yě",
+          "vn": "cũng",
+          "kind": "core"
+        }
+      ],
+      "scenes": [
+        {
+          "scene": 1,
+          "place": "在教室里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "王一飞",
+              "zh": "请问，你叫什么名字？",
+              "py": "qǐng wèn， nǐ jiào shén me míng zì？"
+            },
+            {
+              "line": 2,
+              "speaker": "陈天中",
+              "zh": "我叫陈天中。",
+              "py": "wǒ jiào chén tiān zhōng。"
+            }
+          ]
+        },
+        {
+          "scene": 2,
+          "place": "在校园里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "陈天中",
+              "zh": "你好，安妮！",
+              "py": "nǐ hǎo， ān nī！"
+            },
+            {
+              "line": 2,
+              "speaker": "白家月",
+              "zh": "你好，陈天中！我不是安妮，我是白家月。",
+              "py": "nǐ hǎo， chén tiān zhōng！ wǒ bú shì ān nī， wǒ shì bái jiā yuè。"
+            },
+            {
+              "line": 3,
+              "speaker": "陈天中",
+              "zh": "对不起！",
+              "py": "duì bù qǐ！"
+            },
+            {
+              "line": 4,
+              "speaker": "白家月",
+              "zh": "没关系！",
+              "py": "méi guān xì！"
+            }
+          ]
+        },
+        {
+          "scene": 3,
+          "place": "在校园里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "李文",
+              "zh": "你好！我叫李文。",
+              "py": "nǐ hǎo！ wǒ jiào lǐ wén。"
+            },
+            {
+              "line": 2,
+              "speaker": "白家月",
+              "zh": "你好！我叫白家月。",
+              "py": "nǐ hǎo！ wǒ jiào bái jiā yuè。"
+            },
+            {
+              "line": 3,
+              "speaker": "李文",
+              "zh": "很高兴认识你。",
+              "py": "hěn gāo xìng rèn shí nǐ。"
+            },
+            {
+              "line": 4,
+              "speaker": "白家月",
+              "zh": "认识你我也很高兴。",
+              "py": "rèn shí nǐ wǒ yě hěn gāo xìng。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "vocab": [
+        {
+          "zh": "的",
+          "py": "de",
+          "vn": "trợ từ kết cấu; của",
+          "kind": "core"
+        },
+        {
+          "zh": "对",
+          "py": "duì",
+          "vn": "đúng",
+          "kind": "core"
+        },
+        {
+          "zh": "工作",
+          "py": "gōng zuò",
+          "vn": "làm việc; công việc",
+          "kind": "core"
+        },
+        {
+          "zh": "国",
+          "py": "guó",
+          "vn": "nước; quốc gia",
+          "kind": "core"
+        },
+        {
+          "zh": "还",
+          "py": "hái",
+          "vn": "vẫn; còn",
+          "kind": "core"
+        },
+        {
+          "zh": "姐姐",
+          "py": "jiě jiě",
+          "vn": "chị gái",
+          "kind": "core"
+        },
+        {
+          "zh": "吗",
+          "py": "ma",
+          "vn": "trợ từ nghi vấn cuối câu",
+          "kind": "core"
+        },
+        {
+          "zh": "忙",
+          "py": "máng",
+          "vn": "bận",
+          "kind": "core"
+        },
+        {
+          "zh": "哪",
+          "py": "nǎ",
+          "vn": "nào",
+          "kind": "core"
+        },
+        {
+          "zh": "女朋友",
+          "py": "nǚ péng yǒu",
+          "vn": "bạn gái",
+          "kind": "core"
+        },
+        {
+          "zh": "人",
+          "py": "rén",
+          "vn": "người",
+          "kind": "core"
+        },
+        {
+          "zh": "谁",
+          "py": "shuí",
+          "vn": "ai",
+          "kind": "core"
+        },
+        {
+          "zh": "她",
+          "py": "tā",
+          "vn": "cô ấy; chị ấy",
+          "kind": "core"
+        },
+        {
+          "zh": "太",
+          "py": "tài",
+          "vn": "quá; rất",
+          "kind": "core"
+        },
+        {
+          "zh": "喂",
+          "py": "wèi",
+          "vn": "a lô; này",
+          "kind": "core"
+        },
+        {
+          "zh": "我们",
+          "py": "wǒ men",
+          "vn": "chúng tôi; chúng ta",
+          "kind": "core"
+        },
+        {
+          "zh": "想",
+          "py": "xiǎng",
+          "vn": "muốn; nhớ; nghĩ",
+          "kind": "core"
+        },
+        {
+          "zh": "这",
+          "py": "zhè",
+          "vn": "đây; này",
+          "kind": "core"
+        },
+        {
+          "zh": "法国",
+          "py": "fǎ guó",
+          "vn": "Pháp",
+          "kind": "proper"
+        },
+        {
+          "zh": "泰国",
+          "py": "tài guó",
+          "vn": "Thái Lan",
+          "kind": "proper"
+        },
+        {
+          "zh": "中国",
+          "py": "zhōng guó",
+          "vn": "Trung Quốc",
+          "kind": "proper"
+        },
+        {
+          "zh": "中文",
+          "py": "zhōng wén",
+          "vn": "tiếng Trung",
+          "kind": "proper"
+        }
+      ],
+      "scenes": [
+        {
+          "scene": 1,
+          "place": "在教室里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "李文",
+              "zh": "我是中国人。",
+              "py": "wǒ shì zhōng guó rén。"
+            },
+            {
+              "line": 2,
+              "speaker": "白家月",
+              "zh": "我是法国人。我的中文老师也是中国人。",
+              "py": "wǒ shì fǎ guó rén。 wǒ de zhōng wén lǎo shī yě shì zhōng guó rén。"
+            }
+          ]
+        },
+        {
+          "scene": 2,
+          "place": "看手机照片",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "陈天中",
+              "zh": "这是我女朋友。",
+              "py": "zhè shì wǒ nǚ péng yǒu。"
+            },
+            {
+              "line": 2,
+              "speaker": "安妮",
+              "zh": "她是哪国人？",
+              "py": "tā shì nǎ guó rén？"
+            },
+            {
+              "line": 3,
+              "speaker": "陈天中",
+              "zh": "她也是泰国人。",
+              "py": "tā yě shì tài guó rén。"
+            }
+          ]
+        },
+        {
+          "scene": 3,
+          "place": "打视频电话",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "王一雪",
+              "zh": "喂，一飞！",
+              "py": "wèi， yī fēi！"
+            },
+            {
+              "line": 2,
+              "speaker": "王一飞",
+              "zh": "姐姐！",
+              "py": "jiě jiě！"
+            },
+            {
+              "line": 3,
+              "speaker": "王一雪",
+              "zh": "你工作还忙吗？",
+              "py": "nǐ gōng zuò hái máng ma？"
+            },
+            {
+              "line": 4,
+              "speaker": "王一飞",
+              "zh": "对，还很忙。你也很忙吗？",
+              "py": "duì， hái hěn máng。 nǐ yě hěn máng ma？"
+            },
+            {
+              "line": 5,
+              "speaker": "王一雪",
+              "zh": "我不太忙。我们很想你。",
+              "py": "wǒ bù tài máng。 wǒ men hěn xiǎng nǐ。"
+            },
+            {
+              "line": 6,
+              "speaker": "王一飞",
+              "zh": "我也想你们。",
+              "py": "wǒ yě xiǎng nǐ men。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "vocab": [
+        {
+          "zh": "大",
+          "py": "dà",
+          "vn": "to; lớn",
+          "kind": "core"
+        },
+        {
+          "zh": "多",
+          "py": "duō",
+          "vn": "nhiều; bao nhiêu",
+          "kind": "core"
+        },
+        {
+          "zh": "多少",
+          "py": "duō shǎo",
+          "vn": "bao nhiêu",
+          "kind": "core"
+        },
+        {
+          "zh": "儿子",
+          "py": "ér zi",
+          "vn": "con trai",
+          "kind": "core"
+        },
+        {
+          "zh": "二",
+          "py": "èr",
+          "vn": "hai",
+          "kind": "core"
+        },
+        {
+          "zh": "哥哥",
+          "py": "gē gē",
+          "vn": "anh trai",
+          "kind": "core"
+        },
+        {
+          "zh": "个",
+          "py": "gè",
+          "vn": "lượng từ thông dụng; cái; người",
+          "kind": "core"
+        },
+        {
+          "zh": "孩子",
+          "py": "hái zi",
+          "vn": "con; trẻ em",
+          "kind": "core"
+        },
+        {
+          "zh": "和",
+          "py": "hé",
+          "vn": "và; với",
+          "kind": "core"
+        },
+        {
+          "zh": "几",
+          "py": "jǐ",
+          "vn": "mấy; bao nhiêu",
+          "kind": "core"
+        },
+        {
+          "zh": "家",
+          "py": "jiā",
+          "vn": "nhà; gia đình",
+          "kind": "core"
+        },
+        {
+          "zh": "今年",
+          "py": "jīn nián",
+          "vn": "năm nay",
+          "kind": "core"
+        },
+        {
+          "zh": "九",
+          "py": "jiǔ",
+          "vn": "chín",
+          "kind": "core"
+        },
+        {
+          "zh": "口",
+          "py": "kǒu",
+          "vn": "lượng từ chỉ người trong gia đình",
+          "kind": "core"
+        },
+        {
+          "zh": "两",
+          "py": "liǎng",
+          "vn": "hai",
+          "kind": "core"
+        },
+        {
+          "zh": "零",
+          "py": "líng",
+          "vn": "không (số 0)",
+          "kind": "core"
+        },
+        {
+          "zh": "六",
+          "py": "liù",
+          "vn": "sáu",
+          "kind": "core"
+        },
+        {
+          "zh": "妈妈",
+          "py": "mā mā",
+          "vn": "mẹ",
+          "kind": "core"
+        },
+        {
+          "zh": "没有",
+          "py": "méi yǒu",
+          "vn": "không có",
+          "kind": "core"
+        },
+        {
+          "zh": "妹妹",
+          "py": "mèi mèi",
+          "vn": "em gái",
+          "kind": "core"
+        },
+        {
+          "zh": "呢",
+          "py": "ne",
+          "vn": "trợ từ ngữ khí; còn… thì sao",
+          "kind": "core"
+        },
+        {
+          "zh": "女儿",
+          "py": "nǚ ér",
+          "vn": "con gái",
+          "kind": "core"
+        },
+        {
+          "zh": "七",
+          "py": "qī",
+          "vn": "bảy",
+          "kind": "core"
+        },
+        {
+          "zh": "千",
+          "py": "qiān",
+          "vn": "nghìn",
+          "kind": "core"
+        },
+        {
+          "zh": "三",
+          "py": "sān",
+          "vn": "ba",
+          "kind": "core"
+        },
+        {
+          "zh": "十",
+          "py": "shí",
+          "vn": "mười",
+          "kind": "core"
+        },
+        {
+          "zh": "四",
+          "py": "sì",
+          "vn": "bốn",
+          "kind": "core"
+        },
+        {
+          "zh": "岁",
+          "py": "suì",
+          "vn": "tuổi",
+          "kind": "core"
+        },
+        {
+          "zh": "他",
+          "py": "tā",
+          "vn": "anh ấy; ông ấy",
+          "kind": "core"
+        },
+        {
+          "zh": "五",
+          "py": "wǔ",
+          "vn": "năm",
+          "kind": "core"
+        },
+        {
+          "zh": "一",
+          "py": "yī",
+          "vn": "một",
+          "kind": "core"
+        },
+        {
+          "zh": "有",
+          "py": "yǒu",
+          "vn": "có",
+          "kind": "core"
+        }
+      ],
+      "scenes": [
+        {
+          "scene": 1,
+          "place": "在家里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "刘明",
+              "zh": "一飞忙吗？",
+              "py": "yī fēi máng ma？"
+            },
+            {
+              "line": 2,
+              "speaker": "王一雪",
+              "zh": "她很忙。",
+              "py": "tā hěn máng。"
+            },
+            {
+              "line": 3,
+              "speaker": "刘明",
+              "zh": "她有多少个学生？",
+              "py": "tā yǒu duō shǎo gè xué shēng？"
+            },
+            {
+              "line": 4,
+              "speaker": "王一雪",
+              "zh": "她有二十个学生。",
+              "py": "tā yǒu èr shí gè xué shēng。"
+            }
+          ]
+        },
+        {
+          "scene": 2,
+          "place": "在公司里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "王一雪",
+              "zh": "我有两个哥哥，你呢？",
+              "py": "wǒ yǒu liǎng gè gē gē， nǐ ne？"
+            },
+            {
+              "line": 2,
+              "speaker": "杨同乐",
+              "zh": "我没有哥哥。",
+              "py": "wǒ méi yǒu gē gē。"
+            },
+            {
+              "line": 3,
+              "speaker": "王一雪",
+              "zh": "你家有几口人？",
+              "py": "nǐ jiā yǒu jǐ kǒu rén？"
+            },
+            {
+              "line": 4,
+              "speaker": "杨同乐",
+              "zh": "我家有四口人：爸爸、妈妈、妹妹和我。",
+              "py": "wǒ jiā yǒu sì kǒu rén： bà bà、 mā mā、 mèi mèi hé wǒ。"
+            }
+          ]
+        },
+        {
+          "scene": 3,
+          "place": "在路上",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "杨同乐",
+              "zh": "这是您儿子吗？",
+              "py": "zhè shì nín ér zi ma？"
+            },
+            {
+              "line": 2,
+              "speaker": "王一雪",
+              "zh": "是的。我有两个孩子，一个儿子，一个女儿。",
+              "py": "shì de。 wǒ yǒu liǎng gè hái zi， yí gè ér zi， yí gè nǚ ér。"
+            },
+            {
+              "line": 3,
+              "speaker": "杨同乐",
+              "zh": "他今年几岁？",
+              "py": "tā jīn nián jǐ suì？"
+            },
+            {
+              "line": 4,
+              "speaker": "王一雪",
+              "zh": "他今年五岁。",
+              "py": "tā jīn nián wǔ suì。"
+            },
+            {
+              "line": 5,
+              "speaker": "杨同乐",
+              "zh": "您女儿多大？",
+              "py": "nín nǚ ér duō dà？"
+            },
+            {
+              "line": 6,
+              "speaker": "王一雪",
+              "zh": "她今年十二。",
+              "py": "tā jīn nián shí èr。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "vocab": [
+        {
+          "zh": "菜",
+          "py": "cài",
+          "vn": "món ăn; rau",
+          "kind": "core"
+        },
+        {
+          "zh": "电脑",
+          "py": "diàn nǎo",
+          "vn": "máy tính",
+          "kind": "core"
+        },
+        {
+          "zh": "好看",
+          "py": "hǎo kàn",
+          "vn": "đẹp; dễ nhìn",
+          "kind": "core"
+        },
+        {
+          "zh": "号",
+          "py": "hào",
+          "vn": "ngày; số",
+          "kind": "core"
+        },
+        {
+          "zh": "会",
+          "py": "huì",
+          "vn": "biết; có thể (do học mà biết)",
+          "kind": "core"
+        },
+        {
+          "zh": "饺子",
+          "py": "jiǎo zi",
+          "vn": "sủi cảo",
+          "kind": "core"
+        },
+        {
+          "zh": "今天",
+          "py": "jīn tiān",
+          "vn": "hôm nay",
+          "kind": "core"
+        },
+        {
+          "zh": "面条儿",
+          "py": "miàntiáor",
+          "vn": "mì; mì sợi",
+          "kind": "core"
+        },
+        {
+          "zh": "日",
+          "py": "rì",
+          "vn": "ngày",
+          "kind": "core"
+        },
+        {
+          "zh": "它",
+          "py": "tā",
+          "vn": "nó (đồ vật/con vật)",
+          "kind": "core"
+        },
+        {
+          "zh": "喜欢",
+          "py": "xǐ huān",
+          "vn": "thích",
+          "kind": "core"
+        },
+        {
+          "zh": "下班",
+          "py": "xià bān",
+          "vn": "tan làm",
+          "kind": "core"
+        },
+        {
+          "zh": "新",
+          "py": "xīn",
+          "vn": "mới",
+          "kind": "core"
+        },
+        {
+          "zh": "星期",
+          "py": "xīng qī",
+          "vn": "tuần; thứ",
+          "kind": "core"
+        },
+        {
+          "zh": "星期日",
+          "py": "xīng qī rì",
+          "vn": "Chủ nhật",
+          "kind": "core"
+        },
+        {
+          "zh": "星期天",
+          "py": "xīng qī tiān",
+          "vn": "Chủ nhật",
+          "kind": "core"
+        },
+        {
+          "zh": "休息",
+          "py": "xiū xī",
+          "vn": "nghỉ ngơi; nghỉ",
+          "kind": "core"
+        },
+        {
+          "zh": "一些",
+          "py": "yī xiē",
+          "vn": "một số; một ít",
+          "kind": "core"
+        },
+        {
+          "zh": "月",
+          "py": "yuè",
+          "vn": "tháng; mặt trăng",
+          "kind": "core"
+        },
+        {
+          "zh": "真",
+          "py": "zhēn",
+          "vn": "thật; thật là",
+          "kind": "core"
+        },
+        {
+          "zh": "做",
+          "py": "zuò",
+          "vn": "làm",
+          "kind": "core"
+        },
+        {
+          "zh": "做饭",
+          "py": "zuò fàn",
+          "vn": "nấu cơm; nấu ăn",
+          "kind": "core"
+        }
+      ],
+      "scenes": [
+        {
+          "scene": 1,
+          "place": "在家里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "刘明",
+              "zh": "今天几号？",
+              "py": "jīn tiān jǐ hào？"
+            },
+            {
+              "line": 2,
+              "speaker": "王一雪",
+              "zh": "今天九月八号。",
+              "py": "jīn tiān jiǔ yuè bā hào。"
+            },
+            {
+              "line": 3,
+              "speaker": "刘明",
+              "zh": "星期几？",
+              "py": "xīng qī jǐ？"
+            },
+            {
+              "line": 4,
+              "speaker": "王一雪",
+              "zh": "星期日。今天我休息。",
+              "py": "xīng qī rì。 jīn tiān wǒ xiū xī。"
+            }
+          ]
+        },
+        {
+          "scene": 2,
+          "place": "在公司里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "王一雪",
+              "zh": "你会做饭吗？",
+              "py": "nǐ huì zuò fàn ma？"
+            },
+            {
+              "line": 2,
+              "speaker": "杨同乐",
+              "zh": "我会做。",
+              "py": "wǒ huì zuò。"
+            },
+            {
+              "line": 3,
+              "speaker": "王一雪",
+              "zh": "你会做什么？",
+              "py": "nǐ huì zuò shén me？"
+            },
+            {
+              "line": 4,
+              "speaker": "杨同乐",
+              "zh": "我会做面条儿、饺子，也会做一些菜。星期天我也做饭。",
+              "py": "wǒ huì zuò miàn tiáo ér、 jiǎo zi， yě huì zuò yī xiē cài。 xīng qī tiān wǒ yě zuò fàn。"
+            }
+          ]
+        },
+        {
+          "scene": 3,
+          "place": "下班时",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "王一雪",
+              "zh": "同乐，下班吗？",
+              "py": "tóng lè， xià bān ma？"
+            },
+            {
+              "line": 2,
+              "speaker": "杨同乐",
+              "zh": "下班。",
+              "py": "xià bān。"
+            },
+            {
+              "line": 3,
+              "speaker": "王一雪",
+              "zh": "这是你的新电脑吗？",
+              "py": "zhè shì nǐ de xīn diàn nǎo ma？"
+            },
+            {
+              "line": 4,
+              "speaker": "杨同乐",
+              "zh": "是的，是我的新电脑。",
+              "py": "shì de， shì wǒ de xīn diàn nǎo。"
+            },
+            {
+              "line": 5,
+              "speaker": "王一雪",
+              "zh": "真好看！",
+              "py": "zhēn hǎo kàn！"
+            },
+            {
+              "line": 6,
+              "speaker": "杨同乐",
+              "zh": "我也很喜欢它。",
+              "py": "wǒ yě hěn xǐ huān tā。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "vocab": [
+        {
+          "zh": "包子",
+          "py": "bāo zi",
+          "vn": "bánh bao",
+          "kind": "core"
+        },
+        {
+          "zh": "超市",
+          "py": "chāo shì",
+          "vn": "siêu thị",
+          "kind": "core"
+        },
+        {
+          "zh": "吃",
+          "py": "chī",
+          "vn": "ăn",
+          "kind": "core"
+        },
+        {
+          "zh": "出租车",
+          "py": "chū zū chē",
+          "vn": "taxi",
+          "kind": "core"
+        },
+        {
+          "zh": "电话",
+          "py": "diàn huà",
+          "vn": "điện thoại",
+          "kind": "core"
+        },
+        {
+          "zh": "东西",
+          "py": "dōngxi",
+          "vn": "đồ; đồ vật",
+          "kind": "core"
+        },
+        {
+          "zh": "非常",
+          "py": "fēi cháng",
+          "vn": "vô cùng; rất",
+          "kind": "core"
+        },
+        {
+          "zh": "好吃",
+          "py": "hǎo chī",
+          "vn": "ngon",
+          "kind": "core"
+        },
+        {
+          "zh": "号",
+          "py": "hào",
+          "vn": "ngày; số",
+          "kind": "core"
+        },
+        {
+          "zh": "买",
+          "py": "mǎi",
+          "vn": "mua",
+          "kind": "core"
+        },
+        {
+          "zh": "米饭",
+          "py": "mǐ fàn",
+          "vn": "cơm (đã nấu)",
+          "kind": "core"
+        },
+        {
+          "zh": "明天",
+          "py": "míng tiān",
+          "vn": "ngày mai",
+          "kind": "core"
+        },
+        {
+          "zh": "哪儿",
+          "py": "nǎr",
+          "vn": "ở đâu",
+          "kind": "core"
+        },
+        {
+          "zh": "那边",
+          "py": "nà biān",
+          "vn": "phía kia; bên kia",
+          "kind": "core"
+        },
+        {
+          "zh": "牛奶",
+          "py": "niú nǎi",
+          "vn": "sữa bò",
+          "kind": "core"
+        },
+        {
+          "zh": "去",
+          "py": "qù",
+          "vn": "đi",
+          "kind": "core"
+        },
+        {
+          "zh": "手机",
+          "py": "shǒu jī",
+          "vn": "điện thoại di động",
+          "kind": "core"
+        },
+        {
+          "zh": "晚饭",
+          "py": "wǎn fàn",
+          "vn": "bữa tối",
+          "kind": "core"
+        },
+        {
+          "zh": "想",
+          "py": "xiǎng",
+          "vn": "muốn; nhớ; nghĩ",
+          "kind": "core"
+        },
+        {
+          "zh": "些",
+          "py": "xiē",
+          "vn": "một số; vài",
+          "kind": "core"
+        },
+        {
+          "zh": "怎么",
+          "py": "zěn me",
+          "vn": "thế nào; bằng cách nào",
+          "kind": "core"
+        },
+        {
+          "zh": "坐",
+          "py": "zuò",
+          "vn": "ngồi; đi bằng (phương tiện)",
+          "kind": "core"
+        },
+        {
+          "zh": "西安",
+          "py": "Xī'ān",
+          "vn": "Tây An",
+          "kind": "proper"
+        },
+        {
+          "zh": "西安饭店",
+          "py": "Xī'ān Fàndiàn",
+          "vn": "Khách sạn Tây An",
+          "kind": "proper"
+        }
+      ],
+      "scenes": [
+        {
+          "scene": 1,
+          "place": "在校园里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "李文",
+              "zh": "家月，你的手机号是多少？",
+              "py": "jiā yuè， nǐ de shǒu jī hào shì duō shǎo？"
+            },
+            {
+              "line": 2,
+              "speaker": "白家月",
+              "zh": "我的手机号是+33 601493190。",
+              "py": "wǒ de shǒu jī hào shì + 3 3   6 0 1 4 9 3 1 9 0。"
+            },
+            {
+              "line": 3,
+              "speaker": "李文",
+              "zh": "我的手机号是+86 13552721160。",
+              "py": "wǒ de shǒu jī hào shì + 8 6   1 3 5 5 2 7 2 1 1 6 0。"
+            },
+            {
+              "line": 4,
+              "speaker": "白家月",
+              "zh": "好的。",
+              "py": "hǎo de。"
+            }
+          ]
+        },
+        {
+          "scene": 2,
+          "place": "下课后",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "陈天中",
+              "zh": "家月，明天你去哪儿？",
+              "py": "jiā yuè， míng tiān nǐ qù nǎ ér？"
+            },
+            {
+              "line": 2,
+              "speaker": "白家月",
+              "zh": "我想去超市买东西。",
+              "py": "wǒ xiǎng qù chāo shì mǎi dōng xī。"
+            },
+            {
+              "line": 3,
+              "speaker": "陈天中",
+              "zh": "你去超市买什么？",
+              "py": "nǐ qù chāo shì mǎi shén me？"
+            },
+            {
+              "line": 4,
+              "speaker": "白家月",
+              "zh": "我想买些牛奶。",
+              "py": "wǒ xiǎng mǎi xiē niú nǎi。"
+            }
+          ]
+        },
+        {
+          "scene": 3,
+          "place": "在家里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "王一雪",
+              "zh": "星期天我们去哪儿吃晚饭？",
+              "py": "xīng qī tiān wǒ men qù nǎ ér chī wǎn fàn？"
+            },
+            {
+              "line": 2,
+              "speaker": "刘明",
+              "zh": "我还想去西安饭店。",
+              "py": "wǒ hái xiǎng qù xī ān fàn diàn。"
+            },
+            {
+              "line": 3,
+              "speaker": "刘小雪",
+              "zh": "那边的包子非常好吃，我想吃包子。",
+              "py": "nà biān de bāo zi fēi cháng hǎo chī， wǒ xiǎng chī bāo zi。"
+            },
+            {
+              "line": 4,
+              "speaker": "刘小明",
+              "zh": "妈妈，我想吃米饭，不想吃包子。",
+              "py": "mā mā， wǒ xiǎng chī mǐ fàn， bù xiǎng chī bāo zi。"
+            },
+            {
+              "line": 5,
+              "speaker": "王一雪",
+              "zh": "好的。我们怎么去？",
+              "py": "hǎo de。 wǒ men zěn me qù？"
+            },
+            {
+              "line": 6,
+              "speaker": "刘明",
+              "zh": "坐出租车去。",
+              "py": "zuò chū zū chē qù。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "vocab": [
+        {
+          "zh": "半",
+          "py": "bàn",
+          "vn": "nửa; rưỡi",
+          "kind": "core"
+        },
+        {
+          "zh": "菜",
+          "py": "cài",
+          "vn": "món ăn; rau",
+          "kind": "core"
+        },
+        {
+          "zh": "点",
+          "py": "diǎn",
+          "vn": "giờ; điểm",
+          "kind": "core"
+        },
+        {
+          "zh": "电影",
+          "py": "diàn yǐng",
+          "vn": "phim",
+          "kind": "core"
+        },
+        {
+          "zh": "电影院",
+          "py": "diàn yǐng yuàn",
+          "vn": "rạp chiếu phim",
+          "kind": "core"
+        },
+        {
+          "zh": "店",
+          "py": "diàn",
+          "vn": "cửa hàng; tiệm",
+          "kind": "core"
+        },
+        {
+          "zh": "分",
+          "py": "fēn",
+          "vn": "phút; xu",
+          "kind": "core"
+        },
+        {
+          "zh": "分钟",
+          "py": "fēn zhōng",
+          "vn": "phút",
+          "kind": "core"
+        },
+        {
+          "zh": "后",
+          "py": "hòu",
+          "vn": "sau; phía sau",
+          "kind": "core"
+        },
+        {
+          "zh": "家",
+          "py": "jiā",
+          "vn": "nhà; gia đình",
+          "kind": "core"
+        },
+        {
+          "zh": "见",
+          "py": "jiàn",
+          "vn": "gặp; thấy",
+          "kind": "core"
+        },
+        {
+          "zh": "看",
+          "py": "kàn",
+          "vn": "xem; nhìn",
+          "kind": "core"
+        },
+        {
+          "zh": "课",
+          "py": "kè",
+          "vn": "bài học; tiết học",
+          "kind": "core"
+        },
+        {
+          "zh": "里",
+          "py": "lǐ",
+          "vn": "trong; bên trong",
+          "kind": "core"
+        },
+        {
+          "zh": "呢",
+          "py": "ne",
+          "vn": "trợ từ ngữ khí; còn… thì sao",
+          "kind": "core"
+        },
+        {
+          "zh": "上班",
+          "py": "shàng bān",
+          "vn": "đi làm",
+          "kind": "core"
+        },
+        {
+          "zh": "上课",
+          "py": "shàng kè",
+          "vn": "vào học; lên lớp",
+          "kind": "core"
+        },
+        {
+          "zh": "上午",
+          "py": "shàng wǔ",
+          "vn": "buổi sáng",
+          "kind": "core"
+        },
+        {
+          "zh": "事",
+          "py": "shì",
+          "vn": "việc; chuyện",
+          "kind": "core"
+        },
+        {
+          "zh": "晚上",
+          "py": "wǎn shàng",
+          "vn": "buổi tối",
+          "kind": "core"
+        },
+        {
+          "zh": "下课",
+          "py": "xià kè",
+          "vn": "tan học",
+          "kind": "core"
+        },
+        {
+          "zh": "下午",
+          "py": "xià wǔ",
+          "vn": "buổi chiều",
+          "kind": "core"
+        },
+        {
+          "zh": "现在",
+          "py": "xiàn zài",
+          "vn": "bây giờ",
+          "kind": "core"
+        },
+        {
+          "zh": "医院",
+          "py": "yī yuàn",
+          "vn": "bệnh viện",
+          "kind": "core"
+        },
+        {
+          "zh": "在",
+          "py": "zài",
+          "vn": "ở; đang",
+          "kind": "core"
+        },
+        {
+          "zh": "早上",
+          "py": "zǎo shàng",
+          "vn": "buổi sáng sớm",
+          "kind": "core"
+        }
+      ],
+      "scenes": [
+        {
+          "scene": 1,
+          "place": "打电话",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "白家月",
+              "zh": "现在几点？",
+              "py": "xiàn zài jǐ diǎn？"
+            },
+            {
+              "line": 2,
+              "speaker": "安妮",
+              "zh": "早上八点四十。",
+              "py": "zǎo shàng bā diǎn sì shí。"
+            },
+            {
+              "line": 3,
+              "speaker": "白家月",
+              "zh": "我上午十点十分有课。",
+              "py": "wǒ shàng wǔ shí diǎn shí fēn yǒu kè。"
+            },
+            {
+              "line": 4,
+              "speaker": "安妮",
+              "zh": "好的，我们下午两点见吧。",
+              "py": "hǎo de， wǒ men xià wǔ liǎng diǎn jiàn ba。"
+            }
+          ]
+        },
+        {
+          "scene": 2,
+          "place": "在校园里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "李文",
+              "zh": "我下午想去电影院看电影，你去吗？",
+              "py": "wǒ xià wǔ xiǎng qù diàn yǐng yuàn kàn diàn yǐng， nǐ qù ma？"
+            },
+            {
+              "line": 2,
+              "speaker": "白家月",
+              "zh": "我不想去，下午还有事。",
+              "py": "wǒ bù xiǎng qù， xià wǔ hái yǒu shì。"
+            },
+            {
+              "line": 3,
+              "speaker": "李文",
+              "zh": "好的。明天呢？",
+              "py": "hǎo de。 míng tiān ne？"
+            },
+            {
+              "line": 4,
+              "speaker": "白家月",
+              "zh": "我明天下午两点还上课呢，四点半下课。",
+              "py": "wǒ míng tiān xià wǔ liǎng diǎn hái shàng kè ne， sì diǎn bàn xià kè。"
+            }
+          ]
+        },
+        {
+          "scene": 3,
+          "place": "打电话",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "刘明",
+              "zh": "喂，你在哪儿呢？",
+              "py": "wèi， nǐ zài nǎ ér ne？"
+            },
+            {
+              "line": 2,
+              "speaker": "王一雪",
+              "zh": "我在家里呢。",
+              "py": "wǒ zài jiā lǐ ne。"
+            },
+            {
+              "line": 3,
+              "speaker": "王一雪",
+              "zh": "我晚上六点半下班。",
+              "py": "wǒ wǎn shàng liù diǎn bàn xià bān。"
+            },
+            {
+              "line": 4,
+              "speaker": "刘明",
+              "zh": "我八点去医院上班。",
+              "py": "wǒ bā diǎn qù yī yuàn shàng bān。"
+            },
+            {
+              "line": 5,
+              "speaker": "王一雪",
+              "zh": "好的，你去店里买些菜吧。",
+              "py": "hǎo de， nǐ qù diàn lǐ mǎi xiē cài ba。"
+            },
+            {
+              "line": 6,
+              "speaker": "刘明",
+              "zh": "好，我十分钟后去。",
+              "py": "hǎo， wǒ shí fēn zhōng hòu qù。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "vocab": [
+        {
+          "zh": "病人",
+          "py": "bìng rén",
+          "vn": "bệnh nhân",
+          "kind": "core"
+        },
+        {
+          "zh": "大",
+          "py": "dà",
+          "vn": "to; lớn",
+          "kind": "core"
+        },
+        {
+          "zh": "到",
+          "py": "dào",
+          "vn": "đến",
+          "kind": "core"
+        },
+        {
+          "zh": "多",
+          "py": "duō",
+          "vn": "nhiều; bao nhiêu",
+          "kind": "core"
+        },
+        {
+          "zh": "饭",
+          "py": "fàn",
+          "vn": "cơm; bữa ăn",
+          "kind": "core"
+        },
+        {
+          "zh": "房间",
+          "py": "fáng jiān",
+          "vn": "phòng",
+          "kind": "core"
+        },
+        {
+          "zh": "工作",
+          "py": "gōng zuò",
+          "vn": "làm việc; công việc",
+          "kind": "core"
+        },
+        {
+          "zh": "看见",
+          "py": "kàn jiàn",
+          "vn": "nhìn thấy",
+          "kind": "core"
+        },
+        {
+          "zh": "猫",
+          "py": "māo",
+          "vn": "mèo",
+          "kind": "core"
+        },
+        {
+          "zh": "没",
+          "py": "méi",
+          "vn": "không; chưa",
+          "kind": "core"
+        },
+        {
+          "zh": "能",
+          "py": "néng",
+          "vn": "có thể; có khả năng",
+          "kind": "core"
+        },
+        {
+          "zh": "漂亮",
+          "py": "piào liàng",
+          "vn": "xinh; đẹp",
+          "kind": "core"
+        },
+        {
+          "zh": "前",
+          "py": "qián",
+          "vn": "trước; phía trước",
+          "kind": "core"
+        },
+        {
+          "zh": "书店",
+          "py": "shū diàn",
+          "vn": "hiệu sách",
+          "kind": "core"
+        },
+        {
+          "zh": "外",
+          "py": "wài",
+          "vn": "ngoài",
+          "kind": "core"
+        },
+        {
+          "zh": "午饭",
+          "py": "wǔ fàn",
+          "vn": "bữa trưa",
+          "kind": "core"
+        },
+        {
+          "zh": "下",
+          "py": "xià",
+          "vn": "dưới; xuống",
+          "kind": "core"
+        },
+        {
+          "zh": "小",
+          "py": "xiǎo",
+          "vn": "nhỏ",
+          "kind": "core"
+        },
+        {
+          "zh": "学校",
+          "py": "xué xiào",
+          "vn": "trường học",
+          "kind": "core"
+        },
+        {
+          "zh": "医生",
+          "py": "yī shēng",
+          "vn": "bác sĩ",
+          "kind": "core"
+        },
+        {
+          "zh": "在",
+          "py": "zài",
+          "vn": "ở; đang",
+          "kind": "core"
+        },
+        {
+          "zh": "只",
+          "py": "zhǐ",
+          "vn": "lượng từ cho một số động vật; chỉ",
+          "kind": "core"
+        },
+        {
+          "zh": "桌子",
+          "py": "zhuō zi",
+          "vn": "cái bàn",
+          "kind": "core"
+        },
+        {
+          "zh": "胡医生",
+          "py": "Hú yīshēng",
+          "vn": "bác sĩ Hồ",
+          "kind": "proper"
+        }
+      ],
+      "scenes": [
+        {
+          "scene": 1,
+          "place": "在王一飞家",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "白家月",
+              "zh": "房间外有一只小猫。",
+              "py": "fáng jiān wài yǒu yī zhī xiǎo māo。"
+            },
+            {
+              "line": 2,
+              "speaker": "陈天中",
+              "zh": "我没看见，它在哪儿呢？",
+              "py": "wǒ méi kàn jiàn， tā zài nǎ ér ne？"
+            },
+            {
+              "line": 3,
+              "speaker": "白家月",
+              "zh": "它在桌子下呢。",
+              "py": "tā zài zhuō zi xià ne。"
+            },
+            {
+              "line": 4,
+              "speaker": "陈天中",
+              "zh": "这只小猫真漂亮！",
+              "py": "zhè zhǐ xiǎo māo zhēn piào liàng！"
+            }
+          ]
+        },
+        {
+          "scene": 2,
+          "place": "下课后打电话",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "白家月",
+              "zh": "我们在哪儿见呢？",
+              "py": "wǒ men zài nǎ ér jiàn ne？"
+            },
+            {
+              "line": 2,
+              "speaker": "李文",
+              "zh": "在学校书店前见吧。",
+              "py": "zài xué xiào shū diàn qián jiàn ba。"
+            },
+            {
+              "line": 3,
+              "speaker": "白家月",
+              "zh": "好的。下午两点你能到吗？",
+              "py": "hǎo de。 xià wǔ liǎng diǎn nǐ néng dào ma？"
+            },
+            {
+              "line": 4,
+              "speaker": "李文",
+              "zh": "能到。我在学校吃午饭。",
+              "py": "néng dào。 wǒ zài xué xiào chī wǔ fàn。"
+            }
+          ]
+        },
+        {
+          "scene": 3,
+          "place": "在医院里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "刘明",
+              "zh": "小胡，你还没吃饭呢？",
+              "py": "xiǎo hú， nǐ hái méi chī fàn ne？"
+            },
+            {
+              "line": 2,
+              "speaker": "胡医生",
+              "zh": "没吃呢。",
+              "py": "méi chī ne。"
+            },
+            {
+              "line": 3,
+              "speaker": "刘明",
+              "zh": "大医院病人多，医生非常忙。",
+              "py": "dà yī yuàn bìng rén duō， yī shēng fēi cháng máng。"
+            },
+            {
+              "line": 4,
+              "speaker": "胡医生",
+              "zh": "是的。我爸爸也在医院工作，他也非常忙。",
+              "py": "shì de。 wǒ bà bà yě zài yī yuàn gōng zuò， tā yě fēi cháng máng。"
+            },
+            {
+              "line": 5,
+              "speaker": "刘明",
+              "zh": "你家有两个医生？",
+              "py": "nǐ jiā yǒu liǎng gè yī shēng？"
+            },
+            {
+              "line": 6,
+              "speaker": "胡医生",
+              "zh": "对。",
+              "py": "duì。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "vocab": [
+        {
+          "zh": "本",
+          "py": "běn",
+          "vn": "quyển; cuốn (lượng từ)",
+          "kind": "core"
+        },
+        {
+          "zh": "边",
+          "py": "biān",
+          "vn": "bên; phía",
+          "kind": "core"
+        },
+        {
+          "zh": "唱",
+          "py": "chàng",
+          "vn": "hát",
+          "kind": "core"
+        },
+        {
+          "zh": "第",
+          "py": "dì",
+          "vn": "thứ (tiền tố số thứ tự)",
+          "kind": "core"
+        },
+        {
+          "zh": "电视",
+          "py": "diàn shì",
+          "vn": "tivi; truyền hình",
+          "kind": "core"
+        },
+        {
+          "zh": "读书",
+          "py": "dú shū",
+          "vn": "đọc sách; đi học",
+          "kind": "core"
+        },
+        {
+          "zh": "歌",
+          "py": "gē",
+          "vn": "bài hát",
+          "kind": "core"
+        },
+        {
+          "zh": "狗",
+          "py": "gǒu",
+          "vn": "chó",
+          "kind": "core"
+        },
+        {
+          "zh": "好听",
+          "py": "hǎo tīng",
+          "vn": "hay; dễ nghe",
+          "kind": "core"
+        },
+        {
+          "zh": "和",
+          "py": "hé",
+          "vn": "và; với",
+          "kind": "core"
+        },
+        {
+          "zh": "家",
+          "py": "jiā",
+          "vn": "nhà; gia đình",
+          "kind": "core"
+        },
+        {
+          "zh": "那",
+          "py": "nà",
+          "vn": "kia; đó",
+          "kind": "core"
+        },
+        {
+          "zh": "那个",
+          "py": "nà ge",
+          "vn": "cái kia; người kia",
+          "kind": "core"
+        },
+        {
+          "zh": "朋友",
+          "py": "péng yǒu",
+          "vn": "bạn bè",
+          "kind": "core"
+        },
+        {
+          "zh": "前边",
+          "py": "qián biān",
+          "vn": "phía trước",
+          "kind": "core"
+        },
+        {
+          "zh": "上",
+          "py": "shàng",
+          "vn": "trên; lên",
+          "kind": "core"
+        },
+        {
+          "zh": "书",
+          "py": "shū",
+          "vn": "sách",
+          "kind": "core"
+        },
+        {
+          "zh": "外边",
+          "py": "wài biān",
+          "vn": "bên ngoài",
+          "kind": "core"
+        },
+        {
+          "zh": "玩",
+          "py": "wán",
+          "vn": "chơi",
+          "kind": "core"
+        },
+        {
+          "zh": "学习",
+          "py": "xué xí",
+          "vn": "học; học tập",
+          "kind": "core"
+        },
+        {
+          "zh": "椅子",
+          "py": "yǐ zi",
+          "vn": "ghế",
+          "kind": "core"
+        },
+        {
+          "zh": "做",
+          "py": "zuò",
+          "vn": "làm",
+          "kind": "core"
+        }
+      ],
+      "scenes": [
+        {
+          "scene": 1,
+          "place": "在校园里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "李文",
+              "zh": "学校前边有一家电影院。",
+              "py": "xué xiào qián biān yǒu yī jiā diàn yǐng yuàn。"
+            },
+            {
+              "line": 2,
+              "speaker": "白家月",
+              "zh": "对。我们晚上去那个电影院看电影吧。",
+              "py": "duì。 wǒ men wǎn shàng qù nà ge diàn yǐng yuàn kàn diàn yǐng ba。"
+            },
+            {
+              "line": 3,
+              "speaker": "李文",
+              "zh": "好！我们七点在电影院外边见，好吗？",
+              "py": "hǎo！ wǒ men qī diǎn zài diàn yǐng yuàn wài biān jiàn， hǎo ma？"
+            },
+            {
+              "line": 4,
+              "speaker": "白家月",
+              "zh": "好的，晚上七点见！",
+              "py": "hǎo de， wǎn shàng qī diǎn jiàn！"
+            }
+          ]
+        },
+        {
+          "scene": 2,
+          "place": "在教室里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "白家月",
+              "zh": "椅子上有一本中文书，那是谁的书？",
+              "py": "yǐ zi shàng yǒu yī běn zhōng wén shū， nà shì shéi de shū？"
+            },
+            {
+              "line": 2,
+              "speaker": "陈天中",
+              "zh": "是我的书，谢谢。这是我的第二本中文书。",
+              "py": "shì wǒ de shū， xiè xiè。 zhè shì wǒ de dì èr běn zhōng wén shū。"
+            },
+            {
+              "line": 3,
+              "speaker": "白家月",
+              "zh": "不客气。你明天上午在哪儿？",
+              "py": "bú kè qì。 nǐ míng tiān shàng wǔ zài nǎ ér？"
+            },
+            {
+              "line": 4,
+              "speaker": "陈天中",
+              "zh": "我明天上午在学校学习。",
+              "py": "wǒ míng tiān shàng wǔ zài xué xiào xué xí。"
+            }
+          ]
+        },
+        {
+          "scene": 3,
+          "place": "在办公室里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "王一雪",
+              "zh": "明天星期六，你做什么？",
+              "py": "míng tiān xīng qī liù， nǐ zuò shén me？"
+            },
+            {
+              "line": 2,
+              "speaker": "杨同乐",
+              "zh": "我白天在家里读书，晚上和朋友们去外边唱歌。",
+              "py": "wǒ bái tiān zài jiā lǐ dú shū， wǎn shàng hé péng yǒu men qù wài biān chàng gē。"
+            },
+            {
+              "line": 3,
+              "speaker": "王一雪",
+              "zh": "你唱歌很好听。",
+              "py": "nǐ chàng gē hěn hǎo tīng。"
+            },
+            {
+              "line": 4,
+              "speaker": "杨同乐",
+              "zh": "谢谢！您星期六做什么？",
+              "py": "xiè xiè！ nín xīng qī liù zuò shén me？"
+            },
+            {
+              "line": 5,
+              "speaker": "王一雪",
+              "zh": "我在家里做饭、看电视，和孩子们、小狗玩。",
+              "py": "wǒ zài jiā lǐ zuò fàn、 kàn diàn shì， hé hái zi men、 xiǎo gǒu wán。"
+            },
+            {
+              "line": 6,
+              "speaker": "杨同乐",
+              "zh": "我也有一只小狗。",
+              "py": "wǒ yě yǒu yī zhī xiǎo gǒu。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "vocab": [
+        {
+          "zh": "杯子",
+          "py": "bēi zi",
+          "vn": "cái cốc",
+          "kind": "core"
+        },
+        {
+          "zh": "穿",
+          "py": "chuān",
+          "vn": "mặc",
+          "kind": "core"
+        },
+        {
+          "zh": "贵",
+          "py": "guì",
+          "vn": "đắt",
+          "kind": "core"
+        },
+        {
+          "zh": "件",
+          "py": "jiàn",
+          "vn": "chiếc; cái (lượng từ cho quần áo/sự việc)",
+          "kind": "core"
+        },
+        {
+          "zh": "斤",
+          "py": "jīn",
+          "vn": "cân (500 gram)",
+          "kind": "core"
+        },
+        {
+          "zh": "块",
+          "py": "kuài",
+          "vn": "đồng; miếng",
+          "kind": "core"
+        },
+        {
+          "zh": "那儿",
+          "py": "nà ér",
+          "vn": "ở đó; chỗ kia",
+          "kind": "core"
+        },
+        {
+          "zh": "那些",
+          "py": "nà xiē",
+          "vn": "những cái kia",
+          "kind": "core"
+        },
+        {
+          "zh": "男",
+          "py": "nán",
+          "vn": "nam; đàn ông",
+          "kind": "core"
+        },
+        {
+          "zh": "女",
+          "py": "nǚ",
+          "vn": "nữ; phụ nữ",
+          "kind": "core"
+        },
+        {
+          "zh": "便宜",
+          "py": "piányi",
+          "vn": "rẻ",
+          "kind": "core"
+        },
+        {
+          "zh": "苹果",
+          "py": "píng guǒ",
+          "vn": "táo",
+          "kind": "core"
+        },
+        {
+          "zh": "钱",
+          "py": "qián",
+          "vn": "tiền",
+          "kind": "core"
+        },
+        {
+          "zh": "商店",
+          "py": "shāng diàn",
+          "vn": "cửa hàng",
+          "kind": "core"
+        },
+        {
+          "zh": "少",
+          "py": "shǎo",
+          "vn": "ít",
+          "kind": "core"
+        },
+        {
+          "zh": "售货员",
+          "py": "shòu huò yuán",
+          "vn": "nhân viên bán hàng",
+          "kind": "core"
+        },
+        {
+          "zh": "水果",
+          "py": "shuǐ guǒ",
+          "vn": "hoa quả; trái cây",
+          "kind": "core"
+        },
+        {
+          "zh": "衣服",
+          "py": "yī fú",
+          "vn": "quần áo",
+          "kind": "core"
+        },
+        {
+          "zh": "元",
+          "py": "yuán",
+          "vn": "nhân dân tệ; đồng",
+          "kind": "core"
+        },
+        {
+          "zh": "怎么样",
+          "py": "zěn me yàng",
+          "vn": "thế nào; ra sao",
+          "kind": "core"
+        },
+        {
+          "zh": "这边",
+          "py": "zhè biān",
+          "vn": "phía này",
+          "kind": "core"
+        },
+        {
+          "zh": "这儿",
+          "py": "zhèr",
+          "vn": "ở đây",
+          "kind": "core"
+        },
+        {
+          "zh": "这些",
+          "py": "zhè xiē",
+          "vn": "những cái này",
+          "kind": "core"
+        }
+      ],
+      "scenes": [
+        {
+          "scene": 1,
+          "place": "在一家小店",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "王一雪",
+              "zh": "您好，有杯子吗？",
+              "py": "nín hǎo， yǒu bēi zi ma？"
+            },
+            {
+              "line": 2,
+              "speaker": "售货员",
+              "zh": "有，杯子在这边。",
+              "py": "yǒu， bēi zi zài zhè biān。"
+            },
+            {
+              "line": 3,
+              "speaker": "王一雪",
+              "zh": "多少钱一个？",
+              "py": "duō shǎo qián yí gè？"
+            },
+            {
+              "line": 4,
+              "speaker": "售货员",
+              "zh": "这些五块钱一个，那些十块钱一个。",
+              "py": "zhè xiē wǔ kuài qián yí gè， nà xiē shí kuài qián yí gè。"
+            },
+            {
+              "line": 5,
+              "speaker": "王一雪",
+              "zh": "我买这个吧。",
+              "py": "wǒ mǎi zhè ge ba。"
+            }
+          ]
+        },
+        {
+          "scene": 2,
+          "place": "在菜市场",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "王一雪",
+              "zh": "这儿的水果真不少！",
+              "py": "zhè ér de shuǐ guǒ zhēn bù shǎo！"
+            },
+            {
+              "line": 2,
+              "speaker": "售货员",
+              "zh": "您想买什么？",
+              "py": "nín xiǎng mǎi shén me？"
+            },
+            {
+              "line": 3,
+              "speaker": "王一雪",
+              "zh": "我要买两斤苹果。",
+              "py": "wǒ yào mǎi liǎng jīn píng guǒ。"
+            },
+            {
+              "line": 4,
+              "speaker": "售货员",
+              "zh": "苹果三块五一斤。这些七块二，七块钱吧。",
+              "py": "píng guǒ sān kuài wǔ yī jīn。 zhè xiē qī kuài èr， qī kuài qián ba。"
+            },
+            {
+              "line": 5,
+              "speaker": "王一雪",
+              "zh": "好的，这儿的苹果真便宜！",
+              "py": "hǎo de， zhè ér de píng guǒ zhēn pián yi！"
+            }
+          ]
+        },
+        {
+          "scene": 3,
+          "place": "在商场里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "王一雪",
+              "zh": "这家商店衣服真多！这件一百元，怎么样？",
+              "py": "zhè jiā shāng diàn yī fú zhēn duō！ zhè jiàn yì bǎi yuán， zěn me yàng？"
+            },
+            {
+              "line": 2,
+              "speaker": "刘明",
+              "zh": "好看，也不贵。",
+              "py": "hǎo kàn， yě bù guì。"
+            },
+            {
+              "line": 3,
+              "speaker": "王一雪",
+              "zh": "小雪能穿，买一件吧。",
+              "py": "xiǎo xuě néng chuān， mǎi yī jiàn ba。"
+            },
+            {
+              "line": 4,
+              "speaker": "刘明",
+              "zh": "好的。小明能穿吗？",
+              "py": "hǎo de。 xiǎo míng néng chuān ma？"
+            },
+            {
+              "line": 5,
+              "speaker": "王一雪",
+              "zh": "不能。这些是女孩子穿的衣服。男孩子的衣服在那儿。",
+              "py": "bù néng。 zhè xiē shì nǚ hái zi chuān de yī fú。 nán hái zi de yī fú zài nà ér。"
+            },
+            {
+              "line": 6,
+              "speaker": "刘明",
+              "zh": "好的。",
+              "py": "hǎo de。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "vocab": [
+        {
+          "zh": "车",
+          "py": "chē",
+          "vn": "xe",
+          "kind": "core"
+        },
+        {
+          "zh": "大学",
+          "py": "dà xué",
+          "vn": "đại học",
+          "kind": "core"
+        },
+        {
+          "zh": "大学生",
+          "py": "dà xué shēng",
+          "vn": "sinh viên đại học",
+          "kind": "core"
+        },
+        {
+          "zh": "弟弟",
+          "py": "dì di",
+          "vn": "em trai",
+          "kind": "core"
+        },
+        {
+          "zh": "读",
+          "py": "dú",
+          "vn": "đọc; học",
+          "kind": "core"
+        },
+        {
+          "zh": "对",
+          "py": "duì",
+          "vn": "đúng",
+          "kind": "core"
+        },
+        {
+          "zh": "饭店",
+          "py": "fàn diàn",
+          "vn": "nhà hàng; khách sạn",
+          "kind": "core"
+        },
+        {
+          "zh": "开车",
+          "py": "kāi chē",
+          "vn": "lái xe",
+          "kind": "core"
+        },
+        {
+          "zh": "哪里",
+          "py": "nǎ lǐ",
+          "vn": "ở đâu",
+          "kind": "core"
+        },
+        {
+          "zh": "那里",
+          "py": "nà lǐ",
+          "vn": "ở đó; chỗ kia",
+          "kind": "core"
+        },
+        {
+          "zh": "起床",
+          "py": "qǐ chuáng",
+          "vn": "thức dậy; ra khỏi giường",
+          "kind": "core"
+        },
+        {
+          "zh": "时候",
+          "py": "shíhou",
+          "vn": "lúc; thời điểm",
+          "kind": "core"
+        },
+        {
+          "zh": "睡",
+          "py": "shuì",
+          "vn": "ngủ",
+          "kind": "core"
+        },
+        {
+          "zh": "睡觉",
+          "py": "shuì jiào",
+          "vn": "đi ngủ; ngủ",
+          "kind": "core"
+        },
+        {
+          "zh": "说",
+          "py": "shuō",
+          "vn": "nói",
+          "kind": "core"
+        },
+        {
+          "zh": "问",
+          "py": "wèn",
+          "vn": "hỏi",
+          "kind": "core"
+        },
+        {
+          "zh": "小朋友",
+          "py": "xiǎo péng yǒu",
+          "vn": "trẻ em; bạn nhỏ",
+          "kind": "core"
+        },
+        {
+          "zh": "学",
+          "py": "xué",
+          "vn": "học",
+          "kind": "core"
+        },
+        {
+          "zh": "要",
+          "py": "yào",
+          "vn": "muốn; cần; sẽ",
+          "kind": "core"
+        },
+        {
+          "zh": "医",
+          "py": "yī",
+          "vn": "y học; học y",
+          "kind": "core"
+        },
+        {
+          "zh": "在",
+          "py": "zài",
+          "vn": "ở; đang",
+          "kind": "core"
+        },
+        {
+          "zh": "找",
+          "py": "zhǎo",
+          "vn": "tìm",
+          "kind": "core"
+        },
+        {
+          "zh": "正在",
+          "py": "zhèng zài",
+          "vn": "đang",
+          "kind": "core"
+        },
+        {
+          "zh": "知道",
+          "py": "zhī dào",
+          "vn": "biết",
+          "kind": "core"
+        },
+        {
+          "zh": "昨天",
+          "py": "zuó tiān",
+          "vn": "hôm qua",
+          "kind": "core"
+        }
+      ],
+      "scenes": [
+        {
+          "scene": 1,
+          "place": "在路上",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "王一飞",
+              "zh": "喂，李文，你什么时候能到饭店？",
+              "py": "wèi， lǐ wén， nǐ shén me shí hòu néng dào fàn diàn？"
+            },
+            {
+              "line": 2,
+              "speaker": "李文",
+              "zh": "还不知道，正在找呢。它是不是在超市后边？",
+              "py": "hái bù zhī dào， zhèng zài zhǎo ne。 tā shì bú shì zài chāo shì hòu biān？"
+            },
+            {
+              "line": 3,
+              "speaker": "王一飞",
+              "zh": "是的。你开车没开车？",
+              "py": "shì de。 nǐ kāi chē méi kāi chē？"
+            },
+            {
+              "line": 4,
+              "speaker": "李文",
+              "zh": "我没开车，坐车呢。",
+              "py": "wǒ méi kāi chē， zuò chē ne。"
+            }
+          ]
+        },
+        {
+          "scene": 2,
+          "place": "在饭店里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "王一飞",
+              "zh": "你还在读大学吗？",
+              "py": "nǐ hái zài dú dà xué ma？"
+            },
+            {
+              "line": 2,
+              "speaker": "李文",
+              "zh": "对，我读大学呢，还是大学生。",
+              "py": "duì， wǒ dú dà xué ne， hái shì dà xué shēng。"
+            },
+            {
+              "line": 3,
+              "speaker": "王一飞",
+              "zh": "你们学习忙不忙？",
+              "py": "nǐ men xué xí máng bù máng？"
+            },
+            {
+              "line": 4,
+              "speaker": "李文",
+              "zh": "非常忙。我学医，我们的课很多。",
+              "py": "fēi cháng máng。 wǒ xué yī， wǒ men de kè hěn duō。"
+            }
+          ]
+        },
+        {
+          "scene": 3,
+          "place": "在家里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "刘明",
+              "zh": "弟弟起床没起床呢？",
+              "py": "dì di qǐ chuáng méi qǐ chuáng ne？"
+            },
+            {
+              "line": 2,
+              "speaker": "刘小雪",
+              "zh": "没起床呢，还在睡觉。",
+              "py": "méi qǐ chuáng ne， hái zài shuì jiào。"
+            },
+            {
+              "line": 3,
+              "speaker": "刘明",
+              "zh": "还睡呢？他今天去不去那里？",
+              "py": "hái shuì ne？ tā jīn tiān qù bù qù nà lǐ？"
+            },
+            {
+              "line": 4,
+              "speaker": "刘小雪",
+              "zh": "去哪里？",
+              "py": "qù nǎ lǐ？"
+            },
+            {
+              "line": 5,
+              "speaker": "刘明",
+              "zh": "我昨天问他，他对我说，他不去，他今天要和小朋友玩。",
+              "py": "wǒ zuó tiān wèn tā， tā duì wǒ shuō， tā bù qù， tā jīn tiān yào hé xiǎo péng yǒu wán。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "vocab": [
+        {
+          "zh": "病",
+          "py": "bìng",
+          "vn": "bệnh; ốm",
+          "kind": "core"
+        },
+        {
+          "zh": "公司",
+          "py": "gōng sī",
+          "vn": "công ty",
+          "kind": "core"
+        },
+        {
+          "zh": "喝",
+          "py": "hē",
+          "vn": "uống",
+          "kind": "core"
+        },
+        {
+          "zh": "回",
+          "py": "huí",
+          "vn": "trở về",
+          "kind": "core"
+        },
+        {
+          "zh": "觉得",
+          "py": "jué de",
+          "vn": "cảm thấy; cho rằng",
+          "kind": "core"
+        },
+        {
+          "zh": "看病",
+          "py": "kàn bìng",
+          "vn": "khám bệnh; đi khám",
+          "kind": "core"
+        },
+        {
+          "zh": "来",
+          "py": "lái",
+          "vn": "đến",
+          "kind": "core"
+        },
+        {
+          "zh": "了",
+          "py": "le",
+          "vn": "trợ từ biểu thị thay đổi/hoàn thành",
+          "kind": "core"
+        },
+        {
+          "zh": "冷",
+          "py": "lěng",
+          "vn": "lạnh",
+          "kind": "core"
+        },
+        {
+          "zh": "热",
+          "py": "rè",
+          "vn": "nóng",
+          "kind": "core"
+        },
+        {
+          "zh": "生病",
+          "py": "shēng bìng",
+          "vn": "bị ốm; mắc bệnh",
+          "kind": "core"
+        },
+        {
+          "zh": "水",
+          "py": "shuǐ",
+          "vn": "nước",
+          "kind": "core"
+        },
+        {
+          "zh": "天",
+          "py": "tiān",
+          "vn": "ngày; trời",
+          "kind": "core"
+        },
+        {
+          "zh": "天气",
+          "py": "tiān qì",
+          "vn": "thời tiết",
+          "kind": "core"
+        },
+        {
+          "zh": "下",
+          "py": "xià",
+          "vn": "dưới; xuống",
+          "kind": "core"
+        },
+        {
+          "zh": "下雨",
+          "py": "xià yǔ",
+          "vn": "mưa; trời mưa",
+          "kind": "core"
+        },
+        {
+          "zh": "雪",
+          "py": "xuě",
+          "vn": "tuyết",
+          "kind": "core"
+        },
+        {
+          "zh": "药",
+          "py": "yào",
+          "vn": "thuốc",
+          "kind": "core"
+        },
+        {
+          "zh": "一点儿",
+          "py": "yìdiǎnr",
+          "vn": "một chút",
+          "kind": "core"
+        },
+        {
+          "zh": "有点儿",
+          "py": "yǒudiǎnr",
+          "vn": "hơi; có một chút",
+          "kind": "core"
+        },
+        {
+          "zh": "雨",
+          "py": "yǔ",
+          "vn": "mưa",
+          "kind": "core"
+        },
+        {
+          "zh": "再",
+          "py": "zài",
+          "vn": "lại; nữa; rồi",
+          "kind": "core"
+        },
+        {
+          "zh": "这里",
+          "py": "zhè lǐ",
+          "vn": "ở đây; chỗ này",
+          "kind": "core"
+        }
+      ],
+      "scenes": [
+        {
+          "scene": 1,
+          "place": "打电话",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "王一雪",
+              "zh": "今天天气怎么样？",
+              "py": "jīn tiān tiān qì zěn me yàng？"
+            },
+            {
+              "line": 2,
+              "speaker": "王一飞",
+              "zh": "这里的天不太好，下雨了。",
+              "py": "zhè lǐ de tiān bù tài hǎo， xià yǔ le。"
+            },
+            {
+              "line": 3,
+              "speaker": "王一雪",
+              "zh": "下大雨吗？",
+              "py": "xià dà yǔ ma？"
+            },
+            {
+              "line": 4,
+              "speaker": "王一飞",
+              "zh": "有点儿，我觉得很冷。",
+              "py": "yǒu diǎn ér， wǒ jué de hěn lěng。"
+            }
+          ]
+        },
+        {
+          "scene": 2,
+          "place": "在公司电梯里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "王一雪",
+              "zh": "昨天下雪了。",
+              "py": "zuó tiān xià xuě le。"
+            },
+            {
+              "line": 2,
+              "speaker": "杨同乐",
+              "zh": "是的，太冷了。",
+              "py": "shì de， tài lěng le。"
+            },
+            {
+              "line": 3,
+              "speaker": "王一雪",
+              "zh": "你昨天没来公司，生病了？",
+              "py": "nǐ zuó tiān méi lái gōng sī， shēng bìng le？"
+            },
+            {
+              "line": 4,
+              "speaker": "杨同乐",
+              "zh": "对，我昨天去医院看病了。",
+              "py": "duì， wǒ zuó tiān qù yī yuàn kàn bìng le。"
+            }
+          ]
+        },
+        {
+          "scene": 3,
+          "place": "在医院里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "杨同乐",
+              "zh": "医生，我病了。",
+              "py": "yī shēng， wǒ bìng le。"
+            },
+            {
+              "line": 2,
+              "speaker": "胡医生",
+              "zh": "我看看。你觉得怎么样？",
+              "py": "wǒ kàn kàn。 nǐ jué de zěn me yàng？"
+            },
+            {
+              "line": 3,
+              "speaker": "杨同乐",
+              "zh": "我很冷。",
+              "py": "wǒ hěn lěng。"
+            },
+            {
+              "line": 4,
+              "speaker": "胡医生",
+              "zh": "好的，吃一点儿药，今天休息半天吧。",
+              "py": "hǎo de， chī yì diǎn ér yào， jīn tiān xiū xī bàn tiān ba。"
+            },
+            {
+              "line": 5,
+              "speaker": "杨同乐",
+              "zh": "好的。",
+              "py": "hǎo de。"
+            },
+            {
+              "line": 6,
+              "speaker": "胡医生",
+              "zh": "回家后再喝些热水。",
+              "py": "huí jiā hòu zài hē xiē rè shuǐ。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "vocab": [
+        {
+          "zh": "杯",
+          "py": "bēi",
+          "vn": "cốc; tách (lượng từ)",
+          "kind": "core"
+        },
+        {
+          "zh": "茶",
+          "py": "chá",
+          "vn": "trà",
+          "kind": "core"
+        },
+        {
+          "zh": "打电话",
+          "py": "dǎ diàn huà",
+          "vn": "gọi điện thoại",
+          "kind": "core"
+        },
+        {
+          "zh": "服务员",
+          "py": "fú wù yuán",
+          "vn": "nhân viên phục vụ",
+          "kind": "core"
+        },
+        {
+          "zh": "给",
+          "py": "gěi",
+          "vn": "cho; đưa",
+          "kind": "core"
+        },
+        {
+          "zh": "鸡蛋",
+          "py": "jī dàn",
+          "vn": "trứng gà",
+          "kind": "core"
+        },
+        {
+          "zh": "可以",
+          "py": "kě yǐ",
+          "vn": "có thể; được phép",
+          "kind": "core"
+        },
+        {
+          "zh": "卖",
+          "py": "mài",
+          "vn": "bán",
+          "kind": "core"
+        },
+        {
+          "zh": "面包",
+          "py": "miàn bāo",
+          "vn": "bánh mì",
+          "kind": "core"
+        },
+        {
+          "zh": "女士",
+          "py": "nǚ shì",
+          "vn": "quý cô; bà",
+          "kind": "core"
+        },
+        {
+          "zh": "请",
+          "py": "qǐng",
+          "vn": "mời; xin",
+          "kind": "core"
+        },
+        {
+          "zh": "问题",
+          "py": "wèn tí",
+          "vn": "vấn đề; câu hỏi",
+          "kind": "core"
+        },
+        {
+          "zh": "先生",
+          "py": "xiānsheng",
+          "vn": "ông; ngài",
+          "kind": "core"
+        },
+        {
+          "zh": "要",
+          "py": "yào",
+          "vn": "muốn; cần; sẽ",
+          "kind": "core"
+        },
+        {
+          "zh": "一半",
+          "py": "yí bàn",
+          "vn": "một nửa",
+          "kind": "core"
+        },
+        {
+          "zh": "一下",
+          "py": "yī xià",
+          "vn": "một chút; một lần (sau động từ)",
+          "kind": "core"
+        },
+        {
+          "zh": "再",
+          "py": "zài",
+          "vn": "lại; nữa; rồi",
+          "kind": "core"
+        },
+        {
+          "zh": "早饭",
+          "py": "zǎo fàn",
+          "vn": "bữa sáng",
+          "kind": "core"
+        },
+        {
+          "zh": "这个",
+          "py": "zhè ge",
+          "vn": "cái này",
+          "kind": "core"
+        },
+        {
+          "zh": "坐",
+          "py": "zuò",
+          "vn": "ngồi; đi bằng (phương tiện)",
+          "kind": "core"
+        }
+      ],
+      "scenes": [
+        {
+          "scene": 1,
+          "place": "在教室里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "白家月",
+              "zh": "王老师，我可以再问您一个问题吗？",
+              "py": "wáng lǎo shī， wǒ kě yǐ zài wèn nín yí gè wèn tí ma？"
+            },
+            {
+              "line": 2,
+              "speaker": "王一飞",
+              "zh": "可以。你有什么问题？",
+              "py": "kě yǐ。 nǐ yǒu shén me wèn tí？"
+            },
+            {
+              "line": 3,
+              "speaker": "白家月",
+              "zh": "那个小店卖不卖手机？",
+              "py": "nà ge xiǎo diàn mài bù mài shǒu jī？"
+            },
+            {
+              "line": 4,
+              "speaker": "王一飞",
+              "zh": "我不知道。你可以打电话问一下。",
+              "py": "wǒ bù zhī dào。 nǐ kě yǐ dǎ diàn huà wèn yī xià。"
+            }
+          ]
+        },
+        {
+          "scene": 2,
+          "place": "在咖啡馆里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "服务员",
+              "zh": "女士，请坐！您喝什么？",
+              "py": "nǚ shì， qǐng zuò！ nín hē shén me？"
+            },
+            {
+              "line": 2,
+              "speaker": "王一雪",
+              "zh": "我看一下。请给我一杯牛奶。",
+              "py": "wǒ kàn yī xià。 qǐng gěi wǒ yī bēi niú nǎi。"
+            },
+            {
+              "line": 3,
+              "speaker": "服务员",
+              "zh": "好的。您还要什么？",
+              "py": "hǎo de。 nín hái yào shén me？"
+            },
+            {
+              "line": 4,
+              "speaker": "王一雪",
+              "zh": "我还没吃早饭，再要这个面包和鸡蛋吧。",
+              "py": "wǒ hái méi chī zǎo fàn， zài yào zhè ge miàn bāo hé jī dàn ba。"
+            }
+          ]
+        },
+        {
+          "scene": 3,
+          "place": "在餐馆里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "服务员",
+              "zh": "先生，请坐！您要什么？",
+              "py": "xiān shēng， qǐng zuò！ nín yào shén me？"
+            },
+            {
+              "line": 2,
+              "speaker": "刘明",
+              "zh": "我要一斤饺子。",
+              "py": "wǒ yào yī jīn jiǎo zi。"
+            },
+            {
+              "line": 3,
+              "speaker": "服务员",
+              "zh": "一斤四十个。",
+              "py": "yī jīn sì shí gè。"
+            },
+            {
+              "line": 4,
+              "speaker": "刘明",
+              "zh": "四十个太多了，我要一半吧。",
+              "py": "sì shí gè tài duō le， wǒ yào yí bàn ba。"
+            },
+            {
+              "line": 5,
+              "speaker": "服务员",
+              "zh": "半斤二十个。您想喝什么？",
+              "py": "bàn jīn èr shí gè。 nín xiǎng hē shén me？"
+            },
+            {
+              "line": 6,
+              "speaker": "刘明",
+              "zh": "给我一杯茶吧。",
+              "py": "gěi wǒ yī bēi chá ba。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "vocab": [
+        {
+          "zh": "不要",
+          "py": "bú yào",
+          "vn": "đừng; không được",
+          "kind": "core"
+        },
+        {
+          "zh": "都",
+          "py": "dōu",
+          "vn": "đều; tất cả",
+          "kind": "core"
+        },
+        {
+          "zh": "火车",
+          "py": "huǒ chē",
+          "vn": "tàu hỏa",
+          "kind": "core"
+        },
+        {
+          "zh": "开",
+          "py": "kāi",
+          "vn": "mở; lái",
+          "kind": "core"
+        },
+        {
+          "zh": "了",
+          "py": "le",
+          "vn": "trợ từ biểu thị thay đổi/hoàn thành",
+          "kind": "core"
+        },
+        {
+          "zh": "明年",
+          "py": "míng nián",
+          "vn": "năm sau",
+          "kind": "core"
+        },
+        {
+          "zh": "哪些",
+          "py": "nǎ xiē",
+          "vn": "những cái nào",
+          "kind": "core"
+        },
+        {
+          "zh": "上",
+          "py": "shàng",
+          "vn": "trên; lên",
+          "kind": "core"
+        },
+        {
+          "zh": "上学",
+          "py": "shàng xué",
+          "vn": "đi học",
+          "kind": "core"
+        },
+        {
+          "zh": "说话",
+          "py": "shuō huà",
+          "vn": "nói chuyện",
+          "kind": "core"
+        },
+        {
+          "zh": "他们",
+          "py": "tā men",
+          "vn": "họ (nam hoặc cả nam nữ)",
+          "kind": "core"
+        },
+        {
+          "zh": "它们",
+          "py": "tā men",
+          "vn": "chúng (đồ vật/con vật)",
+          "kind": "core"
+        },
+        {
+          "zh": "她们",
+          "py": "tā men",
+          "vn": "họ (nữ)",
+          "kind": "core"
+        },
+        {
+          "zh": "听",
+          "py": "tīng",
+          "vn": "nghe",
+          "kind": "core"
+        },
+        {
+          "zh": "听见",
+          "py": "tīng jiàn",
+          "vn": "nghe thấy",
+          "kind": "core"
+        },
+        {
+          "zh": "晚",
+          "py": "wǎn",
+          "vn": "muộn; tối",
+          "kind": "core"
+        },
+        {
+          "zh": "小学",
+          "py": "xiǎo xué",
+          "vn": "trường tiểu học",
+          "kind": "core"
+        },
+        {
+          "zh": "小学生",
+          "py": "xiǎo xué shēng",
+          "vn": "học sinh tiểu học",
+          "kind": "core"
+        },
+        {
+          "zh": "写",
+          "py": "xiě",
+          "vn": "viết",
+          "kind": "core"
+        },
+        {
+          "zh": "有的",
+          "py": "yǒu de",
+          "vn": "có cái/người; một số",
+          "kind": "core"
+        },
+        {
+          "zh": "有些",
+          "py": "yǒu xiē",
+          "vn": "một số; có vài",
+          "kind": "core"
+        },
+        {
+          "zh": "中午",
+          "py": "zhōng wǔ",
+          "vn": "buổi trưa",
+          "kind": "core"
+        },
+        {
+          "zh": "中学",
+          "py": "zhōng xué",
+          "vn": "trường trung học",
+          "kind": "core"
+        },
+        {
+          "zh": "中学生",
+          "py": "zhōng xué shēng",
+          "vn": "học sinh trung học",
+          "kind": "core"
+        },
+        {
+          "zh": "字",
+          "py": "zì",
+          "vn": "chữ",
+          "kind": "core"
+        },
+        {
+          "zh": "汉语",
+          "py": "Hànyǔ",
+          "vn": "tiếng Hán; tiếng Trung",
+          "kind": "proper"
+        },
+        {
+          "zh": "汉字",
+          "py": "Hànzì",
+          "vn": "chữ Hán",
+          "kind": "proper"
+        }
+      ],
+      "scenes": [
+        {
+          "scene": 1,
+          "place": "在教室里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "白家月",
+              "zh": "你们上火车后看见王老师了吗？",
+              "py": "nǐ men shàng huǒ chē hòu kàn jiàn wáng lǎo shī le ma？"
+            },
+            {
+              "line": 2,
+              "speaker": "陈天中",
+              "zh": "没看见。中午车开后，有些人在看书，有些人睡觉了。",
+              "py": "méi kàn jiàn。 zhōng wǔ chē kāi hòu， yǒu xiē rén zài kàn shū， yǒu xiē rén shuì jiào le。"
+            },
+            {
+              "line": 3,
+              "speaker": "白家月",
+              "zh": "你呢？",
+              "py": "nǐ ne？"
+            },
+            {
+              "line": 4,
+              "speaker": "陈天中",
+              "zh": "我看了一个电影。",
+              "py": "wǒ kàn le yí gè diàn yǐng。"
+            }
+          ]
+        },
+        {
+          "scene": 2,
+          "place": "在教室里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "王一飞",
+              "zh": "你们会说汉语了，也会写汉字了吗？",
+              "py": "nǐ men huì shuō hàn yǔ le， yě huì xiě hàn zì le ma？"
+            },
+            {
+              "line": 2,
+              "speaker": "白家月",
+              "zh": "我们都会写了。",
+              "py": "wǒ men dū huì xiě le。"
+            },
+            {
+              "line": 3,
+              "speaker": "陈天中",
+              "zh": "老师，我听不见。",
+              "py": "lǎo shī， wǒ tīng bú jiàn。"
+            },
+            {
+              "line": 4,
+              "speaker": "王一飞",
+              "zh": "请大家不要说话！请听老师的问题：你们都会写哪些汉字了？",
+              "py": "qǐng dà jiā bú yào shuō huà！ qǐng tīng lǎo shī de wèn tí： nǐ men dū huì xiě nǎ xiē hàn zì le？"
+            },
+            {
+              "line": 5,
+              "speaker": "陈天中",
+              "zh": "我会写这些字了，您看！",
+              "py": "wǒ huì xiě zhè xiē zì le， nín kàn！"
+            }
+          ]
+        },
+        {
+          "scene": 3,
+          "place": "在家里",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "刘明",
+              "zh": "明年女儿上中学。",
+              "py": "míng nián nǚ ér shàng zhōng xué。"
+            },
+            {
+              "line": 2,
+              "speaker": "王一雪",
+              "zh": "对。儿子也上小学了。",
+              "py": "duì。 ér zi yě shàng xiǎo xué le。"
+            },
+            {
+              "line": 3,
+              "speaker": "刘明",
+              "zh": "我们家有了一个中学生。",
+              "py": "wǒ men jiā yǒu le yí gè zhōng xué shēng。"
+            },
+            {
+              "line": 4,
+              "speaker": "王一雪",
+              "zh": "还有了一个小学生。",
+              "py": "hái yǒu le yí gè xiǎo xué shēng。"
+            },
+            {
+              "line": 5,
+              "speaker": "刘明",
+              "zh": "上学后，他们都忙了。",
+              "py": "shàng xué hòu， tā men dōu máng le。"
+            },
+            {
+              "line": 6,
+              "speaker": "王一雪",
+              "zh": "是的。太晚了，睡觉吧。",
+              "py": "shì de。 tài wǎn le， shuì jiào ba。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "vocab": [
+        {
+          "zh": "飞机",
+          "py": "fēi jī",
+          "vn": "máy bay",
+          "kind": "core"
+        },
+        {
+          "zh": "好玩儿",
+          "py": "hǎowánr",
+          "vn": "vui; thú vị",
+          "kind": "core"
+        },
+        {
+          "zh": "机场",
+          "py": "jī chǎng",
+          "vn": "sân bay",
+          "kind": "core"
+        },
+        {
+          "zh": "几",
+          "py": "jǐ",
+          "vn": "mấy; bao nhiêu",
+          "kind": "core"
+        },
+        {
+          "zh": "家人",
+          "py": "jiā rén",
+          "vn": "người nhà; người thân",
+          "kind": "core"
+        },
+        {
+          "zh": "接",
+          "py": "jiē",
+          "vn": "đón; nhận",
+          "kind": "core"
+        },
+        {
+          "zh": "哪个",
+          "py": "nǎ ge",
+          "vn": "cái nào; người nào",
+          "kind": "core"
+        },
+        {
+          "zh": "那",
+          "py": "nà",
+          "vn": "kia; đó",
+          "kind": "core"
+        },
+        {
+          "zh": "男朋友",
+          "py": "nán péng yǒu",
+          "vn": "bạn trai",
+          "kind": "core"
+        },
+        {
+          "zh": "年",
+          "py": "nián",
+          "vn": "năm",
+          "kind": "core"
+        },
+        {
+          "zh": "去年",
+          "py": "qù nián",
+          "vn": "năm ngoái",
+          "kind": "core"
+        },
+        {
+          "zh": "时间",
+          "py": "shí jiān",
+          "vn": "thời gian",
+          "kind": "core"
+        },
+        {
+          "zh": "小时",
+          "py": "xiǎo shí",
+          "vn": "giờ; tiếng đồng hồ",
+          "kind": "core"
+        },
+        {
+          "zh": "要",
+          "py": "yào",
+          "vn": "muốn; cần; sẽ",
+          "kind": "core"
+        },
+        {
+          "zh": "早",
+          "py": "zǎo",
+          "vn": "sớm",
+          "kind": "core"
+        },
+        {
+          "zh": "住",
+          "py": "zhù",
+          "vn": "ở; cư trú",
+          "kind": "core"
+        },
+        {
+          "zh": "北京",
+          "py": "Běijīng",
+          "vn": "Bắc Kinh",
+          "kind": "proper"
+        },
+        {
+          "zh": "大兴机场",
+          "py": "Dàxīng Jīchǎng",
+          "vn": "Sân bay Đại Hưng",
+          "kind": "proper"
+        }
+      ],
+      "scenes": [
+        {
+          "scene": 1,
+          "place": "在李文家",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "李文",
+              "zh": "你们爱吃哪个菜？",
+              "py": "nǐ men ài chī nǎ ge cài？"
+            },
+            {
+              "line": 2,
+              "speaker": "白家月",
+              "zh": "我喜欢这个，也喜欢那个。",
+              "py": "wǒ xǐ huān zhè ge， yě xǐ huān nà ge。"
+            },
+            {
+              "line": 3,
+              "speaker": "陈天中",
+              "zh": "这些菜都好吃，还很好看。",
+              "py": "zhè xiē cài dōu hǎo chī， hái hěn hǎo kàn。"
+            },
+            {
+              "line": 4,
+              "speaker": "李文",
+              "zh": "我爱吃中国菜，也喜欢做。大家多吃点儿。",
+              "py": "wǒ ài chī zhōng guó cài， yě xǐ huān zuò。 dà jiā duō chī diǎn ér。"
+            }
+          ]
+        },
+        {
+          "scene": 2,
+          "place": "在李文家",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "李文",
+              "zh": "你们都想去哪儿？",
+              "py": "nǐ men dōu xiǎng qù nǎ ér？"
+            },
+            {
+              "line": 2,
+              "speaker": "安妮",
+              "zh": "去年我和男朋友去了西安，今年我想去北京。",
+              "py": "qù nián wǒ hé nán péng yǒu qù le xī ān， jīn nián wǒ xiǎng qù běi jīng。"
+            },
+            {
+              "line": 3,
+              "speaker": "白家月",
+              "zh": "前几年我去了西安，非常好玩儿。今年我也想去北京。",
+              "py": "qián jǐ nián wǒ qù le xī ān， fēi cháng hǎo wán ér。 jīn nián wǒ yě xiǎng qù běi jīng。"
+            },
+            {
+              "line": 4,
+              "speaker": "李文",
+              "zh": "我和王老师都是北京人，北京非常漂亮。",
+              "py": "wǒ hé wáng lǎo shī dōu shì běi jīng rén， běi jīng fēi cháng piào liàng。"
+            }
+          ]
+        },
+        {
+          "scene": 3,
+          "place": "在教室外",
+          "lines": [
+            {
+              "line": 1,
+              "speaker": "王一飞",
+              "zh": "你们的飞机到北京要几个小时？",
+              "py": "nǐ men de fēi jī dào běi jīng yào jǐ gè xiǎo shí？"
+            },
+            {
+              "line": 2,
+              "speaker": "白家月",
+              "zh": "九个小时。",
+              "py": "jiǔ gè xiǎo shí。"
+            },
+            {
+              "line": 3,
+              "speaker": "王一飞",
+              "zh": "我家人都在北京，星期天我姐姐也有时间，她可以去机场接你们，你们也可以住我家。",
+              "py": "wǒ jiā rén dōu zài běi jīng， xīng qī tiān wǒ jiě jiě yě yǒu shí jiān， tā kě yǐ qù jī chǎng jiē nǐ men， nǐ men yě kě yǐ zhù wǒ jiā。"
+            },
+            {
+              "line": 4,
+              "speaker": "安妮",
+              "zh": "我们星期日早上八点到大兴机场。早不早？",
+              "py": "wǒ men xīng qī rì zǎo shàng bā diǎn dào dà xīng jī chǎng。 zǎo bù zǎo？"
+            },
+            {
+              "line": 5,
+              "speaker": "王一飞",
+              "zh": "不早。",
+              "py": "bù zǎo。"
+            },
+            {
+              "line": 6,
+              "speaker": "白家月",
+              "zh": "谢谢老师！那我们和您姐姐在大兴机场见！",
+              "py": "xiè xiè lǎo shī！ nà wǒ men hé nín jiě jiě zài dà xīng jī chǎng jiàn！"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
