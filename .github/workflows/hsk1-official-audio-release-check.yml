@@ -7,6 +7,12 @@ on:
     paths:
       - 'new-hsk1/hsk1/**'
       - '.github/workflows/hsk1-official-audio-release-check.yml'
+  pull_request:
+    branches:
+      - gh-pages
+    paths:
+      - 'new-hsk1/hsk1/**'
+      - '.github/workflows/hsk1-official-audio-release-check.yml'
 
 permissions:
   contents: read
