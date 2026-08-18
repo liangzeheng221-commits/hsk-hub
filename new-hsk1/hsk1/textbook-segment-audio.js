@@ -1,11 +1,10 @@
-/* Step 8: HSK1 official textbook segment player.
-   Uses perceptually recalibrated timing maps with safer pre-roll and waits for
-   seek completion before audio playback to protect the first syllable attack. */
+/* HSK1 official textbook segment player — architecture cleanup.
+   Runtime data is loaded synchronously from textbook-audio-segments.js.
+   This file owns playback only; it does not intercept click events and never synthesizes speech. */
 (function(){
   'use strict';
-  const VERSION='20260818-step8-v1';
+  const VERSION='20260818-arch-v1';
   const AUDIO_DIR='audio/';
-  const WORK_DIR='_audio-work/';
   const cache=new Map();
   let textTracks={};
   let vocabByLesson={};
@@ -15,7 +14,6 @@
   let runToken=0;
   let mutationObserver=null;
   const pendingSequence=[];
-  const UNSUPPORTED={4:new Set(['一','二','三','四','五','六','七','九','十','千','两','零'])};
 
   function lessonId(){
     const n=Number(new URL(location.href).searchParams.get('id')||1);
@@ -96,8 +94,11 @@
     if(!track||!Number.isFinite(start)||!Number.isFinite(end)||end<=start){
       toastSafe('教材原声时间轴不可用。');return false;
     }
-    cancelSpeech();if(stopTimer){clearTimeout(stopTimer);stopTimer=0}
-    const token=++runToken,audio=getAudio(track);activeAudio=audio;stopVisibleAudio();
+    cancelSpeech();
+    if(stopTimer){clearTimeout(stopTimer);stopTimer=0}
+    const token=++runToken,audio=getAudio(track);
+    if(activeAudio&&activeAudio!==audio){try{activeAudio.pause()}catch(_e){}}
+    activeAudio=audio;stopVisibleAudio(audio);
     try{audio.pause()}catch(_e){}
     seekThen(audio,start,token,()=>{
       Promise.resolve(audio.play()).then(()=>{
@@ -110,8 +111,11 @@
   }
   function playFull(track,label=''){
     if(!track)return false;
-    cancelSpeech();if(stopTimer){clearTimeout(stopTimer);stopTimer=0}
-    const token=++runToken,audio=getAudio(track);activeAudio=audio;stopVisibleAudio();
+    cancelSpeech();
+    if(stopTimer){clearTimeout(stopTimer);stopTimer=0}
+    const token=++runToken,audio=getAudio(track);
+    if(activeAudio&&activeAudio!==audio){try{activeAudio.pause()}catch(_e){}}
+    activeAudio=audio;stopVisibleAudio(audio);
     try{audio.pause();audio.currentTime=0}catch(_e){}
     const begin=()=>{
       if(token!==runToken)return;
@@ -129,13 +133,13 @@
   }
   function vocabSegment(lesson,word){return vocabByLesson[String(lesson)]?.[word]||null}
   function playVocab(word,lesson=lessonId()){
-    if(!ready){toastSafe('Đang tải bản đồ audio giáo trình…');return false}
+    if(!ready){toastSafe('教材真人原声尚未就绪，请刷新页面后重试。');return false}
     const seg=vocabSegment(lesson,word);
     if(!seg){toastSafe('教材没有这个词的独立真人录音。');diagnostics({missingVocab:word});return false}
     return startRange(seg.track,seg.start,seg.end,`vocab:${lesson}:${word}`);
   }
   function playTextLine(scene,line,lesson=lessonId()){
-    if(!ready){toastSafe('Đang tải bản đồ audio giáo trình…');return false}
+    if(!ready){toastSafe('教材真人原声尚未就绪，请刷新页面后重试。');return false}
     const seg=textSegment(lesson,scene,line);
     if(!seg){toastSafe('没有找到这一句的教材原声。');return false}
     return startRange(seg.track,seg.start,seg.end,`text:${lesson}:${scene+1}:${line+1}`);
@@ -156,7 +160,9 @@
     if(token!==runToken)return;
     const next=pendingSequence.shift();
     if(!next){activeAudio=null;diagnostics({playing:false,sequenceDone:true});return}
-    const audio=getAudio(next);activeAudio=audio;stopVisibleAudio();
+    const audio=getAudio(next);
+    if(activeAudio&&activeAudio!==audio){try{activeAudio.pause()}catch(_e){}}
+    activeAudio=audio;stopVisibleAudio(audio);
     try{audio.pause();audio.currentTime=0}catch(_e){}
     const begin=()=>{
       if(token!==runToken)return;
@@ -169,129 +175,91 @@
     else{audio.addEventListener('loadedmetadata',begin,{once:true});try{audio.load()}catch(_e){}}
   }
   function playVocabLesson(lesson=lessonId()){
-    if(!ready){toastSafe('Đang tải bản đồ audio giáo trình…');return false}
-    cancelSpeech();if(stopTimer){clearTimeout(stopTimer);stopTimer=0}
+    if(!ready){toastSafe('教材真人原声尚未就绪，请刷新页面后重试。');return false}
+    cancelSpeech();
+    if(stopTimer){clearTimeout(stopTimer);stopTimer=0}
     const tracks=lessonVocabTracks(lesson);if(!tracks.length)return false;
     const token=++runToken;pendingSequence.splice(0,pendingSequence.length,...tracks);playNextSequence(token);return true;
   }
-  function patchLesson11(){
-    const lesson=window.HSK1_LESSONS?.find?.(x=>Number(x.id)===11),lines=lesson?.scenes?.[2]?.lines;
-    if(!lines)return false;if(lines.some(x=>x.zh==='去超市。'))return true;
-    if(lines.length===5){
-      lines.splice(4,0,{s:'刘小雪',zh:'去超市。',py:'qù chāo shì。',vn:'Đi siêu thị.'});
-      diagnostics({patch11_5:true});
-      if(lessonId()===11&&Number(document.querySelector('#sceneSelect')?.value)===2&&typeof window.drawScene==='function'){try{window.drawScene()}catch(_e){}}
-      return true;
-    }
-    diagnostics({patch11_5:false,patchError:`unexpected-line-count:${lines.length}`});return false;
-  }
-
-  function interceptLegacy(e){
-    const b=e.target.closest?.('button');
-    if(!b||b.dataset.officialAudioBound==='1')return;
-    const card=b.closest?.('#vocabGrid .vocab-card');
-    const panel=b.closest?.('#wordPanel');
-    const line=b.closest?.('#scenePane .dialogue-line');
-    const sceneTitle=b.closest?.('#scenePane .scene-title');
-    const vocabAll=b.closest?.('#vocab .tool-row')&&/Nghe từ|Nghe giáo trình/.test(b.textContent||'');
-    const relevant=(card&&b.matches('.listen'))||panel||line||sceneTitle||vocabAll;
-    if(!relevant)return;
-    e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
-    if(!ready){toastSafe('Đang tải bản đồ audio giáo trình…');return}
-    const lesson=lessonId(),scene=sceneIndex();
-    if(card&&b.matches('.listen')){
-      const word=card.dataset.zh||card.querySelector('.vocab-zh')?.textContent?.trim()||'';
-      playVocab(word,lesson);return;
-    }
-    if(panel){
-      const word=panel.querySelector('.word-main')?.textContent?.trim()||'';
-      playVocab(word,lesson);return;
-    }
-    if(line){
-      const rows=[...document.querySelectorAll('#scenePane .dialogue-card .dialogue-line')];
-      playTextLine(scene,rows.indexOf(line),lesson);return;
-    }
-    if(sceneTitle){playTextScene(scene,lesson);return}
-    if(vocabAll){playVocabLesson(lesson)}
-  }
   function setText(el,text){if(el&&el.textContent!==text)el.textContent=text}
-  function bindButton(button,handler,available=true){
-    if(!button||button.dataset.officialAudioBound==='1')return;
-    button.dataset.officialAudioBound='1';button.removeAttribute('onclick');
-    if(!available){
-      button.disabled=true;setText(button,'🔇 无独立教材音');button.title='教材 New Words 录音中没有该词的独立读音';button.setAttribute('aria-label','教材无独立真人录音');return;
-    }
-    button.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();handler()});
-  }
   function decorateVocab(){
     if(!ready)return;
     const lesson=lessonId();
     document.querySelectorAll('#vocabGrid .vocab-card').forEach(card=>{
-      const word=card.dataset.zh||card.querySelector('.vocab-zh')?.textContent?.trim()||'',available=!!vocabSegment(lesson,word);
-      card.querySelectorAll('button.listen').forEach(b=>{if(available)setText(b,'🎧 教材');bindButton(b,()=>playVocab(word,lesson),available)});
+      const word=card.dataset.zh||card.querySelector('.vocab-zh')?.textContent?.trim()||'';
+      const available=!!vocabSegment(lesson,word);
+      card.querySelectorAll('button.listen').forEach(b=>{
+        b.dataset.officialAudio='1';
+        if(available){b.disabled=false;setText(b,'🎧 教材');b.title='教材真人原声'}
+        else{b.disabled=true;setText(b,'🔇 无独立教材音');b.title='教材 New Words 录音中没有该词的独立读音'}
+      });
     });
     const panel=document.querySelector('#wordPanel .word-detail');
     if(panel){
-      const word=panel.querySelector('.word-main')?.textContent?.trim()||'',b=panel.querySelector('.vocab-actions button'),available=!!vocabSegment(lesson,word);
-      if(b&&available)setText(b,'🎧 教材发音');bindButton(b,()=>playVocab(word,lesson),available);
+      const word=panel.querySelector('.word-main')?.textContent?.trim()||'';
+      const b=panel.querySelector('.vocab-actions button'),available=!!vocabSegment(lesson,word);
+      if(b){
+        b.dataset.officialAudio='1';
+        if(available){b.disabled=false;setText(b,'🎧 教材发音');b.title='教材真人原声'}
+        else{b.disabled=true;setText(b,'🔇 无独立教材音');b.title='教材 New Words 录音中没有该词的独立读音'}
+      }
     }
     const all=[...document.querySelectorAll('#vocab .tool-row button')].find(b=>/Nghe từ|Nghe giáo trình/.test(b.textContent||''));
-    if(all){setText(all,'🎧 Nghe giáo trình');bindButton(all,()=>playVocabLesson(lesson),true)}
+    if(all){all.dataset.officialAudio='1';setText(all,'🎧 Nghe giáo trình')}
   }
   function decorateText(){
     if(!ready)return;
-    const lesson=lessonId(),scene=sceneIndex(),track=textTrack(lesson,scene);
     const titleBtn=document.querySelector('#scenePane .scene-title button');
-    if(titleBtn&&textTracks[track]){setText(titleBtn,'🎧 教材整段');bindButton(titleBtn,()=>playTextScene(scene,lesson),true)}
+    if(titleBtn){titleBtn.dataset.officialAudio='1';setText(titleBtn,'🎧 教材整段')}
     [...document.querySelectorAll('#scenePane .dialogue-card .dialogue-line')].forEach((row,i)=>{
       const b=row.querySelector('.speak-line');if(!b)return;
-      setText(b,'🎧');b.title='播放这一句教材真人原声';b.setAttribute('aria-label','教材真人原声');
-      bindButton(b,()=>playTextLine(scene,i,lesson),!!textSegment(lesson,scene,i));
+      b.dataset.officialAudio='1';setText(b,'🎧');
+      b.title=textSegment(lessonId(),sceneIndex(),i)?'播放这一句教材真人原声':'未找到教材原声';
     });
   }
-  function scan(){
-    patchLesson11();decorateVocab();decorateText();warmLesson(lessonId());diagnostics({ready});
-  }
-  function buildMaps(textData,vocabData){
-    textTracks=textData.tracks||{};
+  function scan(){decorateVocab();decorateText();warmLesson(lessonId());diagnostics({ready})}
+  function buildMaps(data){
+    textTracks=data?.text||{};
     vocabByLesson={};
-    Object.entries(vocabData.tracks||{}).forEach(([track,items])=>{
+    Object.entries(data?.vocab||{}).forEach(([track,items])=>{
       const lesson=track.split('-')[0],map=vocabByLesson[lesson]||(vocabByLesson[lesson]={});
       items.forEach(([word,start,end])=>{if(!map[word])map[word]={track,start,end}});
     });
-    const xian=(vocabData.tracks?.['15-4']||[]).find(x=>x[0]==='西安');
-    if(xian){const map=vocabByLesson['6']||(vocabByLesson['6']={});map['西安']={track:'15-4',start:xian[1],end:xian[2],reusedFromLesson:15}}
-    ready=Object.keys(textTracks).length===45;
-  }
-  async function loadMaps(){
-    try{
-      const [tr,vr]=await Promise.all([
-        fetch(`${WORK_DIR}all-text-1-15-compact.json`,{cache:'no-store'}),
-        fetch(`${WORK_DIR}all-vocab-1-15-compact.json`,{cache:'no-store'})
-      ]);
-      if(!tr.ok||!vr.ok)throw new Error(`map-http:${tr.status}/${vr.status}`);
-      buildMaps(await tr.json(),await vr.json());scan();
-      diagnostics({ready,textTrackCount:Object.keys(textTracks).length,vocabLessons:Object.keys(vocabByLesson).length,error:''});
-    }catch(e){ready=false;diagnostics({ready:false,error:String(e?.message||e)});console.error('HSK1 official segment maps failed to load',e)}
+    Object.entries(data?.crossLessonReuse||{}).forEach(([lesson,items])=>{
+      const map=vocabByLesson[lesson]||(vocabByLesson[lesson]={});
+      Object.entries(items||{}).forEach(([word,row])=>{map[word]={track:row[0],start:row[1],end:row[2],reusedFromLesson:Number(row[0].split('-')[0])}});
+    });
+    ready=Object.keys(textTracks).length===45&&Object.keys(data?.vocab||{}).length===45;
   }
   function install(){
-    patchLesson11();
-    document.addEventListener('click',interceptLegacy,true);
-    mutationObserver?.disconnect();mutationObserver=new MutationObserver(()=>queueMicrotask(scan));mutationObserver.observe(document.body,{childList:true,subtree:true});
-    document.addEventListener('play',e=>{
-      const target=e.target;
-      if(target instanceof HTMLMediaElement&&target!==activeAudio){
-        if(activeAudio){try{activeAudio.pause()}catch(_e){}}
-        if(stopTimer){clearTimeout(stopTimer);stopTimer=0}
-        activeAudio=null;
-      }
-    },true);
-    loadMaps();
+    try{
+      const data=window.HSK1_OFFICIAL_SEGMENTS;
+      if(!data)throw new Error('static-segment-data-missing');
+      buildMaps(data);
+      mutationObserver?.disconnect();
+      mutationObserver=new MutationObserver(()=>queueMicrotask(scan));
+      mutationObserver.observe(document.body,{childList:true,subtree:true});
+      document.addEventListener('play',e=>{
+        const target=e.target;
+        if(typeof HTMLMediaElement!=='undefined'&&target instanceof HTMLMediaElement&&target!==activeAudio){
+          if(activeAudio){try{activeAudio.pause()}catch(_e){}}
+          if(stopTimer){clearTimeout(stopTimer);stopTimer=0}
+          activeAudio=null;
+        }
+      },true);
+      scan();
+      diagnostics({ready,textTrackCount:Object.keys(textTracks).length,vocabLessons:Object.keys(vocabByLesson).length,staticData:true,error:''});
+    }catch(e){
+      ready=false;diagnostics({ready:false,error:String(e?.message||e)});console.error('HSK1 official segment player failed to initialize',e);
+    }
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 
   window.HSK1_OFFICIAL_AUDIO={
-    version:VERSION,get ready(){return ready},playVocab,playVocabLesson,playTextLine,playTextScene,stop,scan,patchLesson11,vocabSegment,textSegment,lessonVocabTracks,
+    version:VERSION,
+    get ready(){return ready},
+    playVocab,playVocabLesson,playTextLine,playTextScene,stop,scan,warmLesson,
+    vocabSegment,textSegment,lessonVocabTracks,
     diagnostics:()=>window.__HSK1_OFFICIAL_AUDIO_DIAGNOSTICS
   };
 })();
