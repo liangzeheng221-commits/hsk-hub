@@ -1,0 +1,68 @@
+name: HSK1 temporary vocabulary ASR alignment
+
+on:
+  push:
+    branches: [agent/hsk1-segment-audio]
+    paths:
+      - '.github/workflows/hsk1-vocab-asr.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  align:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/hsk1-segment-audio
+      - name: Install Vosk
+        run: python -m pip install --quiet vosk
+      - name: Download Chinese ASR model
+        run: |
+          curl -L --retry 3 -o /tmp/vosk-cn.zip https://alphacephei.com/vosk/models/vosk-model-small-cn-0.22.zip
+          unzip -q /tmp/vosk-cn.zip -d /tmp
+      - name: Align New Words tracks against textbook vocabulary
+        run: |
+          cat > /tmp/align.py <<'PY'
+          import json, os, subprocess, wave
+          from vosk import Model, KaldiRecognizer, SetLogLevel
+          SetLogLevel(-1)
+          root='new-hsk1/hsk1'
+          order=json.load(open('hsk1-vocab-official-order.json',encoding='utf-8'))
+          model=Model('/tmp/vosk-model-small-cn-0.22')
+          out={}; summary=[]
+          for lesson in range(1,16):
+              out[str(lesson)]={}
+              for track in (2,4,6):
+                  words=order[str(lesson)][str(track)]
+                  src=f'{root}/audio/{lesson}-{track}.mp3'
+                  wav=f'/tmp/{lesson}-{track}.wav'
+                  subprocess.run(['ffmpeg','-v','error','-y','-i',src,'-ac','1','-ar','16000','-f','wav',wav],check=True)
+                  wf=wave.open(wav,'rb')
+                  grammar=list(dict.fromkeys(words))+['[unk]']
+                  rec=KaldiRecognizer(model,16000,json.dumps(grammar,ensure_ascii=False))
+                  rec.SetWords(True)
+                  pieces=[]
+                  while True:
+                      data=wf.readframes(4000)
+                      if not data: break
+                      if rec.AcceptWaveform(data):
+                          pieces.extend(json.loads(rec.Result()).get('result',[]))
+                  pieces.extend(json.loads(rec.FinalResult()).get('result',[]))
+                  wf.close()
+                  out[str(lesson)][str(track)]={'expected':words,'recognized':pieces}
+                  recognized=[x.get('word','') for x in pieces if x.get('word')!='[unk]']
+                  summary.append({'lesson':lesson,'track':track,'expected_count':len(words),'recognized_count':len(recognized),'recognized':recognized})
+          json.dump(out,open('hsk1-vocab-asr.json','w',encoding='utf-8'),ensure_ascii=False,indent=2)
+          json.dump(summary,open('hsk1-vocab-asr-summary.json','w',encoding='utf-8'),ensure_ascii=False,indent=2)
+          PY
+          python /tmp/align.py
+      - name: Commit temporary alignment diagnostics
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add hsk1-vocab-asr.json hsk1-vocab-asr-summary.json
+          git diff --cached --quiet || git commit -m 'Temporary HSK1 vocabulary ASR alignment'
+          git push origin HEAD:agent/hsk1-segment-audio
