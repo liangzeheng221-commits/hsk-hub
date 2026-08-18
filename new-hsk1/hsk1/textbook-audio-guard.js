@@ -3,7 +3,7 @@
    prevents overlapping segment playback, and verifies visible textbook audio cards. */
 (function(){
   'use strict';
-  const VERSION='20260818-step7-v1';
+  const VERSION='20260818-step8-v1';
   const STYLE_ID='hsk1TextbookAudioGuardStyle';
   if(!document.getElementById(STYLE_ID)){
     const style=document.createElement('style');style.id=STYLE_ID;
@@ -58,7 +58,7 @@
   async function loadOfficialLayer(){
     try{
       await loadScript('textbook-data-corrections.js?v=20260818-2','corrections');
-      await loadScript('textbook-segment-audio.js?v=20260818-2','player');
+      await loadScript('textbook-segment-audio.js?v=20260818-3','player');
       window.HSK1_OFFICIAL_AUDIO?.scan?.();
       window.__HSK1_TEXTBOOK_AUDIO_GUARD_DIAGNOSTICS={version:VERSION,officialLayerLoaded:true,error:''};
     }catch(e){console.error('HSK1 official audio layer failed to load',e);window.__HSK1_TEXTBOOK_AUDIO_GUARD_DIAGNOSTICS={version:VERSION,officialLayerLoaded:false,error:String(e?.message||e)}}
