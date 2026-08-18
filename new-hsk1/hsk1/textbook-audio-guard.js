@@ -1,5 +1,6 @@
 /* Safety gate for the additive New HSK 1 textbook-audio layer.
-   Cards are shown only after the referenced MP3 is confirmed to exist. */
+   Cards are shown only after the referenced MP3 is confirmed to exist.
+   Step 6 also loads the official segment-data/player layer on the development branch. */
 (function(){
   'use strict';
   const STYLE_ID='hsk1TextbookAudioGuardStyle';
@@ -45,5 +46,16 @@
   observer.observe(document.documentElement,{childList:true,subtree:true});
   scan();
 
-  window.__HSK1_TEXTBOOK_AUDIO_GUARD={version:'20260818-1',scan,verify};
+  function loadStep6(){
+    if(document.querySelector('script[data-hsk1-segment-layer]'))return;
+    const player=document.createElement('script');
+    player.src='textbook-segment-audio.js?v=20260818-1';
+    player.async=false;
+    player.dataset.hsk1SegmentLayer='player';
+    player.addEventListener('error',()=>console.error('HSK1 segment player failed to load'));
+    document.head.appendChild(player);
+  }
+  loadStep6();
+
+  window.__HSK1_TEXTBOOK_AUDIO_GUARD={version:'20260818-step6',scan,verify,loadStep6};
 })();
