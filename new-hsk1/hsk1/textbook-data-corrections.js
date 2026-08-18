@@ -9,7 +9,7 @@
     if(lines.some(x=>x.zh==='去超市。'))return true;
     if(lines.length!==5){console.error('HSK1 correction 11-5 skipped: unexpected line count',lines.length);return false}
     lines.splice(4,0,{s:'刘小雪',zh:'去超市。',py:'qù chāo shì。',vn:'Đi siêu thị.'});
-    if(Number(new URL(location.href).searchParams.get('id')||0)===11&&Number(document.querySelector('#sceneSelect')?.value)===2&&typeof window.drawScene==='function'){
+    if(typeof location!=='undefined'&&typeof document!=='undefined'&&typeof URL!=='undefined'&&Number(new URL(location.href).searchParams.get('id')||0)===11&&Number(document.querySelector('#sceneSelect')?.value)===2&&typeof window.drawScene==='function'){
       try{window.drawScene()}catch(_e){}
     }
     return true;
