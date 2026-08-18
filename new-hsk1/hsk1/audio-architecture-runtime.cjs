@@ -39,14 +39,20 @@ async function make(id){
   w.speechSynthesis={speaking:false,pending:false,paused:false,getVoices:()=>[{name:'fake zh',lang:'zh-CN',localService:true}],cancel(){},resume(){},speak(){speechCount++},addEventListener(){}};
   w.SpeechSynthesisUtterance=function(t){this.text=t};
   w.scrollTo=()=>{};w.confirm=()=>false;
+  // Practice has its own production script. This regression isolates the lesson-shell/audio routes,
+  // so provide the same callable boundary without importing unrelated practice-bank dependencies.
+  w.renderPractice=()=>{};
   for(const n of ['new-data.js','new-enrichment.js','textbook-data-corrections.js','textbook-audio-segments.js','textbook-segment-audio.js','app-core.js','tts-only.js'])w.eval(read(n));
+  // The production scripts are at the end of <body>; DOMContentLoaded follows immediately after them.
+  // Reproduce that lifecycle before invoking the lesson's visible controls.
+  w.document.dispatchEvent(new w.Event('DOMContentLoaded'));
   w.initLesson();
   await new Promise(r=>setTimeout(r,0));
   return {dom,w,get speechCount(){return speechCount}};
 }
 (async()=>{
   const a=await make(1);
-  if(!a.w.HSK1_OFFICIAL_AUDIO?.ready)throw new Error('official player not ready synchronously');
+  if(!a.w.HSK1_OFFICIAL_AUDIO?.ready)throw new Error('official player not ready after DOMContentLoaded');
   const vocab=a.w.document.querySelector('.vocab-card[data-zh="不客气"] .listen');
   if(!vocab)throw new Error('lesson1 不客气 button missing');
   vocab.click();await new Promise(r=>setTimeout(r,0));
@@ -63,7 +69,6 @@ async function make(id){
   if(scene.textContent.trim()!=='🎧')throw new Error(`text button copy wrong: ${scene.textContent}`);
 
   const b=await make(4);
-  await new Promise(r=>setTimeout(r,0));
   const unsupported=b.w.document.querySelector('.vocab-card[data-zh="一"] .listen');
   if(!unsupported||!unsupported.disabled||!unsupported.textContent.includes('无独立教材音'))throw new Error('unsupported lesson4 number card not disabled');
   unsupported.click();await new Promise(r=>setTimeout(r,0));
