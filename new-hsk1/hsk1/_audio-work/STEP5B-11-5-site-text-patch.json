@@ -1,0 +1,20 @@
+{
+  "lesson": 11,
+  "scene": 3,
+  "track_id": "11-5",
+  "status": "SITE_TEXT_PATCH_REQUIRED",
+  "textbook_audio_line_count": 6,
+  "current_site_line_count": 5,
+  "missing_current_site_dialogue_row": {
+    "insert_after_current_line": 4,
+    "speaker": "刘小雪",
+    "zh": "去超市。",
+    "py": "qù chāo shì。",
+    "vn": "Đi siêu thị.",
+    "audio_segment": {
+      "start": 12.386,
+      "end": 13.716
+    }
+  },
+  "binding_rule": "Insert the missing row before binding final per-line audio indexes; do not collapse it into the preceding or following row."
+}
