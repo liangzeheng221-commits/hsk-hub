@@ -5,12 +5,14 @@ on:
       - agent/hsk1-parity-official-vocab
     paths:
       - new-hsk1/hsk1/apply-parity-official-vocab-fix.cjs
+      - new-hsk1/hsk1/apply-parity-official-vocab-fix-v2.cjs
       - .github/workflows/apply-hsk1-parity-official-vocab.yml
   pull_request:
     branches:
       - gh-pages
     paths:
       - new-hsk1/hsk1/apply-parity-official-vocab-fix.cjs
+      - new-hsk1/hsk1/apply-parity-official-vocab-fix-v2.cjs
       - .github/workflows/apply-hsk1-parity-official-vocab.yml
 permissions:
   contents: write
@@ -26,7 +28,7 @@ jobs:
         with:
           node-version: '20'
       - name: Apply deterministic source patch
-        run: node new-hsk1/hsk1/apply-parity-official-vocab-fix.cjs
+        run: node new-hsk1/hsk1/apply-parity-official-vocab-fix-v2.cjs
       - name: Commit patched production sources
         run: |
           git config user.name "github-actions[bot]"
