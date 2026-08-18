@@ -167,6 +167,35 @@
     }
     diagnostics({patch11_5:false,patchError:`unexpected-line-count:${lines.length}`});return false;
   }
+
+  function interceptLegacy(e){
+    const b=e.target.closest?.('button');
+    if(!b||b.dataset.officialAudioBound==='1')return;
+    const card=b.closest?.('#vocabGrid .vocab-card');
+    const panel=b.closest?.('#wordPanel');
+    const line=b.closest?.('#scenePane .dialogue-line');
+    const sceneTitle=b.closest?.('#scenePane .scene-title');
+    const vocabAll=b.closest?.('#vocab .tool-row')&&/Nghe từ|Nghe giáo trình/.test(b.textContent||'');
+    const relevant=(card&&b.matches('.listen'))||panel||line||sceneTitle||vocabAll;
+    if(!relevant)return;
+    e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
+    if(!ready){toastSafe('Đang tải bản đồ audio giáo trình…');return}
+    const lesson=lessonId(),scene=sceneIndex();
+    if(card&&b.matches('.listen')){
+      const word=card.dataset.zh||card.querySelector('.vocab-zh')?.textContent?.trim()||'';
+      playVocab(word,lesson);return;
+    }
+    if(panel){
+      const word=panel.querySelector('.word-main')?.textContent?.trim()||'';
+      playVocab(word,lesson);return;
+    }
+    if(line){
+      const rows=[...document.querySelectorAll('#scenePane .dialogue-card .dialogue-line')];
+      playTextLine(scene,rows.indexOf(line),lesson);return;
+    }
+    if(sceneTitle){playTextScene(scene,lesson);return}
+    if(vocabAll){playVocabLesson(lesson)}
+  }
   function setText(el,text){if(el&&el.textContent!==text)el.textContent=text}
   function bindButton(button,handler,available=true){
     if(!button||button.dataset.officialAudioBound==='1')return;
@@ -229,6 +258,7 @@
   }
   function install(){
     patchLesson11();
+    document.addEventListener('click',interceptLegacy,true);
     mutationObserver?.disconnect();mutationObserver=new MutationObserver(()=>queueMicrotask(scan));mutationObserver.observe(document.body,{childList:true,subtree:true});
     document.addEventListener('play',e=>{
       const target=e.target;
