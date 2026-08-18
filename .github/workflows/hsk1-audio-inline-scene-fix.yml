@@ -1,0 +1,31 @@
+name: Apply HSK1 inline scene audio fix
+on:
+  push:
+    branches: [agent/hsk1-audio-architecture-cleanup]
+    paths:
+      - 'new-hsk1/hsk1/fix-audio-inline-scene.cjs'
+permissions:
+  contents: write
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/hsk1-audio-architecture-cleanup
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Apply fix
+        working-directory: new-hsk1/hsk1
+        run: node fix-audio-inline-scene.cjs
+      - name: Check
+        run: node --check new-hsk1/hsk1/app-core.js
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add new-hsk1/hsk1/app-core.js
+          git commit -m "Bind HSK1 official dialogue audio to rendered scene index"
+          git push origin HEAD:agent/hsk1-audio-architecture-cleanup
