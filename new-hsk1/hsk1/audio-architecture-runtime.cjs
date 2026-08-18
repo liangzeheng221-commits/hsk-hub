@@ -42,8 +42,11 @@ async function make(id){
   // Practice has its own production script. This regression isolates the lesson-shell/audio routes,
   // so provide the same callable boundary without importing unrelated practice-bank dependencies.
   w.renderPractice=()=>{};
-  for(const n of ['new-data.js','new-enrichment.js','textbook-data-corrections.js','textbook-audio-segments.js','textbook-segment-audio.js','app-core.js'])w.eval(read(n));
-  w.eval(fs.readFileSync(path.join(root,'../assets/hsk2-parity.js'),'utf8'));
+  for(const n of ['new-data.js','new-enrichment.js','textbook-data-corrections.js','textbook-audio-segments.js','textbook-segment-audio.js'])w.eval(read(n));
+  // app-core defines top-level lexical bindings (id/L). Classic script tags share that global lexical environment;
+  // separate window.eval() calls in JSDOM do not. Evaluate app-core + the production parity layer together
+  // so the regression models browser classic-script binding semantics instead of inventing window.L.
+  w.eval(read('app-core.js')+'\n'+fs.readFileSync(path.join(root,'../assets/hsk2-parity.js'),'utf8'));
   w.eval(read('tts-only.js'));
   // The production scripts are at the end of <body>; DOMContentLoaded follows immediately after them.
   // Reproduce that lifecycle before invoking the lesson's visible controls.
