@@ -10,8 +10,10 @@ assert(!core.split('\n').find(x=>x.startsWith('function showWordDetail'))?.inclu
 assert(!core.split('\n').find(x=>x.startsWith('function drawScene'))?.includes('onclick="speak('),'text dialogue still uses TTS');
 assert(core.includes('playOfficialVocab(w.zh)'),'official vocab route missing');
 assert(core.includes('playOfficialVocabLesson()'),'official whole-vocab route missing');
-assert(core.includes('playOfficialTextScene(sceneIndex)'),'official scene route missing');
-assert(core.includes('playOfficialTextLine(sceneIndex,${i})'),'official line route missing');
+assert(core.includes('playOfficialTextScene(${sceneIndex})'),'rendered scene route must bind the numeric scene index');
+assert(core.includes('playOfficialTextLine(${sceneIndex},${i})'),'rendered line route must bind numeric scene and line indexes');
+assert(!core.includes('onclick="playOfficialTextScene(sceneIndex)"'),'inline scene handler still depends on lexical sceneIndex');
+assert(!core.includes('onclick="playOfficialTextLine(sceneIndex,'),'inline line handler still depends on lexical sceneIndex');
 assert(core.includes('function renderGrammar')&&core.includes('onclick="speak('),'grammar/Hanzi TTS unexpectedly removed');
 
 assert(!player.includes('_audio-work'),'player still depends on underscore work directory');
@@ -57,4 +59,4 @@ for(const e of manifest.entries){
   const b=fs.readFileSync(p);assert(b.length===e.bytes,`${e.id}: byte size mismatch`);
   assert(crypto.createHash('sha256').update(b).digest('hex')===e.sha256,`${e.id}: SHA mismatch`);
 }
-console.log(JSON.stringify({status:'PASS',architecture:'static-direct-routing',textTracks:45,textRows,vocabTracks:45,vocabRows,audioFiles:93,legacyAudioFixLoaded:false,runtimeFetch:false,playerClickInterception:false}));
+console.log(JSON.stringify({status:'PASS',architecture:'static-direct-routing',textTracks:45,textRows,vocabTracks:45,vocabRows,audioFiles:93,legacyAudioFixLoaded:false,runtimeFetch:false,playerClickInterception:false,literalSceneBinding:true}));
