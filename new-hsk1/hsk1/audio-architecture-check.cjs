@@ -2,7 +2,7 @@ const fs=require('fs'),path=require('path'),vm=require('vm'),crypto=require('cry
 const root=__dirname;
 function assert(c,m){if(!c)throw new Error(m)}
 function read(n){return fs.readFileSync(path.join(root,n),'utf8')}
-const core=read('app-core.js'),lesson=read('lesson.html'),player=read('textbook-segment-audio.js'),guard=read('textbook-audio-guard.js'),tts=read('tts-only.js'),segments=read('textbook-audio-segments.js');
+const core=read('app-core.js'),lesson=read('lesson.html'),player=read('textbook-segment-audio.js'),guard=read('textbook-audio-guard.js'),tts=read('tts-only.js'),segments=read('textbook-audio-segments.js'),parity=read('../assets/hsk2-parity.js');
 
 assert(!core.includes('speak(w.zh)'),'app-core still routes vocab to TTS');
 assert(!/function speakAllVocab\(\)\{speak/.test(core),'app-core still routes whole vocab to TTS');
@@ -15,6 +15,12 @@ assert(core.includes('playOfficialTextLine(${sceneIndex},${i})'),'rendered line 
 assert(!core.includes('onclick="playOfficialTextScene(sceneIndex)"'),'inline scene handler still depends on lexical sceneIndex');
 assert(!core.includes('onclick="playOfficialTextLine(sceneIndex,'),'inline line handler still depends on lexical sceneIndex');
 assert(core.includes('function renderGrammar')&&core.includes('onclick="speak('),'grammar/Hanzi TTS unexpectedly removed');
+assert(parity.includes('function playParityWord(v)'),'parity official word router missing');
+assert(parity.includes("if(LEVEL!==1){if(typeof speak==='function')speak(v.zh);return true}"),'shared parity no longer preserves HSK3 TTS');
+assert(!parity.includes("q('.speak-word',card).onclick=e=>{e.stopPropagation();speak(v.zh)}"),'parity card still routes HSK1 vocab to TTS');
+assert(!parity.includes("q('#parityWordSpeak').onclick=()=>speak(v.zh)"),'parity detail still routes HSK1 vocab to TTS');
+assert(parity.includes('configureParityWordAudioButton(speakWordBtn,v)'),'parity card official-state decoration missing');
+assert(parity.includes('configureParityWordAudioButton(parityWordSpeak,v)'),'parity detail official-state decoration missing');
 
 assert(!player.includes('_audio-work'),'player still depends on underscore work directory');
 assert(!/\bfetch\s*\(/.test(player),'player still fetches runtime maps');
@@ -23,6 +29,8 @@ assert(!/speechSynthesis\s*\.\s*speak/.test(player),'player synthesizes speech')
 assert(player.includes("a.preload='auto'"),'player preload auto missing');
 assert(player.includes('function seekThen('),'seek-settle protection missing');
 assert(player.includes('window.HSK1_OFFICIAL_SEGMENTS'),'static segment source missing');
+assert(player.includes("#vocabGrid .vcard"),'player does not recognize parity vocab cards');
+assert(player.includes("#parityWordSpeak"),'player does not recognize parity word detail button');
 
 assert(!tts.includes("addEventListener('click'"),'TTS-only layer still captures buttons globally');
 assert(tts.includes('window.speak=robustSpeak'),'TTS-only global speak missing');
@@ -32,11 +40,13 @@ assert(!guard.includes('loadScript('),'guard still dynamically loads official la
 assert(!guard.includes('textbook-segment-audio.js?v='),'guard still owns player loading');
 assert(!/speechSynthesis\s*\.\s*speak/.test(guard),'guard synthesizes speech');
 
-const required=['new-enrichment.js','textbook-data-corrections.js','textbook-audio-segments.js','textbook-segment-audio.js','app-core.js','tts-only.js','textbook-audio-guard.js','textbook-audio.js'];
+const required=['new-enrichment.js','textbook-data-corrections.js','textbook-audio-segments.js','textbook-segment-audio.js','app-core.js','../assets/hsk2-parity.js','tts-only.js','textbook-audio-guard.js','textbook-audio.js'];
 let prev=-1;
 for(const name of required){const p=lesson.indexOf(name);assert(p>prev,`bad/missing script order at ${name}`);prev=p}
 assert(!lesson.includes('audio-fix.js'),'lesson still loads legacy audio-fix');
 assert(!lesson.includes('_audio-work'),'lesson references underscore runtime assets');
+assert(lesson.includes('../assets/hsk2-parity.js?v=20260818-5'),'parity cache-bust missing');
+assert(lesson.includes('textbook-segment-audio.js?v=20260818-5'),'player cache-bust missing');
 
 const sandbox={window:{},console};sandbox.window.window=sandbox.window;
 vm.runInNewContext(segments,sandbox,{filename:'textbook-audio-segments.js'});
@@ -59,4 +69,4 @@ for(const e of manifest.entries){
   const b=fs.readFileSync(p);assert(b.length===e.bytes,`${e.id}: byte size mismatch`);
   assert(crypto.createHash('sha256').update(b).digest('hex')===e.sha256,`${e.id}: SHA mismatch`);
 }
-console.log(JSON.stringify({status:'PASS',architecture:'static-direct-routing',textTracks:45,textRows,vocabTracks:45,vocabRows,audioFiles:93,legacyAudioFixLoaded:false,runtimeFetch:false,playerClickInterception:false,literalSceneBinding:true}));
+console.log(JSON.stringify({status:'PASS',architecture:'static-direct-routing-with-parity',textTracks:45,textRows,vocabTracks:45,vocabRows,audioFiles:93,legacyAudioFixLoaded:false,runtimeFetch:false,playerClickInterception:false,parityOfficialVocab:true,parityDetailOfficialVocab:true,hsk3TtsPreserved:true,literalSceneBinding:true}));

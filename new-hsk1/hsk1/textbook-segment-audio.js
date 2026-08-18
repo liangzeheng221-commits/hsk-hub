@@ -194,6 +194,11 @@
         else{b.disabled=true;setText(b,'🔇 无独立教材音');b.title='教材 New Words 录音中没有该词的独立读音'}
       });
     });
+    document.querySelectorAll('#vocabGrid .vcard').forEach(card=>{
+      const word=card.querySelector('.vzh')?.textContent?.trim()||'';
+      const b=card.querySelector('.speak-word'),available=!!vocabSegment(lesson,word);
+      if(b){b.dataset.officialAudio='1';if(available){b.disabled=false;setText(b,'🎧');b.title='教材真人原声'}else{b.disabled=true;setText(b,'🔇');b.title='教材没有该词的独立真人录音'}}
+    });
     const panel=document.querySelector('#wordPanel .word-detail');
     if(panel){
       const word=panel.querySelector('.word-main')?.textContent?.trim()||'';
@@ -203,6 +208,12 @@
         if(available){b.disabled=false;setText(b,'🎧 教材发音');b.title='教材真人原声'}
         else{b.disabled=true;setText(b,'🔇 无独立教材音');b.title='教材 New Words 录音中没有该词的独立读音'}
       }
+    }
+    const parityPanel=document.querySelector('#wordPanel.hsk2-word-panel');
+    if(parityPanel){
+      const word=parityPanel.querySelector('.word-panel-head h3')?.textContent?.trim()||'';
+      const b=parityPanel.querySelector('#parityWordSpeak'),available=!!vocabSegment(lesson,word);
+      if(b){b.dataset.officialAudio='1';if(available){b.disabled=false;setText(b,'🎧');b.title='教材真人原声'}else{b.disabled=true;setText(b,'🔇');b.title='教材没有该词的独立真人录音'}}
     }
     const all=[...document.querySelectorAll('#vocab .tool-row button')].find(b=>/Nghe từ|Nghe giáo trình/.test(b.textContent||''));
     if(all){all.dataset.officialAudio='1';setText(all,'🎧 Nghe giáo trình')}

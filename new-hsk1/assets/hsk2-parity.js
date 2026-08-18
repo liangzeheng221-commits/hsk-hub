@@ -14,6 +14,28 @@
   const htmlEscape=s=>typeof esc==='function'?esc(s):String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   const pinyinOf=w=>String(w?.py || (typeof pyOf==='function'?pyOf(w?.zh||''):'') || '');
   const sentencePinyin=(text,line)=>String(line?.py || (typeof pyOf==='function'?pyOf(text):'') || '');
+  function parityOfficialVocabSegment(v){
+    if(LEVEL!==1)return null;
+    return window.HSK1_OFFICIAL_AUDIO?.vocabSegment?.(id,String(v?.zh||''))||null;
+  }
+  function playParityWord(v){
+    if(LEVEL!==1){if(typeof speak==='function')speak(v.zh);return true}
+    const audio=window.HSK1_OFFICIAL_AUDIO;
+    if(!audio?.ready){if(typeof toast==='function')toast('教材真人原声尚未就绪，请刷新页面后重试。');return false}
+    const seg=audio.vocabSegment?.(id,v.zh);
+    if(!seg){if(typeof toast==='function')toast('教材没有这个词的独立真人录音。');return false}
+    return audio.playVocab(v.zh,id);
+  }
+  function configureParityWordAudioButton(button,v){
+    if(!button)return;
+    if(LEVEL!==1){button.disabled=false;button.textContent='🔊';button.title='Phát âm';return}
+    const available=!!parityOfficialVocabSegment(v);
+    button.dataset.officialAudio='1';
+    button.disabled=!available;
+    button.textContent=available?'🎧':'🔇';
+    button.title=available?'教材真人原声':'教材没有该词的独立真人录音';
+    button.setAttribute('aria-label',available?`教材真人发音 ${v.zh}`:`无独立教材真人录音 ${v.zh}`);
+  }
   const getMastered=()=>{try{return JSON.parse(localStorage.getItem(MASTER_KEY)||'{}')}catch{return {}}};
   const saveMastered=m=>localStorage.setItem(MASTER_KEY,JSON.stringify(m));
 
@@ -106,7 +128,7 @@
       card.onclick=e=>{if(e.target.closest('button'))return;const flipped=!card.classList.contains('flipped');card.classList.toggle('flipped',flipped);card.setAttribute('aria-pressed',String(flipped))};
       card.onkeydown=e=>{if(!['Enter',' '].includes(e.key))return;e.preventDefault();card.click()};
       card.ondblclick=()=>showUnifiedWord(i);
-      q('.speak-word',card).onclick=e=>{e.stopPropagation();speak(v.zh)};
+      const speakWordBtn=q('.speak-word',card);configureParityWordAudioButton(speakWordBtn,v);speakWordBtn.onclick=e=>{e.stopPropagation();playParityWord(v)};
       q('.detail-tiny',card).onclick=e=>{e.stopPropagation();showUnifiedWord(i)};
       q('.known',card).onclick=e=>{e.stopPropagation();const mm=getMastered();mm[key]=!mm[key];saveMastered(mm);e.currentTarget.textContent=mm[key]?'★':'☆';if(typeof toast==='function')toast(mm[key]?'Đã đánh dấu từ đã nhớ.':'Đã bỏ đánh dấu.')};
       grid.appendChild(card);
@@ -119,7 +141,7 @@
     qa('.vocab-pill').forEach(b=>b.classList.toggle('active',+b.dataset.i===i));
     panel.classList.add('show','hsk2-word-panel');
     panel.innerHTML=`<div class="word-panel-head"><div><h3>${htmlEscape(v.zh)}</h3><div class="py">${htmlEscape(py)}</div><div class="word-vn">${htmlEscape(v.vn||'')}</div></div><div class="word-actions"><button class="speak" id="parityWordSpeak">🔊</button><button class="word-close" id="parityWordClose" aria-label="Đóng">×</button></div></div>${example?`<div class="example-box"><div class="example-label">VÍ DỤ TRONG NỘI DUNG BÀI</div><div class="example-py">${htmlEscape(example.py)}</div><div class="zh example-zh">${htmlEscape(example.zh)}</div><div class="example-vn">${htmlEscape(example.vn)}</div></div>`:''}${chars.length?`<div class="word-hanzi-block"><div class="word-hanzi-title"><b>笔顺 · Bút thuận chữ Hán</b><span>${chars.length} chữ</span></div><div class="word-hanzi-tabs">${chars.map((ch,ci)=>`<button class="word-hanzi-tab ${ci===0?'active':''}" data-char="${htmlEscape(ch)}">${htmlEscape(ch)}</button>`).join('')}</div><div class="hanzi-detail compact" id="parityWordHanziDetail"></div></div>`:''}<div class="word-nav"><button class="ghost-btn" id="parityWordPrev" ${i===0?'disabled':''}>← Từ trước</button><button class="ghost-btn" id="parityWordNext" ${i===L.vocab.length-1?'disabled':''}>Từ sau →</button></div><div class="word-tip">Mẹo: nhấp thẻ để lật · nhấp ⓘ hoặc nhấp đúp để mở chi tiết.</div>`;
-    q('#parityWordSpeak').onclick=()=>speak(v.zh);
+    const parityWordSpeak=q('#parityWordSpeak');configureParityWordAudioButton(parityWordSpeak,v);parityWordSpeak.onclick=()=>playParityWord(v);
     q('#parityWordClose').onclick=()=>{panel.classList.remove('show');parityActiveWord=-1;parityWordWriter?.cancelQuiz?.();parityWordWriter=null;qa('.vocab-pill').forEach(b=>b.classList.remove('active'))};
     q('#parityWordPrev').onclick=()=>showUnifiedWord(i-1);q('#parityWordNext').onclick=()=>showUnifiedWord(i+1);
     if(chars.length){qa('.word-hanzi-tab',panel).forEach(b=>b.onclick=()=>{qa('.word-hanzi-tab',panel).forEach(x=>x.classList.remove('active'));b.classList.add('active');parityWordWriter?.cancelQuiz?.();renderHanziDetail(q('#parityWordHanziDetail'),b.dataset.char,'word')});renderHanziDetail(q('#parityWordHanziDetail'),chars[0],'word')}
