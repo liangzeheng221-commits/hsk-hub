@@ -1,8 +1,9 @@
-/* Step 6: replace HSK1 vocabulary/text TTS buttons with textbook recordings.
-   Development-layer only. Loads the verified timing maps from _audio-work. */
+/* Step 8: HSK1 official textbook segment player.
+   Uses perceptually recalibrated timing maps with safer pre-roll and waits for
+   seek completion before audio playback to protect the first syllable attack. */
 (function(){
   'use strict';
-  const VERSION='20260818-step6-v1';
+  const VERSION='20260818-step8-v1';
   const AUDIO_DIR='audio/';
   const WORK_DIR='_audio-work/';
   const cache=new Map();
@@ -52,7 +53,7 @@
   }
   function getAudio(track){
     let a=cache.get(track);if(a)return a;
-    a=new Audio(srcFor(track));a.preload='metadata';a.playsInline=true;a.dataset.officialTrack=track;
+    a=new Audio(srcFor(track));a.preload='auto';a.playsInline=true;a.dataset.officialTrack=track;
     a.addEventListener('error',()=>diagnostics({error:`load-failed:${track}`,playing:false}));
     cache.set(track,a);return a;
   }
@@ -71,6 +72,26 @@
       activeAudio=null;stopTimer=0;diagnostics({playing:false,endedByRange:true});
     },ms);
   }
+  function seekThen(audio,start,token,fn){
+    let settled=false,timer=0;
+    const finish=()=>{
+      if(settled)return;settled=true;
+      if(timer)clearTimeout(timer);
+      audio.removeEventListener('seeked',onSeeked);
+      if(token===runToken&&audio===activeAudio)fn();
+    };
+    const onSeeked=()=>finish();
+    const assign=()=>{
+      if(token!==runToken||audio!==activeAudio)return;
+      if(Math.abs((audio.currentTime||0)-start)<=0.025&&!audio.seeking){finish();return}
+      audio.addEventListener('seeked',onSeeked);
+      try{audio.currentTime=start}catch(_e){finish();return}
+      if(!audio.seeking&&Math.abs((audio.currentTime||0)-start)<=0.035)queueMicrotask(finish);
+      timer=setTimeout(finish,450);
+    };
+    if(audio.readyState>=1)assign();
+    else{audio.addEventListener('loadedmetadata',assign,{once:true});try{audio.load()}catch(_e){}}
+  }
   function startRange(track,start,end,label=''){
     if(!track||!Number.isFinite(start)||!Number.isFinite(end)||end<=start){
       toastSafe('教材原声时间轴不可用。');return false;
@@ -78,16 +99,13 @@
     cancelSpeech();if(stopTimer){clearTimeout(stopTimer);stopTimer=0}
     const token=++runToken,audio=getAudio(track);activeAudio=audio;stopVisibleAudio();
     try{audio.pause()}catch(_e){}
-    const begin=()=>{
-      if(token!==runToken)return;
-      try{audio.currentTime=start}catch(_e){}
+    seekThen(audio,start,token,()=>{
       Promise.resolve(audio.play()).then(()=>{
         if(token!==runToken)return;
-        scheduleStop(audio,end,token);diagnostics({playing:true,label,range:[start,end],error:''});
+        scheduleStop(audio,end,token);
+        diagnostics({playing:true,label,range:[start,end],seekSettled:true,preload:audio.preload,error:''});
       }).catch(()=>{diagnostics({playing:false,error:`play-blocked:${track}`,label});toastSafe('Không phát được audio giáo trình. Hãy chạm lại nút nghe.');});
-    };
-    if(audio.readyState>=1)begin();
-    else{audio.addEventListener('loadedmetadata',begin,{once:true});try{audio.load()}catch(_e){}}
+    });
     return true;
   }
   function playFull(track,label=''){
