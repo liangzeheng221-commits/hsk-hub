@@ -43,11 +43,17 @@ jobs:
           fs.writeFileSync('hsk1-scene-extract.json', JSON.stringify({lessons}, null, 2) + '\n');
           const summary = lessons.map(L => ({id:L.id, vocab:L.vocab.length, scene_lines:L.scenes.map(s=>s.lines.length)}));
           fs.writeFileSync('hsk1-scene-summary.json', JSON.stringify(summary, null, 2) + '\n');
+          const han = s => [...String(s||'')].filter(ch => /[\p{Script=Han}A-Za-z0-9]/u.test(ch)).length;
+          const lengths = lessons.map(L => ({
+            id:L.id,
+            scenes:L.scenes.map(s => ({scene:s.scene, lengths:s.lines.map(x=>han(x.zh)), text:s.lines.map(x=>x.zh)}))
+          }));
+          fs.writeFileSync('hsk1-line-lengths.json', JSON.stringify(lengths, null, 2) + '\n');
           NODE
       - name: Commit extracted temporary data
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add hsk1-scene-extract.json hsk1-scene-summary.json
-          git commit -m 'Temporary HSK1 scene data extract'
+          git add hsk1-scene-extract.json hsk1-scene-summary.json hsk1-line-lengths.json
+          git diff --cached --quiet || git commit -m 'Temporary HSK1 scene data extract'
           git push origin HEAD:agent/hsk1-segment-audio
