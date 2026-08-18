@@ -13,6 +13,12 @@ async function sha256(text){if(!globalThis.crypto?.subtle)return null;const d=ne
 async function checkPassword(){const input=$('#pwInput'),err=$('#pwError'),btn=$('#pwBtn');if(!input)return;btn.disabled=true;const ok=(await sha256(input.value.trim()))===PASSWORD_HASH;btn.disabled=false;if(ok){sessionStorage.setItem(SESSION_KEY,'1');sessionStorage.setItem('hsk_portal_unlocked','1');$('#pwOverlay').style.display='none';document.body.style.overflow=''}else{err?.classList.add('show');input.select()}}
 function initGate(){const o=$('#pwOverlay');if(!o)return;if(sessionStorage.getItem(SESSION_KEY)==='1'||sessionStorage.getItem('hsk_portal_unlocked')==='1'){o.style.display='none';document.body.style.overflow=''}else{document.body.style.overflow='hidden';$('#pwInput')?.addEventListener('keydown',e=>{if(e.key==='Enter')checkPassword()})}}
 function speak(text){if(!('speechSynthesis' in window)){toast('Trình duyệt chưa hỗ trợ phát âm.');return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='zh-CN';u.rate=.82;const vs=speechSynthesis.getVoices();u.voice=vs.find(v=>/zh|Chinese|Mandarin/i.test(v.lang+' '+v.name))||null;speechSynthesis.speak(u)}
+function officialAudioLayer(){return window.HSK1_OFFICIAL_AUDIO}
+function officialAudioUnavailable(){toast('教材真人原声尚未就绪，请刷新页面后重试。');return false}
+function playOfficialVocab(word){const a=officialAudioLayer();return a?.ready?a.playVocab(word,id):officialAudioUnavailable()}
+function playOfficialVocabLesson(){const a=officialAudioLayer();return a?.ready?a.playVocabLesson(id):officialAudioUnavailable()}
+function playOfficialTextLine(scene,line){const a=officialAudioLayer();return a?.ready?a.playTextLine(scene,line,id):officialAudioUnavailable()}
+function playOfficialTextScene(scene){const a=officialAudioLayer();return a?.ready?a.playTextScene(scene,id):officialAudioUnavailable()}
 function resetCourse(){if(confirm('Xóa toàn bộ tiến độ HSK 1 trên trình duyệt này?')){localStorage.removeItem(STORAGE_KEY);localStorage.removeItem(MASTER_KEY);location.reload()}}
 function allVocab(){return HSK1_LESSONS.flatMap(x=>x.vocab)}
 function markVisited(id){const p=getProgress();p[id]??={};p[id].visited=true;saveProgress(p)}
@@ -74,19 +80,19 @@ function renderVocab(){
   const q=$('#vSearch'),grid=$('#vocabGrid');
   function draw(term=''){
     const t=term.trim().toLowerCase(),items=L.vocab.filter(w=>!t||[w.zh,w.py,w.vn,w.posLabel].some(x=>String(x||'').toLowerCase().includes(t)));
-    grid.innerHTML=items.map(w=>`<article class="vocab-card" tabindex="0" role="button" aria-label="${esc(w.zh)}. Chạm để lật" data-zh="${esc(w.zh)}"><div class="vocab-card-inner"><div class="vocab-face vocab-front">${w.posLabel?`<div class="pos-badge unified-pos">${esc(w.posLabel)}</div>`:''}<div class="vocab-zh">${esc(w.zh)}</div><div class="vocab-py">${esc(w.py)}</div><div class="vocab-actions"><button class="mini-btn listen" type="button">🔊 Nghe</button><span class="mini-btn flip-hint">↻ Lật</span></div></div><div class="vocab-face vocab-back">${w.posLabel?`<div class="pos-badge unified-pos">${esc(w.posLabel)}</div>`:''}<div class="vocab-vn">${esc(w.vn)}</div><div class="vocab-py">${esc(w.py)}</div><div class="vocab-actions"><button class="mini-btn listen" type="button">🔊 Nghe</button><span class="mini-btn flip-hint">↻ Lật</span></div></div></div></article>`).join('');
+    grid.innerHTML=items.map(w=>`<article class="vocab-card" tabindex="0" role="button" aria-label="${esc(w.zh)}. Chạm để lật" data-zh="${esc(w.zh)}"><div class="vocab-card-inner"><div class="vocab-face vocab-front">${w.posLabel?`<div class="pos-badge unified-pos">${esc(w.posLabel)}</div>`:''}<div class="vocab-zh">${esc(w.zh)}</div><div class="vocab-py">${esc(w.py)}</div><div class="vocab-actions"><button class="mini-btn listen" type="button">🎧 教材</button><span class="mini-btn flip-hint">↻ Lật</span></div></div><div class="vocab-face vocab-back">${w.posLabel?`<div class="pos-badge unified-pos">${esc(w.posLabel)}</div>`:''}<div class="vocab-vn">${esc(w.vn)}</div><div class="vocab-py">${esc(w.py)}</div><div class="vocab-actions"><button class="mini-btn listen" type="button">🎧 教材</button><span class="mini-btn flip-hint">↻ Lật</span></div></div></div></article>`).join('');
     if(items[0])showWordDetail(items[0]);
   }
   if(!grid.dataset.cardBound){
     grid.dataset.cardBound='1';
-    grid.addEventListener('click',e=>{const card=e.target.closest('.vocab-card');if(!card||!grid.contains(card))return;const w=L.vocab.find(x=>x.zh===card.dataset.zh);if(!w)return;if(e.target.closest('.listen')){e.stopPropagation();speak(w.zh);return}card.classList.toggle('flipped');card.setAttribute('aria-pressed',String(card.classList.contains('flipped')));showWordDetail(w)});
+    grid.addEventListener('click',e=>{const card=e.target.closest('.vocab-card');if(!card||!grid.contains(card))return;const w=L.vocab.find(x=>x.zh===card.dataset.zh);if(!w)return;if(e.target.closest('.listen')){e.stopPropagation();playOfficialVocab(w.zh);return}card.classList.toggle('flipped');card.setAttribute('aria-pressed',String(card.classList.contains('flipped')));showWordDetail(w)});
     grid.addEventListener('keydown',e=>{const card=e.target.closest('.vocab-card');if(!card||!['Enter',' '].includes(e.key))return;e.preventDefault();card.click()});
   }
   q.oninput=()=>draw(q.value);draw();
 }
-function showWordDetail(w){$('#wordPanel').innerHTML=`<div class="word-detail"><div class="word-detail-head"><div class="word-main">${esc(w.zh)}</div><div class="word-py">${esc(w.py)}</div></div><div class="word-context">${esc(w.vn)}</div><div class="vocab-actions"><button class="mini-btn" onclick="speak('${esc(w.zh)}')">🔊 Nghe phát âm</button></div></div>`}
+function showWordDetail(w){$('#wordPanel').innerHTML=`<div class="word-detail"><div class="word-detail-head"><div class="word-main">${esc(w.zh)}</div><div class="word-py">${esc(w.py)}</div></div><div class="word-context">${esc(w.vn)}</div><div class="vocab-actions"><button class="mini-btn" onclick="playOfficialVocab(${JSON.stringify(w.zh)})">🎧 教材发音</button></div></div>`}
 function flipAll(){$$('.vocab-card').forEach(c=>c.classList.toggle('flipped'))}
-function speakAllVocab(){speak(L.vocab.map(x=>x.zh).join('，'))}
+function speakAllVocab(){return playOfficialVocabLesson()}
 
 function renderText(){
   sceneIndex=0;
@@ -98,7 +104,7 @@ function renderText(){
   select.onchange=()=>activate(select.value);
   activate(0);
 }
-function drawScene(){const s=L.scenes[sceneIndex];$('#scenePane').innerHTML=`<div class="scene-title"><h3>${esc(s.place)} · ${esc(s.place_vn)}</h3><button class="ghost-btn" onclick="speak(${JSON.stringify(s.lines.map(x=>x.zh).join('，'))})">🔊 Đọc đoạn</button></div><div class="dialogue-card">${s.lines.map(x=>`<div class="dialogue-line"><div class="speaker">${esc(x.s)}</div><div><div class="line-py">${esc(x.py)}</div><div class="line-zh">${esc(x.zh)}</div><div class="line-vn">${esc(x.vn)}</div></div><button class="speak-line" onclick="speak(${JSON.stringify(x.zh)})">🔊</button></div>`).join('')}</div>`}
+function drawScene(){const s=L.scenes[sceneIndex];$('#scenePane').innerHTML=`<div class="scene-title"><h3>${esc(s.place)} · ${esc(s.place_vn)}</h3><button class="ghost-btn" onclick="playOfficialTextScene(sceneIndex)">🎧 教材整段</button></div><div class="dialogue-card">${s.lines.map((x,i)=>`<div class="dialogue-line"><div class="speaker">${esc(x.s)}</div><div><div class="line-py">${esc(x.py)}</div><div class="line-zh">${esc(x.zh)}</div><div class="line-vn">${esc(x.vn)}</div></div><button class="speak-line" onclick="playOfficialTextLine(sceneIndex,${i})" title="播放这一句教材真人原声">🎧</button></div>`).join('')}</div>`}
 function renderGrammar(){const items=languageItems(L);$('#grammarList').innerHTML=items.length?items.map((g,i)=>`<article class="grammar-card"><h3>${i+1}. ${esc(g.title)}</h3><div class="grammar-vn-title">${esc(g.vn_title)}</div>${g.structure?`<div class="grammar-structure">${esc(g.structure)}</div>`:''}<div class="grammar-desc">${esc(g.desc)}</div><div class="grammar-examples">${g.examples.map(e=>{const x=typeof e==='string'?{zh:e,py:'',vn:''}:e;return `<div class="grammar-example"><div><span class="grammar-example-py">${esc(x.py)}</span><span class="grammar-example-zh">${esc(x.zh)}</span>${x.vn?`<span class="grammar-example-vn">${esc(x.vn)}</span>`:''}</div><button onclick="speak(${JSON.stringify(x.zh)})">🔊</button></div>`}).join('')}</div></article>`).join(''):'<article class="grammar-card"><h3>Bài này không có nội dung ngữ âm hoặc ngữ pháp riêng.</h3><div class="grammar-desc">Hãy chuyển sang mục tiếp theo hoặc chọn bài khác.</div></article>'}
 
 function uniqueHanzi(){const out=[];L.vocab.forEach(w=>[...w.zh].forEach(ch=>{if(/\p{Script=Han}/u.test(ch)&&!out.includes(ch))out.push(ch)}));return out}
