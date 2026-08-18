@@ -24,7 +24,6 @@ assert(l11.scenes[2].lines[4].py==='qù chāo shì。','Lesson 11 correction pin
 assert(l11.scenes[2].lines[4].vn==='Đi siêu thị.','Lesson 11 correction Vietnamese mismatch');
 assert(ctx.HSK1_TEXTBOOK_DATA_CORRECTIONS.apply()===true,'Data correction must be idempotent');
 assert(l11.scenes[2].lines.length===6,'Repeated correction duplicated a row');
-
 const textKeys=Object.keys(data.text||{});assert(textKeys.length===45,`Expected 45 text tracks, got ${textKeys.length}`);
 let textRows=0;
 for(const L of lessons){
@@ -36,7 +35,6 @@ for(const L of lessons){
   });
 }
 assert(textRows===202,`Expected 202 text ranges, got ${textRows}`);
-
 const vocabKeys=Object.keys(data.vocab||{});assert(vocabKeys.length===45,`Expected 45 vocab tracks, got ${vocabKeys.length}`);
 const byLesson={};let recorded=0;
 for(const [track,items] of Object.entries(data.vocab)){
@@ -67,7 +65,6 @@ assert(mappedCards===324,`Expected 324 site cards with official standalone audio
 assert(unsupportedCards===12,`Expected 12 explicitly unsupported site cards, got ${unsupportedCards}`);
 assert(missingCards.length===0,`Unexpected unmapped site vocab: ${JSON.stringify(missingCards)}`);
 const xian=byLesson['6']['西安'];assert(xian&&xian.track==='15-4'&&xian.start===13.392&&xian.end===16.143,'Lesson 6 西安 cross-lesson mapping is wrong');
-
 const manifest=JSON.parse(read('textbook-audio-manifest.json'));
 assert(manifest.count===93&&manifest.entries.length===93,'Manifest must contain 93 audio files');
 const expected=new Set();for(let L=1;L<=15;L++){for(let t=1;t<=6;t++)expected.add(`${L}-${t}`);if(L<=3)expected.add(`${L}-7`)}
@@ -82,9 +79,8 @@ for(const e of manifest.entries){
 }
 for(const [id,arr] of Object.entries(data.text))for(const r of arr)assert(r[1]<=meta[id].duration_s+0.02,`${id}: text range exceeds audio duration`);
 for(const [id,arr] of Object.entries(data.vocab))for(const r of arr)assert(r[2]<=meta[id].duration_s+0.02,`${id}: vocab range exceeds audio duration`);
-
 const player=read('textbook-segment-audio.js'),guard=read('textbook-audio-guard.js'),corrections=read('textbook-data-corrections.js');
-assert(player.includes('_audio-work/all-text-1-15-compact.json')&&player.includes('_audio-work/all-vocab-1-15-compact.json'),'Player timing-map paths are wrong');
+assert(player.includes("const WORK_DIR='_audio-work/'")&&player.includes('all-text-1-15-compact.json')&&player.includes('all-vocab-1-15-compact.json'),'Player timing-map paths are wrong');
 assert(!/speechSynthesis\s*\.\s*speak/.test(player),'Production player must never synthesize speech');
 assert(!/speechSynthesis\s*\.\s*speak/.test(guard),'Production guard must never synthesize speech');
 assert(guard.includes('guardLegacyClick'),'Guard must block legacy TTS during loading');
@@ -92,5 +88,4 @@ assert(guard.includes('official.stop?.();return'),'Guard must stop the previous 
 assert(guard.includes('textbook-data-corrections.js?v=20260818-2'),'Guard must load permanent data corrections');
 assert(guard.includes('textbook-segment-audio.js?v=20260818-2'),'Guard must load production segment player');
 assert(corrections.includes("zh:'去超市。'"),'Permanent Lesson 11 correction missing');
-
 console.log(JSON.stringify({status:'PASS',lessons:15,siteVocabCards:siteCards,officialVocabCards:mappedCards,unsupportedVocabCards:unsupportedCards,textTracks:textKeys.length,textRows,audioFiles:manifest.count,lesson11Rows:l11.scenes[2].lines.length}));
