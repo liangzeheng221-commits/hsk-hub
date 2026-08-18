@@ -6,6 +6,12 @@ on:
     paths:
       - new-hsk1/hsk1/apply-parity-official-vocab-fix.cjs
       - .github/workflows/apply-hsk1-parity-official-vocab.yml
+  pull_request:
+    branches:
+      - gh-pages
+    paths:
+      - new-hsk1/hsk1/apply-parity-official-vocab-fix.cjs
+      - .github/workflows/apply-hsk1-parity-official-vocab.yml
 permissions:
   contents: write
 jobs:
