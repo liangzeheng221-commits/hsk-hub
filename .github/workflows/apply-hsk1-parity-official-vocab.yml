@@ -5,6 +5,7 @@ on:
       - agent/hsk1-parity-official-vocab
     paths:
       - new-hsk1/hsk1/apply-parity-official-vocab-fix.cjs
+      - .github/workflows/apply-hsk1-parity-official-vocab.yml
 permissions:
   contents: write
 jobs:
