@@ -1,0 +1,40 @@
+name: Apply HSK1 audio architecture cleanup
+on:
+  push:
+    branches: [agent/hsk1-audio-architecture-cleanup]
+    paths:
+      - 'new-hsk1/hsk1/apply-audio-architecture-cleanup.cjs'
+permissions:
+  contents: write
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/hsk1-audio-architecture-cleanup
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Apply source routing cleanup
+        working-directory: new-hsk1/hsk1
+        run: node apply-audio-architecture-cleanup.cjs
+      - name: Syntax check changed source
+        run: |
+          node --check new-hsk1/hsk1/app-core.js
+          node --check new-hsk1/hsk1/textbook-audio-segments.js
+          node --check new-hsk1/hsk1/textbook-segment-audio.js
+          node --check new-hsk1/hsk1/tts-only.js
+          node --check new-hsk1/hsk1/textbook-audio-guard.js
+      - name: Commit patched source
+        run: |
+          if git diff --quiet -- new-hsk1/hsk1/app-core.js new-hsk1/hsk1/lesson.html; then
+            echo "No source patch needed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add new-hsk1/hsk1/app-core.js new-hsk1/hsk1/lesson.html
+          git commit -m "Route HSK1 vocab and text directly to official audio"
+          git push origin HEAD:agent/hsk1-audio-architecture-cleanup
