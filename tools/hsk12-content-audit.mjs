@@ -38,7 +38,8 @@ for(const L of h2){const corpus=JSON.stringify({mc:L.mc||[],fills:L.fills||[],fi
 const h1Audit=read('hsk1/content-audit.js');ok(/core\.forEach/.test(h1Audit)&&/genVocabMC/.test(h1Audit),'HSK1: full core-vocabulary MC generator missing');
 const hc=read('assets/hanzi-curriculum.js');for(const token of ['笔画','独体字','笔顺规则','结构','偏旁'])ok(hc.includes(token),`HSK1 Hanzi curriculum dimension missing: ${token}`);
 ok(hc.includes("8:{chars:'少、个',structure:'汉字结构（3）：上下结构与上中下结构',radicals:'钅、口'}"),'HSK1 L8: radicals should be 钅、口');
-const forbidden=/HSK\s*2\.0|HSK\s*3\.0|旧\s*HSK|旧体系|新\s*HSK|HSK\s*新标准|new\s+HSK\s+standard/ig;
+// Only reject explicit course-system comparison wording. Normal textbook names such as “新HSK教程” are valid content and must not trigger this audit.
+const forbidden=/HSK\s*2\.0|HSK\s*3\.0|旧\s*HSK|旧体系|新\s*HSK\s*(?:体系|标准|考试制度?)|HSK\s*新标准|new\s+HSK\s+standard/ig;
 function walk(dir='.'){
   for(const e of fs.readdirSync(path.join(root,dir),{withFileTypes:true})){
     if(['.git','node_modules','qa'].includes(e.name))continue;const rel=path.posix.join(dir==='.'?'':dir,e.name);
