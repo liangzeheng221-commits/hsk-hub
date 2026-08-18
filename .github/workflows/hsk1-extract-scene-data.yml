@@ -1,0 +1,53 @@
+name: HSK1 temporary scene-data extract
+
+on:
+  push:
+    branches: [agent/hsk1-segment-audio]
+    paths:
+      - '.github/workflows/hsk1-extract-scene-data.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/hsk1-segment-audio
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Extract current lesson text and vocabulary data
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const vm = require('vm');
+          const base = 'new-hsk1/hsk1/';
+          const context = { console };
+          context.window = context;
+          context.globalThis = context;
+          vm.createContext(context);
+          vm.runInContext(fs.readFileSync(base + 'new-data.js', 'utf8'), context, {filename:'new-data.js'});
+          vm.runInContext(fs.readFileSync(base + 'new-enrichment.js', 'utf8'), context, {filename:'new-enrichment.js'});
+          const lessons = context.HSK1_LESSONS.map(L => ({
+            id: L.id,
+            vocab: L.vocab.map(w => ({zh:w.zh, py:w.py, vn:w.vn, kind:w.kind || ''})),
+            scenes: L.scenes.map((s, sceneIndex) => ({
+              scene: sceneIndex + 1,
+              place: s.place,
+              lines: s.lines.map((x, lineIndex) => ({line:lineIndex + 1, speaker:x.s, zh:x.zh, py:x.py}))
+            }))
+          }));
+          fs.writeFileSync('hsk1-scene-extract.json', JSON.stringify({lessons}, null, 2) + '\n');
+          const summary = lessons.map(L => ({id:L.id, vocab:L.vocab.length, scene_lines:L.scenes.map(s=>s.lines.length)}));
+          fs.writeFileSync('hsk1-scene-summary.json', JSON.stringify(summary, null, 2) + '\n');
+          NODE
+      - name: Commit extracted temporary data
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add hsk1-scene-extract.json hsk1-scene-summary.json
+          git commit -m 'Temporary HSK1 scene data extract'
+          git push origin HEAD:agent/hsk1-segment-audio
