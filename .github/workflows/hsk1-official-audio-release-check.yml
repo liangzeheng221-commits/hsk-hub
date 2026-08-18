@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - agent/hsk1-official-audio-release
+      - agent/hsk1-audio-step8
       - gh-pages
     paths:
       - 'new-hsk1/hsk1/**'
@@ -31,7 +32,7 @@ jobs:
           node --check new-hsk1/hsk1/textbook-data-corrections.js
           node --check new-hsk1/hsk1/textbook-segment-audio.js
           node --check new-hsk1/hsk1/textbook-audio-guard.js
-          node --check new-hsk1/hsk1/official-audio-release-check.cjs
-      - name: Verify textbook audio data and files
+          node --check new-hsk1/hsk1/official-audio-step8-check.cjs
+      - name: Verify Step 8 textbook audio data and files
         working-directory: new-hsk1/hsk1
-        run: node official-audio-release-check.cjs
+        run: node official-audio-step8-check.cjs
