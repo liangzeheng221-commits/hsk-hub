@@ -1,0 +1,29 @@
+name: Apply HSK1 app-core cache bust
+on:
+  push:
+    branches: [agent/hsk1-audio-architecture-cache-bust]
+    paths:
+      - 'new-hsk1/hsk1/fix-app-core-cache-bust.cjs'
+permissions:
+  contents: write
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/hsk1-audio-architecture-cache-bust
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Cache-bust app-core
+        working-directory: new-hsk1/hsk1
+        run: node fix-app-core-cache-bust.cjs
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add new-hsk1/hsk1/lesson.html
+          git commit -m "Cache-bust HSK1 audio routing app-core"
+          git push origin HEAD:agent/hsk1-audio-architecture-cache-bust
